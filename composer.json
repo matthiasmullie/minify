@@ -1,0 +1,21 @@
+{
+	"name": "matthiasmullie/minify",
+	"type": "library",
+	"description": "CSS & JS minifier",
+	"homepage": "https://github.com/matthiasmullie/minify",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Matthias Mullie",
+			"email": "minify@mullie.eu",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": ">=5.2.0",
+		"ext-curl": "*"
+	},
+	"autoload": {
+		"classmap": [""]
+	}
+}
