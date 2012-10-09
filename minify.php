@@ -636,7 +636,6 @@ class MinifyJS extends Minify
 				case '\'':
 				case '"':
 					$stringOpener = $character;
-					$string = $character;
 
 					// process through content until we find the end of the string
 					for($j = $i + 1; $j < strlen($content); $j++)

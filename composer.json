@@ -13,7 +13,7 @@
 	],
 	"require": {
 		"php": ">=5.2.0",
-		"ext-curl": "*"
+		"ext-pcre": "*"
 	},
 	"autoload": {
 		"classmap": [""]
