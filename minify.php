@@ -804,6 +804,7 @@ class MinifyJS extends Minify
 
 		// newlines > linefeed
 		$content = str_replace(array("\r\n", "\r", "\n"), "\n", $content);
+		$content = preg_replace('/\n/', '', $content);
 
 		// empty lines > collapse
 		$content = preg_replace('/^[ \t]*|[ \t]*$/m', '', $content);
