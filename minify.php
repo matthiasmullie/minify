@@ -770,8 +770,8 @@ class MinifyJS extends Minify
 			$content = str_replace(array_keys($strings), array_values($strings), $content);
 		}
 
-		// strip comments
-		$content = str_replace(array_keys($comments), array_fill(0, count($comments), ''), $content);
+		// strip comments (if any)
+		if ($comments) $content = str_replace(array_keys($comments), array_fill(0, count($comments), ''), $content);
 
 		// save to path (not for internal use!)
 		if(@func_get_arg(2) === false) $this->save($content, $path);
