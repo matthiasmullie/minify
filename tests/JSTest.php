@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__.'/../minify.php';
-require_once __DIR__.'/../js.php';
-require_once __DIR__.'/../exception.php';
+require_once __DIR__.'/../Minify.php';
+require_once __DIR__.'/../JS.php';
+require_once __DIR__.'/../Exception.php';
 require_once 'PHPUnit/Framework/TestCase.php';
 
 use MatthiasMullie\Minify;
