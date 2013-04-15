@@ -37,7 +37,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
      * @test
      * @dataProvider dataProvider
      */
-    public function failure($input, $expected, $options)
+    public function minify($input, $expected, $options)
     {
         $this->minifier->add($input);
         $result = $this->minifier->minify(false, $options);
