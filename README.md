@@ -71,4 +71,4 @@ Strips redundant whitespace
     $minifier->minify('/target/path.css', Minify\CSS::ALL);
 
 ## License
-Minify is [MIT](http://opensource.org/licenses/MIT) licensed:
+Minify is [MIT](http://opensource.org/licenses/MIT) licensed.
