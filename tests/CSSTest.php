@@ -84,6 +84,19 @@ class CSSTest extends PHPUnit_Framework_TestCase
             Minify\CSS::STRIP_WHITESPACE
         );
 
+		/*
+		 * https://github.com/forkcms/forkcms/issues/387
+		 *
+		 * CSS backslash.
+		 * * Backslash escaped by backslash in CSS
+		 * * Double CSS backslashed escaped twice for in PHP string
+		 */
+		$tests[] = array(
+			'.iconic.map-pin:before { content: "\\\\"; }',
+			'.iconic.map-pin:before{content:"\\\\"}',
+			Minify\CSS::ALL
+		);
+
         return $tests;
     }
 }
