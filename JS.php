@@ -100,10 +100,7 @@ class JS extends Minify
         $this->registerPattern('/^\n\s+/', "\n");
 
         // redundant whitespace > remove
-        $callback = function($match) {
-            return $match[1];
-        };
-        $this->registerPattern('/^([{}\[\]\(\)=><&\|;:,\?!\+-])[ \t]+/', $callback);
+        $this->registerPattern('/^([{}\[\]\(\)=><&\|;:,\?!\+-])[ \t]+/', '\\1');
         $this->registerPattern('/^[ \t]+(?=[{}\[\]\(\)=><&\|;:,\?!\+-])/', '');
 
         // redundant semicolons (followed by another semicolon or closing curly bracket) > remove
