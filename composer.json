@@ -11,11 +11,11 @@
 			"role": "Developer"
 		}
 	],
-	"require": {
-		"php": ">=5.3.0",
-		"ext-pcre": "*"
-	},
-	"autoload": {
-		"classmap": [""]
-	}
+    "require": {
+        "php": ">=5.3.0",
+        "ext-pcre": "*"
+    },
+    "autoload": {
+        "classmap": [""]
+    }
 }

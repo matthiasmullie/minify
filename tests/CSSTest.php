@@ -46,6 +46,19 @@ class CSSTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test conversion of relative paths, provided by dataProviderPaths
+     *
+     * @test
+     * @dataProvider dataProviderPaths
+     */
+    public function convertRelativePath($source, $target, $expected, $options) {
+        $this->minifier->add($source);
+        $result = $this->minifier->minify($target, $options);
+
+        $this->assertEquals($result, $expected);
+    }
+
+    /**
      * Test cases [input, expected result, options]
      *
      * @return array
@@ -95,6 +108,25 @@ class CSSTest extends PHPUnit_Framework_TestCase
             '.iconic.map-pin:before { content: "\\\\"; }',
             '.iconic.map-pin:before{content:"\\\\"}',
             Minify\CSS::ALL
+        );
+
+        return $tests;
+    }
+
+    /**
+     *
+     */
+    public function dataProviderPaths() {
+        $tests = array();
+
+        $source = __DIR__.'/sample/css/convert_relative_path/source';
+        $target = __DIR__.'/sample/css/convert_relative_path/target';
+
+        $tests[] = array(
+            $source . '/external.css',
+            $target . '/external.css',
+            file_get_contents($source . '/external.css'),
+            0
         );
 
         return $tests;

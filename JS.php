@@ -100,9 +100,9 @@ class JS extends Minify
         $this->registerPattern('/^\n\s+/', "\n");
 
         // redundant whitespace > remove
-		$callback = function($match) {
-			return $match[1];
-		};
+        $callback = function($match) {
+            return $match[1];
+        };
         $this->registerPattern('/^([{}\[\]\(\)=><&\|;:,\?!\+-])[ \t]+/', $callback);
         $this->registerPattern('/^[ \t]+(?=[{}\[\]\(\)=><&\|;:,\?!\+-])/', '');
 

@@ -201,9 +201,9 @@ abstract class Minify
      * This function will be called plenty of times, where $content will always
      * move up 1 character.
      *
-     * @param string $pattern Pattern to match
-     * @param string $content Content to match pattern against
-     * @param string|callable $replacement Replacement value
+     * @param string $pattern Pattern to match.
+     * @param string $content Content to match pattern against.
+     * @param string|callable $replacement Replacement value.
      * @return array [content, replacement, match]
      */
     protected function replacePattern($pattern, $content, $replacement) {
@@ -217,9 +217,9 @@ abstract class Minify
     /**
      * Replaces pattern by a value from a callback, via preg_replace_callback.
      *
-     * @param string $pattern
-     * @param string $content
-     * @param callable $replacement
+     * @param string $pattern Pattern to match.
+     * @param string $content Content to match pattern against.
+     * @param string|callable $replacement Replacement value.
      * @return array [content, replacement, match]
      */
     protected function replaceWithCallback($pattern, $content, $replacement) {
@@ -244,9 +244,9 @@ abstract class Minify
     /**
      * Replaces pattern by a value from a callback, via preg_replace.
      *
-     * @param string $pattern
-     * @param string $content
-     * @param string $replacement
+     * @param string $pattern Pattern to match.
+     * @param string $content Content to match pattern against.
+     * @param string|callable $replacement Replacement value.
      * @return array [content, replacement, match]
      */
     protected function replaceWithString($pattern, $content, $replacement) {
