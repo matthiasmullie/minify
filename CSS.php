@@ -22,7 +22,7 @@ namespace MatthiasMullie\Minify;
  *
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
- * @version 1.1.0
+ * @version 1.2.0
  *
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved.
  * @license MIT License
@@ -55,9 +55,6 @@ class CSS extends Minify
      */
     protected function combineImports($source, $content)
     {
-        // validate data
-        if($content == $source) throw new Exception('The data for "' . $source . '" could not be loaded, please make sure the path is correct.');
-
         // the regex to match import statements
         $importRegex = '/
 
@@ -364,9 +361,6 @@ class CSS extends Minify
      */
     protected function move($source, $destination, $content)
     {
-        // validate data
-        if($content == $source) throw new Exception('The data for "' . $source . '" could not be loaded, please make sure the path is correct.');
-
         // regex to match paths
         $pathsRegex = '/
 
