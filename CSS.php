@@ -22,7 +22,7 @@ namespace MatthiasMullie\Minify;
  *
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
- * @version 1.1.0
+ * @version 1.2.0
  *
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved.
  * @license MIT License
@@ -49,20 +49,12 @@ class CSS extends Minify
      * Combine CSS from import statements.
      * @import's will be loaded and their content merged into the original file, to save HTTP requests.
      *
-     * @param  string $source The file to combine imports for.
+     * @param  string $source  The file to combine imports for.
+     * @param  string $content The CSS content to combine imports for.
      * @return string
      */
-    protected function combineImports($source)
+    protected function combineImports($source, $content)
     {
-        // little "hack" for internal use
-        $content = @func_get_arg(1);
-
-        // load the content
-        if($content === false) $content = $this->load($source);
-
-        // validate data
-        if($content == $source) throw new Exception('The data for "' . $source . '" could not be loaded, please make sure the path is correct.');
-
         // the regex to match import statements
         $importRegex = '/
 
@@ -273,20 +265,12 @@ class CSS extends Minify
      * Import files into the CSS, base64-ized.
      * @url(image.jpg) images will be loaded and their content merged into the original file, to save HTTP requests.
      *
-     * @param  string $source The file to import files for.
+     * @param  string $source  The file to import files for.
+     * @param  string $content The CSS content to import files for.
      * @return string
      */
-    protected function importFiles($source)
+    protected function importFiles($source, $content)
     {
-        // little "hack" for internal use
-        $content = @func_get_arg(1);
-
-        // load the content
-        if($content === false) $content = $this->load($source);
-
-        // validate data
-        if($content == $source) throw new Exception('The data for "' . $source . '" could not be loaded, please make sure the path is correct.');
-
         if (preg_match_all('/url\((["\']?)((?!["\']?data:).*?\.(gif|png|jpg|jpeg|svg|woff))\\1\)/i', $content, $matches, PREG_SET_ORDER)) {
             $search = array();
             $replace = array();
@@ -372,19 +356,11 @@ class CSS extends Minify
      *
      * @param  string $source      The file to update relative urls for.
      * @param  string $destination The path the data will be written to.
+     * @param  string $content     The CSS content to update relative urls for.
      * @return string
      */
-    protected function move($source, $destination)
+    protected function move($source, $destination, $content)
     {
-        // little "hack" for internal use
-        $content = @func_get_arg(2);
-
-        // load the content
-        if($content === false) $content = $this->load($source);
-
-        // validate data
-        if($content == $source) throw new Exception('The data for "' . $source . '" could not be loaded, please make sure the path is correct.');
-
         // regex to match paths
         $pathsRegex = '/
 
@@ -479,14 +455,11 @@ class CSS extends Minify
      * Shorthand hex color codes.
      * #FF0000 -> #F00
      *
-     * @param  string $content The file/content to shorten the hex color codes for.
+     * @param  string $content The CSS content to shorten the hex color codes for.
      * @return string
      */
     protected function shortenHex($content)
     {
-        // load the content
-        $content = $this->load($content);
-
         // shorthand hex color codes
         $content = preg_replace('/(?<![\'"])#([0-9a-z])\\1([0-9a-z])\\2([0-9a-z])\\3(?![\'"])/i', '#$1$2$3', $content);
 
@@ -496,14 +469,11 @@ class CSS extends Minify
     /**
      * Strip comments.
      *
-     * @param  string $content The file/content to strip the comments for.
+     * @param  string $content The CSS content to strip the comments for.
      * @return string
      */
     protected function stripComments($content)
     {
-        // load the content
-        $content = $this->load($content);
-
         // strip comments
         $content = preg_replace('/\/\*(.*?)\*\//is', '', $content);
 
@@ -513,14 +483,11 @@ class CSS extends Minify
     /**
      * Strip whitespace.
      *
-     * @param  string $content The file/content to strip the whitespace for.
+     * @param  string $content The CSS content to strip the whitespace for.
      * @return string
      */
     protected function stripWhitespace($content)
     {
-        // load the content
-        $content = $this->load($content);
-
         // semicolon/space before closing bracket > replace by bracket
         $content = preg_replace('/;?\s*}/', '}', $content);
 

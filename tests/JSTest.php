@@ -66,6 +66,28 @@ class JSTest extends PHPUnit_Framework_TestCase
             Minify\JS::STRIP_WHITESPACE
         );
 
+        // https://github.com/matthiasmullie/minify/issues/10
+        $tests[] = array(
+            '// first mutation patch
+// second mutation patch
+// third mutation patch
+// fourth mutation patch',
+            '',
+            Minify\JS::STRIP_COMMENTS
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/10
+        $tests[] = array(
+            '/////////////////////////
+// first mutation patch
+// second mutation patch
+// third mutation patch
+// fourth mutation patch
+/////////////////////////',
+            '',
+            Minify\JS::STRIP_COMMENTS
+        );
+
         return $tests;
     }
 }
