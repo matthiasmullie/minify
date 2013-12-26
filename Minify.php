@@ -172,24 +172,43 @@ abstract class Minify
         // update will keep shrinking, character by character, until all of it
         // has been processed
         while($content) {
-            foreach($this->patterns as $i => $pattern) {
+            $replaced = false;
+            $ignore = -1;
+
+            for($i = 0; $i < count($this->patterns); $i++) {
+                $pattern = $this->patterns[$i];
                 $replacement = $this->replacements[$i];
 
-                // replace pattern occurrences starting at this characters
+                // pattern to ignore (if it was previously matched)
+                if($i === $ignore) continue;
+
+                // replace pattern occurrences starting at this character
                 list($content, $replacement, $match) = $this->replacePattern($pattern, $content, $replacement);
 
-                // if a pattern was replaceed out of the content, move the
-                // replacement to $processed & remove it from $content
+                // pattern matched & content replaced; save replacement value
                 if($match != '' || $replacement != '') {
-                    $processed .= $replacement;
-                    $content = substr($content, strlen($replacement));
-                    continue 2;
+                    $replaced = $replacement;
+
+                    // since there's been a change in the content, let's re-run
+                    // all patterns at the start of the new content, but make
+                    // sure the same pattern is ignored time
+                    $ignore = $i;
+                    $i = -1;
                 }
             }
 
-            // character processed: add it to $processed & strip from $content
-            $processed .= $content[0];
-            $content = substr($content, 1);
+            // if (a) replacement(s) have occurred, replace the content and
+            // resume after the replaced content
+            if($replaced !== false) {
+                $processed .= $replaced;
+                $content = substr($content, strlen($replaced));
+
+            // if no replacement occurred, add this character to $processed &
+            // strip it from $content, moving on to the next character
+            } elseif($content) {
+                $processed .= $content[0];
+                $content = substr($content, 1);
+            }
         }
 
         return $processed;

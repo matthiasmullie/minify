@@ -42,7 +42,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
         $this->minifier->add($input);
         $result = $this->minifier->minify(false, $options);
 
-        $this->assertEquals($result, $expected);
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -55,7 +55,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
         $this->minifier->add($source);
         $result = $this->minifier->minify($target, $options);
 
-        $this->assertEquals($result, $expected);
+        $this->assertEquals($expected, $result);
     }
 
     /**

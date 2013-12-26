@@ -51,6 +51,8 @@ Applies all below options
 Strips /* JS */ // comments
 * **Minify\JS::STRIP_WHITESPACE**
 Strips redundant whitespace
+* **Minify\JS::STRIP_SEMICOLONS**
+Strips redundant semicolons
 
 ## Example usage
     $file1 = '/path/to/file1.css';

@@ -31,6 +31,7 @@ class JS extends Minify
 {
     const STRIP_COMMENTS = 1;
     const STRIP_WHITESPACE = 2;
+    const STRIP_SEMICOLONS = 4;
 
     /**
      * Minify the data.
@@ -57,8 +58,17 @@ class JS extends Minify
          */
         $this->registerPattern('/^([\'"]).*?(?<!\\\\)\\1/s', '\\0');
 
-        if($options & static::STRIP_COMMENTS) $content = $this->stripComments($content);
+        /*
+         * If comments should be stripped, we can just replace these matches
+         * with nothing; otherwise, we just want to match them and replace with
+         * their original content (similar to how strings are matched just to
+         * make sure the rest of the patterns, like whitespace, ignore them)
+         */
+        $commentsReplacement = $options & static::STRIP_COMMENTS ? '' : '\\1';
+        $content = $this->stripComments($content, $commentsReplacement);
+
         if($options & static::STRIP_WHITESPACE) $content = $this->stripWhitespace($content);
+        if($options & static::STRIP_SEMICOLONS) $content = $this->stripSemicolons($content);
 
         $content = $this->replace($content);
 
@@ -72,15 +82,18 @@ class JS extends Minify
      * Strip comments from source code.
      *
      * @param  string $content The content to strip the comments for.
+     * @param  string[optional] $replacement The replacement for matched comments.
      * @return string
      */
-    protected function stripComments($content)
+    protected function stripComments($content, $replacement = '')
     {
+        // @todo: also register these when comments are _not_ stripped, to make sure only whitespace stripping doesn't affect anything inside comments
+
         // single-line comments
-        $this->registerPattern('/^\/\/.*$[\r\n]*/m', '');
+        $this->registerPattern('/^\/\/.*$[\r\n]*/m', $replacement);
 
         // multi-line comments
-        $this->registerPattern('/^\/\*.*?\*\//s', '');
+        $this->registerPattern('/^\/\*.*?\*\//s', $replacement);
 
         return $content;
     }
@@ -88,31 +101,99 @@ class JS extends Minify
     /**
      * Strip whitespace.
      *
+     * Part of stripping whitespace may be adding ;'s to terminate statements
+     * where statements were auto-terminated by a newline.
+     *
      * @param  string $content The content to strip the whitespace for.
      * @return string
      */
     protected function stripWhitespace($content)
     {
-        // newlines > linefeed
-        $this->registerPattern('/^(\r\n|\r)/m', "\n");
+        /*
+         * Operators where whitespace can safely be ignored
+         * Operator list at:
+         * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators
+         */
+        $operators = array(
+            // arithmetic
+            '+', '-', '*', '/', '%', '++', '--',
+            // assignment
+            '=', '+=', '-=', '*=', '/=', '%=',
+            '<<=', '>>=', '>>>=', '&=', '^=', '|=',
+            // bitwise
+            '&', '|', '^', '~', '<<', '>>', '>>>',
+            // comparison
+            '==', '===', '!=', '!==', '>', '<', '>=', '<=',
+            // logical
+            '&&', '||', '!',
+            // string
+            // + and += already added
+            // member
+            '.', '[', ']',
+            // conditional
+            '?', ':',
+            // comma
+            ',',
 
-        // empty lines > collapse
-        $this->registerPattern('/^\n\s+/', "\n");
+            // function call
+            '(', ')',
+            // object literal ({ & } are also used as block delimiter, but
+            // we can strip whitespace around that too)
+            '{', '}', ':',
+            // statement terminator
+            ';',
+        );
 
-        // redundant whitespace > remove
-        $this->registerPattern('/^([{}\[\]\(\)=><&\|;:,\?!\+-])[ \t]+/', '\\1');
-        $this->registerPattern('/^[ \t]+(?=[{}\[\]\(\)=><&\|;:,\?!\+-])/', '');
-
-        // redundant semicolons (followed by another semicolon or closing curly bracket) > remove
-        $this->registerPattern('/^;\s*(?=[;}])/s', '');
+        $delimiter = array_fill(0, count($operators), '/');
+        $operators = array_map('preg_quote', $operators, $delimiter);
+        $this->registerPattern('/^\s*('. implode('|', $operators) .')\s*/s', '\\1');
 
         /*
-         * @todo: we could remove all line feeds, but then we have to be certain that all statements are properly
-         * terminated with a semi-colon. So we'd first have to parse the statements to see which require a semi-colon,
-         * add it if it's not present, and then remove the line feeds. The semi-colon just before a closing curly
-         * bracket can then also be omitted.
+         * Now that we've removed all whitespace around operators, all remaining
+         * line-breaking whitespace should be end-of-statements, which should be
+         * terminated with ; and have their surrounding whitespace removed.
          */
+        $this->registerPattern('/^\s*?;?\s*?$\s+/m', ';');
 
-        return $content;
+        // All other whitespace can be reduced to 1 space
+        $this->registerPattern('/^\s+/s', ' ');
+
+        /*
+         * We cheated when stripping whitespace; we can not safely strip line-
+         * breaking whitespace after ) and }, as per these examples:
+         * * console.log('abc')
+         * * var a=function(){}
+         *
+         * Both of these are statements that have to be terminated with ; if
+         * they're followed by unicode letter, $ or _ (valid variable names)
+         *
+         * Note that this will also add a semicolon after a blocks where it may
+         * not be needed, like:
+         * function abc(){};
+         *
+         * It'd be quite complex to figure out if the closing brace belongs to
+         * a statement where ; can be omitted (for, function, if, switch, try,
+         * and while). Since it won't break anything if the semicolon is there,
+         * I'll ignore that ;)
+         */
+        $this->registerPattern('/^([\)\}])(?=[_\$\p{L}]+)/', '\\1;');
+
+        // trim remaining whitespace
+        return trim($content);
+    }
+
+    /**
+     * Statement terminator ; can be omitted if it's the last statement in its
+     * scope.
+     *
+     * @param $content
+     * @return string
+     */
+    protected function stripSemicolons($content) {
+        // Last ; right before the end of a block can safely be discarded
+        $this->registerPattern('/^;\}/', '}');
+
+        // trim last ;
+        return trim($content, ';');
     }
 }
