@@ -72,3 +72,6 @@ Strips redundant whitespace
 
 ## License
 Minify is [MIT](http://opensource.org/licenses/MIT) licensed.
+
+## CLI script
+[Baki Goxhaj](https://github.com/banago) developed a [CLI tool](https://github.com/banago/CLI-Minify) using this library - could be useful to automate minification of your project's CSS/JS files in e.g. some build or deployment script.
