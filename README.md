@@ -19,40 +19,9 @@ This is roughly equivalent to the constructor.
 ### minify($path, $options)
 This will minify the files' content, save the result to $path and return the resulting content.
 If the $path parameter is false, the result will not be written anywhere. CAUTION: Only use this for "simple" CSS: if no target directory ($path) is known, relative uris to e.g. images can not be fixed!
-The $options parameter allow you to define the exact minifying actions that should be performed.
 
-    $minifier->minify('/target/path.css', Minify\CSS::ALL);
+    $minifier->minify('/target/path.css');
 
-## Options
-Both CSS & JS minifiers accept, as 2nd argument to ->minify, options to finegrain the exact minifying actions that should happen.
-Multiple options can be combined using |, like:
-
-    $minifier->minify($path, Minify\CSS::COMBINE_IMPORTS | Minify\CSS::IMPORT_FILES);
-
-### CSS
-* **Minify\CSS::ALL**
-Applies all below options
-* **Minify\CSS::STRIP_COMMENTS**
-Strips /* CSS comments */
-* **Minify\CSS::STRIP_WHITESPACE**
-Strips redundant whitespace
-* **Minify\CSS::SHORTEN_HEX**
-Shortens hexadecimal color codes where applicable (e.g. #000000 -> #000)
-* **Minify\CSS::COMBINE_IMPORTS**
-Will include @import'ed files into the original document, saving connections to fetch the imported files.
-This will make sure that relative paths (to e.g. images, other @imports, ..) in @import'ed files are adjusted to the correct location relative to the original file.
-* **Minify\CSS::IMPORT_FILES**
-This will import (small) referenced images & woff's as data-uri into the CSS, thus saving connections to fetch the images.
-
-### JS
-* **Minify\JS::ALL**
-Applies all below options
-* **Minify\JS::STRIP_COMMENTS**
-Strips /* JS */ // comments
-* **Minify\JS::STRIP_WHITESPACE**
-Strips redundant whitespace
-* **Minify\JS::STRIP_SEMICOLONS**
-Strips redundant semicolons
 
 ## Example usage
     $file1 = '/path/to/file1.css';
@@ -69,8 +38,8 @@ Strips redundant semicolons
     // or even css content can be loaded
     $minifier->add($css);
 
-    // minify (all options) & write to file
-    $minifier->minify('/target/path.css', Minify\CSS::ALL);
+    // minify & write to file
+    $minifier->minify('/target/path.css');
 
 ## License
 Minify is [MIT](http://opensource.org/licenses/MIT) licensed.

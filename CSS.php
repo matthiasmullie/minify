@@ -29,12 +29,6 @@ namespace MatthiasMullie\Minify;
  */
 class CSS extends Minify
 {
-    const STRIP_COMMENTS = 1;
-    const STRIP_WHITESPACE = 2;
-    const SHORTEN_HEX = 4;
-    const COMBINE_IMPORTS = 8;
-    const IMPORT_FILES = 16;
-
     /**
      * Files larger than this value (in kB) will not be imported into the CSS.
      * Importing files into the CSS as data-uri will save you some connections,
@@ -321,10 +315,9 @@ class CSS extends Minify
      * Perform CSS optimizations.
      *
      * @param  string[optional] $path    The path the data should be written to.
-     * @param  int[optional]    $options The minify options to be applied.
      * @return string           The minified data.
      */
-    public function minify($path = false, $options = self::ALL)
+    public function minify($path = false)
     {
         $content = '';
 
@@ -337,11 +330,11 @@ class CSS extends Minify
             $content .= $css;
         }
 
-        if($options & static::COMBINE_IMPORTS) $content = $this->combineImports($path, $content);
-        if($options & static::SHORTEN_HEX) $content = $this->shortenHex($content);
-        if($options & static::IMPORT_FILES) $content = $this->importFiles($path, $content);
-        if($options & static::STRIP_COMMENTS) $content = $this->stripComments($content);
-        if($options & static::STRIP_WHITESPACE) $content = $this->stripWhitespace($content);
+        $content = $this->combineImports($path, $content);
+        $content = $this->shortenHex($content);
+        $content = $this->importFiles($path, $content);
+        $content = $this->stripComments($content);
+        $content = $this->stripWhitespace($content);
 
         // save to path
         if($path !== false) $this->save($content, $path);

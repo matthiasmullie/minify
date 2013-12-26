@@ -37,10 +37,10 @@ class JSTest extends PHPUnit_Framework_TestCase
      * @test
      * @dataProvider dataProvider
      */
-    public function minify($input, $expected, $options)
+    public function minify($input, $expected)
     {
         $this->minifier->add($input);
-        $result = $this->minifier->minify(false, $options);
+        $result = $this->minifier->minify(false);
 
         $this->assertEquals($expected, $result);
     }
@@ -58,13 +58,18 @@ class JSTest extends PHPUnit_Framework_TestCase
         $tests[] = array(
             'alert("Escaped quote which is same as string quotes: \"; should not match")',
             'alert("Escaped quote which is same as string quotes: \"; should not match")',
-            Minify\JS::ALL
+        );
+
+        // Regex delimiters need to be treated as strings
+        // Two forward slashes could look like a comment
+        $tests[] = array(
+            '/abc\/def\//.test("abc")',
+            '/abc\/def\//.test("abc")',
         );
 
         $tests[] = array(
             '/* This is a JS comment */',
             '',
-            Minify\JS::STRIP_COMMENTS
         );
 
         // https://github.com/matthiasmullie/minify/issues/10
@@ -74,7 +79,6 @@ class JSTest extends PHPUnit_Framework_TestCase
 // third mutation patch
 // fourth mutation patch',
             '',
-            Minify\JS::STRIP_COMMENTS
         );
 
         // https://github.com/matthiasmullie/minify/issues/10
@@ -86,20 +90,17 @@ class JSTest extends PHPUnit_Framework_TestCase
 // fourth mutation patch
 /////////////////////////',
             '',
-            Minify\JS::STRIP_COMMENTS
         );
 
         // operators
         $tests[] = array(
             'a = 1 + 2',
             'a=1+2',
-            Minify\JS::STRIP_WHITESPACE
         );
 
         $tests[] = array(
             'alert ( "this is a test" );',
-            'alert("this is a test");',
-            Minify\JS::STRIP_WHITESPACE
+            'alert("this is a test")',
         );
 
         // Strip newlines & replace line-endings-as-terminator with ;
@@ -107,7 +108,6 @@ class JSTest extends PHPUnit_Framework_TestCase
             'alert ( "this is a test" )
 alert ( "this is another test" )',
             'alert("this is a test");alert("this is another test")',
-            Minify\JS::STRIP_WHITESPACE
         );
 
         // Strip newlines & replace line-endings-as-terminator with ;
@@ -122,20 +122,54 @@ alert ( "this is another test" )',
     {
         console . log( "two" );
     }',
-            'function one(){console.log("one");};function two(){console.log("two");}',
-            Minify\JS::STRIP_WHITESPACE
+            'function one(){console.log("one")};function two(){console.log("two")}',
+        );
+
+        // Make sure no ; is added in places it shouldn't
+        $tests[] = array(
+            'if(true){}else{}',
+            'if(true){}else{}',
+        );
+        $tests[] = array(
+            'do{i++}while(i<1)',
+            'do{i++}while(i<1)',
         );
 
         $tests[] = array(
             'alert("this is a test");',
             'alert("this is a test")',
-            Minify\JS::STRIP_SEMICOLONS
         );
 
         $tests[] = array(
             'function(){console.log("this is a test");}',
             'function(){console.log("this is a test")}',
-            Minify\JS::STRIP_SEMICOLONS
+        );
+
+        $tests[] = array(
+            'object
+                .property',
+            'object.property',
+        );
+
+        $tests[] = array(
+            'a = b + c
+             d = e + f',
+            'a=b+c;d=e+f',
+        );
+
+        $tests[] = array(
+            '
+				// check if it isn\'t a text-element
+				if(currentElement.attr(\'type\') != \'text\')
+				{
+					// remove the current one
+					currentElement.remove();
+				}
+
+				// already a text element
+				else newElement = currentElement;
+',
+            'if(currentElement.attr(\'type\')!=\'text\'){currentElement.remove()}else newElement=currentElement',
         );
 
         return $tests;

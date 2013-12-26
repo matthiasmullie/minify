@@ -37,10 +37,10 @@ class CSSTest extends PHPUnit_Framework_TestCase
      * @test
      * @dataProvider dataProvider
      */
-    public function minify($input, $expected, $options)
+    public function minify($input, $expected)
     {
         $this->minifier->add($input);
-        $result = $this->minifier->minify(false, $options);
+        $result = $this->minifier->minify(false);
 
         $this->assertEquals($expected, $result);
     }
@@ -69,32 +69,27 @@ class CSSTest extends PHPUnit_Framework_TestCase
 
         $tests[] = array(
             __DIR__.'/sample/css/combine_imports/index.css',
-            file_get_contents(__DIR__.'/sample/css/combine_imports/import.css')."\n",
-            Minify\CSS::COMBINE_IMPORTS
+            'body{color:red}',
         );
 
         $tests[] = array(
-            'color: #FF00FF;',
-            'color: #F0F;',
-            Minify\CSS::SHORTEN_HEX
+            'color:#FF00FF;',
+            'color:#F0F;',
         );
 
         $tests[] = array(
             __DIR__.'/sample/css/import_files/index.css',
-            'background: url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/css/import_files/file.png')).');'."\n",
-            Minify\CSS::IMPORT_FILES
+            'background:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/css/import_files/file.png')).');',
         );
 
         $tests[] = array(
             '/* This is a CSS comment */',
             '',
-            Minify\CSS::STRIP_COMMENTS
         );
 
         $tests[] = array(
             'body { color: red; }',
             'body{color:red}',
-            Minify\CSS::STRIP_WHITESPACE
         );
 
         /*
@@ -107,7 +102,6 @@ class CSSTest extends PHPUnit_Framework_TestCase
         $tests[] = array(
             '.iconic.map-pin:before { content: "\\\\"; }',
             '.iconic.map-pin:before{content:"\\\\"}',
-            Minify\CSS::ALL
         );
 
         return $tests;

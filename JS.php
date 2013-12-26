@@ -29,19 +29,14 @@ namespace MatthiasMullie\Minify;
  */
 class JS extends Minify
 {
-    const STRIP_COMMENTS = 1;
-    const STRIP_WHITESPACE = 2;
-    const STRIP_SEMICOLONS = 4;
-
     /**
      * Minify the data.
      * Perform JS optimizations.
      *
      * @param  string[optional] $path    The path the data should be written to.
-     * @param  int[optional]    $options The minify options to be applied.
      * @return string           The minified data.
      */
-    public function minify($path = false, $options = self::ALL)
+    public function minify($path = false)
     {
         $content = '';
 
@@ -52,25 +47,15 @@ class JS extends Minify
         }
 
         /*
-         * Strings are a pattern we need to match, in order to ignore potential
-         * code-like content inside them, but we just want all of the string
-         * content to remain untouched.
-         */
-        $this->registerPattern('/^([\'"]).*?(?<!\\\\)\\1/s', '\\0');
-
-        /*
          * If comments should be stripped, we can just replace these matches
          * with nothing; otherwise, we just want to match them and replace with
          * their original content (similar to how strings are matched just to
          * make sure the rest of the patterns, like whitespace, ignore them)
          */
-        $commentsReplacement = $options & static::STRIP_COMMENTS ? '' : '\\1';
-        $content = $this->stripComments($content, $commentsReplacement);
+        $content = $this->stripComments($content);
+        $content = $this->stripWhitespace($content);
 
-        if($options & static::STRIP_WHITESPACE) $content = $this->stripWhitespace($content);
-        if($options & static::STRIP_SEMICOLONS) $content = $this->stripSemicolons($content);
-
-        $content = $this->replace($content);
+        // @todo: strip whitespace that remains after comments have been parsed
 
         // save to path
         if($path !== false) $this->save($content, $path);
@@ -82,20 +67,31 @@ class JS extends Minify
      * Strip comments from source code.
      *
      * @param  string $content The content to strip the comments for.
-     * @param  string[optional] $replacement The replacement for matched comments.
      * @return string
      */
-    protected function stripComments($content, $replacement = '')
+    protected function stripComments($content)
     {
-        // @todo: also register these when comments are _not_ stripped, to make sure only whitespace stripping doesn't affect anything inside comments
+        /*
+         * Strings are a pattern we need to match, in order to ignore potential
+         * code-like content inside them, but we just want all of the string
+         * content to remain untouched.
+         */
+        $this->registerPattern('/^([\'"]).*?(?<!\\\\)\\1/s', '\\0', true);
+
+        /*
+         * Make sure that escaped slashes are ignored when matching comments:
+         * e.g. RegExp(/abc\//) <- this is a valid regular expression, not
+         * the start of a comment.
+         */
+        $this->registerPattern('/^\\\\\//', '\\0', true);
 
         // single-line comments
-        $this->registerPattern('/^\/\/.*$[\r\n]*/m', $replacement);
+        $this->registerPattern('/^\/\/.*$[\r\n]*/m', '', true);
 
         // multi-line comments
-        $this->registerPattern('/^\/\*.*?\*\//s', $replacement);
+        $this->registerPattern('/^\/\*.*?\*\//s', '', true);
 
-        return $content;
+        return $this->replace($content);
     }
 
     /**
@@ -110,13 +106,27 @@ class JS extends Minify
     protected function stripWhitespace($content)
     {
         /*
+         * Strings are a pattern we need to match, in order to ignore potential
+         * code-like content inside them, but we just want all of the string
+         * content to remain untouched.
+         */
+        $this->registerPattern('/^([\'"]).*?(?<!\\\\)\\1/s', '\\0', true);
+
+        /*
+         * Regular expressions are //-delimited in JS and should remain
+         * untouched, just like strings. / is also an operator, so I'm
+         * extracting them before replacing whitespace around operators
+         */
+        $this->registerPattern('/^(\/).*?(?<!\\\\)\\1/s', '\\0', true); // @todo: merge with above
+
+        /*
          * Operators where whitespace can safely be ignored
          * Operator list at:
          * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators
          */
         $operators = array(
             // arithmetic
-            '+', '-', '*', '/', '%', '++', '--',
+            '+', '-', '*', '/', '%', '++', '--', // @todo: slash can be
             // assignment
             '=', '+=', '-=', '*=', '/=', '%=',
             '<<=', '>>=', '>>>=', '&=', '^=', '|=',
@@ -149,23 +159,17 @@ class JS extends Minify
         $this->registerPattern('/^\s*('. implode('|', $operators) .')\s*/s', '\\1');
 
         /*
-         * Now that we've removed all whitespace around operators, all remaining
-         * line-breaking whitespace should be end-of-statements, which should be
-         * terminated with ; and have their surrounding whitespace removed.
-         */
-        $this->registerPattern('/^\s*?;?\s*?$\s+/m', ';');
-
-        // All other whitespace can be reduced to 1 space
-        $this->registerPattern('/^\s+/s', ' ');
-
-        /*
          * We cheated when stripping whitespace; we can not safely strip line-
          * breaking whitespace after ) and }, as per these examples:
          * * console.log('abc')
          * * var a=function(){}
          *
-         * Both of these are statements that have to be terminated with ; if
-         * they're followed by unicode letter, $ or _ (valid variable names)
+         * Both of these are statements that have to be terminated with ; unless
+         * they're followed by some operator, e.g.:
+         * * }else{
+         * * function(){
+         * We don't want ; to be added after these ) & } (rather: we want the
+         * redundant whitespace to be removed)
          *
          * Note that this will also add a semicolon after a blocks where it may
          * not be needed, like:
@@ -176,24 +180,23 @@ class JS extends Minify
          * and while). Since it won't break anything if the semicolon is there,
          * I'll ignore that ;)
          */
-        $this->registerPattern('/^([\)\}])(?=[_\$\p{L}]+)/', '\\1;');
+        $operators = array_merge($operators, array('else', 'while', 'catch', 'finally', '$'));
+        $this->registerPattern('/^([\)\}])(?!('. implode('|', $operators) .'))/s', '\\1;');
 
-        // trim remaining whitespace
-        return trim($content);
-    }
+        /*
+         * Now that we've removed all whitespace around operators, all remaining
+         * line-breaking whitespace should be end-of-line statements, which
+         * should be terminated with ; and have surrounding whitespace removed.
+         */
+        $this->registerPattern('/^\s*\n\s*/s', ';');
 
-    /**
-     * Statement terminator ; can be omitted if it's the last statement in its
-     * scope.
-     *
-     * @param $content
-     * @return string
-     */
-    protected function stripSemicolons($content) {
+        // All other whitespace can be reduced to 1 space
+        $this->registerPattern('/^\s+/s', ' ');
+
         // Last ; right before the end of a block can safely be discarded
         $this->registerPattern('/^;\}/', '}');
 
-        // trim last ;
-        return trim($content, ';');
+        // trim last ; & remaining whitespace
+        return trim(trim($this->replace($content)), ';');
     }
 }
