@@ -88,6 +88,13 @@ class JSTest extends PHPUnit_Framework_TestCase
             Minify\JS::STRIP_COMMENTS
         );
 
+        // Escaped quotes should not terminate string
+        $tests[] = array(
+            'alert("Escaped quote which is same as string quotes: \"; should not match")',
+            'alert("Escaped quote which is same as string quotes: \"; should not match")',
+            Minify\JS::ALL
+        );
+
         return $tests;
     }
 }

@@ -55,7 +55,7 @@ class JS extends Minify
          * code-like content inside them, but we just want all of the string
          * content to remain untouched.
          */
-        $this->registerPattern('/^([\'"]).*?\\1/s', '\\0');
+        $this->registerPattern('/^([\'"]).*?(?<!\\\\)\\1/s', '\\0');
 
         if($options & static::STRIP_COMMENTS) $content = $this->stripComments($content);
         if($options & static::STRIP_WHITESPACE) $content = $this->stripWhitespace($content);
