@@ -67,11 +67,11 @@ class JSTest extends PHPUnit_Framework_TestCase
             '/abc\/def\//.test("abc")',
         );
 
+        // replace comments
         $tests[] = array(
             '/* This is a JS comment */',
             '',
         );
-
         // https://github.com/matthiasmullie/minify/issues/10
         $tests[] = array(
             '// first mutation patch
@@ -80,7 +80,6 @@ class JSTest extends PHPUnit_Framework_TestCase
 // fourth mutation patch',
             '',
         );
-
         // https://github.com/matthiasmullie/minify/issues/10
         $tests[] = array(
             '/////////////////////////
@@ -92,25 +91,57 @@ class JSTest extends PHPUnit_Framework_TestCase
             '',
         );
 
-        // operators
+        // replace line-endings-as-terminator by semicolon
+        $tests[] = array(
+            'alert("this is a test")
+alert("this is another test")',
+            'alert("this is a test");alert("this is another test")',
+        );
+        $tests[] = array(
+            'a=b+c
+             d=e+f',
+            'a=b+c;d=e+f',
+        );
+
+        // Make sure no ; is added in places it shouldn't
+        $tests[] = array(
+            'if(true){}else{}',
+            'if(true){}else{}',
+        );
+        $tests[] = array(
+            'do{i++}while(i<1)',
+            'do{i++}while(i<1)',
+        );
+        $tests[] = array(
+            'if(true)statement;else statement',
+            'if(true)statement;else statement',
+        );
+
+        // remove redundant ;
+        $tests[] = array(
+            'alert("this is a test");',
+            'alert("this is a test")',
+        );
+        $tests[] = array(
+            'function(){console.log("this is a test");}',
+            'function(){console.log("this is a test")}',
+        );
+
+        // remove whitespace around operators
         $tests[] = array(
             'a = 1 + 2',
             'a=1+2',
         );
-
+        $tests[] = array(
+            'object
+                .property',
+            'object.property',
+        );
         $tests[] = array(
             'alert ( "this is a test" );',
             'alert("this is a test")',
         );
 
-        // Strip newlines & replace line-endings-as-terminator with ;
-        $tests[] = array(
-            'alert ( "this is a test" )
-alert ( "this is another test" )',
-            'alert("this is a test");alert("this is another test")',
-        );
-
-        // Strip newlines & replace line-endings-as-terminator with ;
         // Note that the ; inserted after the first function block is not
         // strictly needed - see comment in JS.php
         $tests[] = array(
@@ -125,49 +156,17 @@ alert ( "this is another test" )',
             'function one(){console.log("one")};function two(){console.log("two")}',
         );
 
-        // Make sure no ; is added in places it shouldn't
-        $tests[] = array(
-            'if(true){}else{}',
-            'if(true){}else{}',
-        );
-        $tests[] = array(
-            'do{i++}while(i<1)',
-            'do{i++}while(i<1)',
-        );
-
-        $tests[] = array(
-            'alert("this is a test");',
-            'alert("this is a test")',
-        );
-
-        $tests[] = array(
-            'function(){console.log("this is a test");}',
-            'function(){console.log("this is a test")}',
-        );
-
-        $tests[] = array(
-            'object
-                .property',
-            'object.property',
-        );
-
-        $tests[] = array(
-            'a = b + c
-             d = e + f',
-            'a=b+c;d=e+f',
-        );
-
         $tests[] = array(
             '
-				// check if it isn\'t a text-element
-				if(currentElement.attr(\'type\') != \'text\')
-				{
-					// remove the current one
-					currentElement.remove();
-				}
+                // check if it isn\'t a text-element
+                if(currentElement.attr(\'type\') != \'text\')
+                {
+                    // remove the current one
+                    currentElement.remove();
+                }
 
-				// already a text element
-				else newElement = currentElement;
+                // already a text element
+                else newElement = currentElement;
 ',
             'if(currentElement.attr(\'type\')!=\'text\'){currentElement.remove()}else newElement=currentElement',
         );

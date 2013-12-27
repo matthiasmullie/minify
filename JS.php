@@ -180,8 +180,11 @@ class JS extends Minify
          * and while). Since it won't break anything if the semicolon is there,
          * I'll ignore that ;)
          */
-        $operators = array_merge($operators, array('else', 'while', 'catch', 'finally', '$'));
+        $keywords = array('else', 'while', 'catch', 'finally');
+        $operators = array_merge($operators, $keywords, array('$'));
         $this->registerPattern('/^([\)\}])(?!('. implode('|', $operators) .'))/s', '\\1;');
+
+        // @todo: single-line if statement (without {}) - ; is added after if (); <- here
 
         /*
          * Now that we've removed all whitespace around operators, all remaining
