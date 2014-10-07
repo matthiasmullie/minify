@@ -1,8 +1,7 @@
 <?php
-require_once __DIR__.'/../Minify.php';
-require_once __DIR__.'/../JS.php';
-require_once __DIR__.'/../Exception.php';
-require_once 'PHPUnit/Framework/TestCase.php';
+require_once __DIR__ . '/../Minify.php';
+require_once __DIR__ . '/../JS.php';
+require_once __DIR__ . '/../Exception.php';
 
 use MatthiasMullie\Minify;
 
@@ -37,10 +36,12 @@ class JSTest extends PHPUnit_Framework_TestCase
      * @test
      * @dataProvider dataProvider
      */
-    public function minify($input, $expected)
+    public function minify($input, $expected, $debug = false)
     {
+        $this->minifier->debug((bool) $debug);
+
         $this->minifier->add($input);
-        $result = $this->minifier->minify(false);
+        $result = $this->minifier->minify();
 
         $this->assertEquals($expected, $result);
     }
@@ -54,17 +55,28 @@ class JSTest extends PHPUnit_Framework_TestCase
     {
         $tests = array();
 
-        // Escaped quotes should not terminate string
+        // escaped quotes should not terminate string
         $tests[] = array(
             'alert("Escaped quote which is same as string quotes: \"; should not match")',
             'alert("Escaped quote which is same as string quotes: \"; should not match")',
         );
 
-        // Regex delimiters need to be treated as strings
-        // Two forward slashes could look like a comment
+        // regex delimiters need to be treated as strings
+        // (two forward slashes could look like a comment)
         $tests[] = array(
             '/abc\/def\//.test("abc")',
             '/abc\/def\//.test("abc")',
+        );
+
+        // mixture of quotes starting in comment/regex, to make sure strings are
+        // matched correctly, not inside comment/regex.
+        $tests[] = array(
+            '/abc"def/.test("abc")',
+            '/abc"def/.test("abc")',
+        );
+        $tests[] = array(
+            '/* Bogus " */var test="test";',
+            'var test="test"',
         );
 
         // replace comments
@@ -91,7 +103,39 @@ class JSTest extends PHPUnit_Framework_TestCase
             '',
         );
 
-        // replace line-endings-as-terminator by semicolon
+        // make sure no ; is added in places it shouldn't
+        $tests[] = array(
+            'if(true){}else{}',
+            'if(true){}else{}',
+        );
+        $tests[] = array(
+            'do{i++}while(i<1)',
+            'do{i++}while(i<1)',
+        );
+        $tests[] = array(
+            'if(true)statement;else statement',
+            'if(true)statement;else statement',
+        );
+        $tests[] = array(
+            'for (i = 0; (i < 10); i++) statement',
+            'for(i=0;(i<10);i++)statement', // @todo: ideally, we could get rid of some () too, here
+        );
+        $tests[] = array(
+            '-1
+             +2',
+            '-1+2',
+        );
+
+        // make sure ; is added where it should
+        $tests[] = array(
+            'alert("this is a test");',
+            'alert("this is a test")',
+        );
+
+        $tests[] = array(
+            'function(){console.log("this is a test");}',
+            'function(){console.log("this is a test")}',
+        );
         $tests[] = array(
             'alert("this is a test")
 alert("this is another test")',
@@ -102,35 +146,100 @@ alert("this is another test")',
              d=e+f',
             'a=b+c;d=e+f',
         );
+        $tests[] = array(
+            'a++
 
-        // Make sure no ; is added in places it shouldn't
-        $tests[] = array(
-            'if(true){}else{}',
-            'if(true){}else{}',
+             ++b',
+            'a++;++b',
         );
         $tests[] = array(
-            'do{i++}while(i<1)',
-            'do{i++}while(i<1)',
+            '!a
+             !b',
+            '!a;!b',
         );
         $tests[] = array(
-            'if(true)statement;else statement',
-            'if(true)statement;else statement',
+            // don't confuse with 'if'
+            'digestif
+            (true)
+            statement',
+            'digestif(true);statement',
         );
 
-        // remove redundant ;
         $tests[] = array(
-            'alert("this is a test");',
-            'alert("this is a test")',
+            'if
+             (
+                 (
+                     true
+                 )
+                 &&
+                 (
+                     true
+                 )
+            )
+            statement',
+            'if((true)&&(true))statement',
+        );
+
+        $tests[] = array(
+            'var
+             variable
+             =
+             "value";',
+            'var variable="value"',
         );
         $tests[] = array(
-            'function(){console.log("this is a test");}',
-            'function(){console.log("this is a test")}',
+            'var variable = {
+                 test:
+                 {
+                 }
+             }',
+            'var variable={test:{}}',
+        );
+        $tests[] = array(
+            'if
+             (
+                 true
+             )
+             {
+             }
+             else
+             {
+             }',
+            'if(true){}else{}',
+        );
+        $tests[] = array(
+            'if ( true ) {
+             } else {
+             }',
+            'if(true){}else{}',
+        );
+        $tests[] = array(
+            'do
+             {
+                 i++
+             }
+             while
+             (
+                 i<1
+             )',
+            'do{i++}while(i<1)',
+        );
+        $tests[] = array(
+            'if ( true )
+                 statement
+             else
+                 statement',
+            'if(true)statement;else statement',
         );
 
         // remove whitespace around operators
         $tests[] = array(
             'a = 1 + 2',
             'a=1+2',
+        );
+        $tests[] = array(
+            'object  .  property',
+            'object.property',
         );
         $tests[] = array(
             'object
@@ -142,18 +251,12 @@ alert("this is another test")',
             'alert("this is a test")',
         );
 
-        // Note that the ; inserted after the first function block is not
-        // strictly needed - see comment in JS.php
+        // add comment in between whitespace that needs to be stripped
         $tests[] = array(
-            '    function one()
-    {
-        console . log( "one" );
-    }
-    function two()
-    {
-        console . log( "two" );
-    }',
-            'function one(){console.log("one")};function two(){console.log("two")}',
+            'object
+                // haha, some comment, just to make things harder!
+                .property',
+            'object.property',
         );
 
         $tests[] = array(

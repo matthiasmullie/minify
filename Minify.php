@@ -21,7 +21,7 @@ namespace MatthiasMullie\Minify;
  * This software is provided by the author "as is" and any express or implied warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no event shall the author be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.
  *
  * @author Matthias Mullie <minify@mullie.eu>
- * @version 1.2.0
+ * @version 1.3.0
  *
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved.
  * @license MIT License
@@ -43,7 +43,16 @@ abstract class Minify
     protected $patterns = array();
 
     /**
-     * Init the minify class - optionally, css may be passed along already.
+     * Quite a useless variable, for dev-purpose only.
+     * Can be helpful when running the test suite, to single out a specific
+     * test to debug.
+     *
+     * @var bool
+     */
+    protected $debug = false;
+
+    /**
+     * Init the minify class - optionally, code may be passed along already.
      *
      * @param string[optional] $css
      */
@@ -81,7 +90,7 @@ abstract class Minify
     /**
      * Load data.
      *
-     * @param  string $data Either a path to a file or the content itself.
+     * @param string $data Either a path to a file or the content itself.
      * @return string
      */
     protected function load($data)
@@ -100,7 +109,8 @@ abstract class Minify
      * Save to file
      *
      * @param string $content The minified data.
-     * @param string $path    The path to save the minified data to.
+     * @param string $path The path to save the minified data to.
+     * @throws Exception
      */
     protected function save($content, $path)
     {
@@ -115,12 +125,36 @@ abstract class Minify
     }
 
     /**
+     * Sets the debug state.
+     * Can be helpful when running the test suite, to single out a specific test
+     * to debug.
+     *
+     * @param bool $debug
+     */
+    public function debug($debug) {
+        $this->debug = (bool) $debug;
+    }
+
+    /**
+     * Prints a var_dump of all vars tossed in, then exits.
+     * Only when $this->debug is set to true.
+     *
+     * @param mixed $vars Can be overloaded with multiple vars
+     */
+    protected function dump($vars /* [, $var2 [, ...]] */) {
+        if(!$this->debug) return;
+
+        var_dump(func_get_args());
+        exit;
+    }
+
+    /**
      * Minify the data.
      *
-     * @param  string[optional] $path    The path the data should be written to.
-     * @return string           The minified data.
+     * @param string[optional] $path Path to write the data to.
+     * @return string The minified data.
      */
-    abstract public function minify($path = false);
+    abstract public function minify($path = null);
 
     /**
      * Register a pattern to execute against the source content.
@@ -129,9 +163,9 @@ abstract class Minify
      * character by character, so we need the pattern to start matching
      * exactly at the first character of the content at that point.
      *
-     * @param string $pattern             PCRE pattern.
-     * @param string|Closure[optional] $replacement Replacement value for matched pattern.
-     * @param bool[optional] $skip Identifies if this match should be skipped by the rest of the patterns, once matched.
+     * @param string $pattern PCRE pattern.
+     * @param string|callable $replacement Replacement value for matched pattern.
+     * @param bool $skip Identifies if this match should be skipped by the rest of the patterns, once matched.
      * @throws Exception
      */
     protected function registerPattern($pattern, $replacement = '', $skip = false) {
@@ -151,7 +185,7 @@ abstract class Minify
      * The only way to accurately replace these pieces is to traverse the JS one
      * character at a time and try to find whatever starts first.
      *
-     * @param  string $content The content to replace patterns in.
+     * @param string $content The content to replace patterns in.
      * @return string The (manipulated) content.
      */
     protected function replace($content)
@@ -169,18 +203,10 @@ abstract class Minify
                 if($i === $ignore) continue;
 
                 list($pattern, $replacement, $skip) = $this->patterns[$i];
-if($pattern === '/^\s*?;?\s*?$\s+/m') {
-	var_dump('start');
-	var_dump($content);
-}
 
                 // replace pattern occurrences starting at this character
                 list($content, $replacement, $match) = $this->replacePattern($pattern, $content, $replacement);
-if($pattern === '/^\s*?;?\s*?$\s+/m') {
-	var_dump($content);
-	var_dump($match);
-	var_dump($replacement);
-}
+
                 // pattern matched & content replaced; save replacement value
                 if($match != '' || $replacement != '') {
                     // some patterns will want to make sure that the replaced
@@ -224,7 +250,7 @@ if($pattern === '/^\s*?;?\s*?$\s+/m') {
      * @return array [content, replacement, match]
      */
     protected function replacePattern($pattern, $content, $replacement) {
-        if(is_callable($replacement) || $replacement instanceof Closure) {
+        if(is_callable($replacement)) {
             return $this->replaceWithCallback($pattern, $content, $replacement);
         } else {
             return $this->replaceWithString($pattern, $content, $replacement);

@@ -2,7 +2,7 @@
 namespace MatthiasMullie\Minify;
 
 /**
- * MinifyCSS class
+ * Minify\CSS class
  *
  * This source file can be used to minify CSS files.
  *
@@ -22,7 +22,7 @@ namespace MatthiasMullie\Minify;
  *
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
- * @version 1.2.0
+ * @version 1.3.0
  *
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved.
  * @license MIT License
@@ -41,7 +41,8 @@ class CSS extends Minify
 
     /**
      * Combine CSS from import statements.
-     * @import's will be loaded and their content merged into the original file, to save HTTP requests.
+     * @import's will be loaded and their content merged into the original file,
+     * to save HTTP requests.
      *
      * @param  string $source  The file to combine imports for.
      * @param  string $content The CSS content to combine imports for.
@@ -140,9 +141,9 @@ class CSS extends Minify
      * ../images/img.gif based upon /home/forkcms/frontend/core/layout/css, should become
      * ../../core/layout/images/img.gif based upon /home/forkcms/frontend/cache/minified_css
      *
-     * @param  string $path The relative path that needs to be converted.
-     * @param  string $from The original base path.
-     * @param  string $to   The new base path.
+     * @param string $path The relative path that needs to be converted.
+     * @param string $from The original base path.
+     * @param string $to The new base path.
      * @return string The new relative path.
      */
     protected function convertRelativePath($path, $from, $to)
@@ -259,8 +260,8 @@ class CSS extends Minify
      * Import files into the CSS, base64-ized.
      * @url(image.jpg) images will be loaded and their content merged into the original file, to save HTTP requests.
      *
-     * @param  string $source  The file to import files for.
-     * @param  string $content The CSS content to import files for.
+     * @param string $source The file to import files for.
+     * @param string $content The CSS content to import files for.
      * @return string
      */
     protected function importFiles($source, $content)
@@ -314,10 +315,10 @@ class CSS extends Minify
      * Minify the data.
      * Perform CSS optimizations.
      *
-     * @param  string[optional] $path    The path the data should be written to.
-     * @return string           The minified data.
+     * @param string[optional] $path Path to write the data to.
+     * @return string The minified data.
      */
-    public function minify($path = false)
+    public function minify($path = null)
     {
         $content = '';
 
@@ -337,7 +338,7 @@ class CSS extends Minify
         $content = $this->stripWhitespace($content);
 
         // save to path
-        if($path !== false) $this->save($content, $path);
+        if($path !== null) $this->save($content, $path);
 
         return $content;
     }
@@ -347,9 +348,9 @@ class CSS extends Minify
      * Relative references (e.g. ../images/image.gif) in a certain css file, will have to be updated when a file is
      * being saved at another location (e.g. ../../images/image.gif, if the new CSS file is 1 folder deeper)
      *
-     * @param  string $source      The file to update relative urls for.
-     * @param  string $destination The path the data will be written to.
-     * @param  string $content     The CSS content to update relative urls for.
+     * @param string $source The file to update relative urls for.
+     * @param string $destination The path the data will be written to.
+     * @param string $content The CSS content to update relative urls for.
      * @return string
      */
     protected function move($source, $destination, $content)
@@ -448,7 +449,7 @@ class CSS extends Minify
      * Shorthand hex color codes.
      * #FF0000 -> #F00
      *
-     * @param  string $content The CSS content to shorten the hex color codes for.
+     * @param string $content The CSS content to shorten the hex color codes for.
      * @return string
      */
     protected function shortenHex($content)
@@ -462,7 +463,7 @@ class CSS extends Minify
     /**
      * Strip comments.
      *
-     * @param  string $content The CSS content to strip the comments for.
+     * @param string $content The CSS content to strip the comments for.
      * @return string
      */
     protected function stripComments($content)
@@ -476,7 +477,7 @@ class CSS extends Minify
     /**
      * Strip whitespace.
      *
-     * @param  string $content The CSS content to strip the whitespace for.
+     * @param string $content The CSS content to strip the whitespace for.
      * @return string
      */
     protected function stripWhitespace($content)
@@ -484,10 +485,10 @@ class CSS extends Minify
         // semicolon/space before closing bracket > replace by bracket
         $content = preg_replace('/;?\s*}/', '}', $content);
 
-        // bracket, colon, semicolon or comma preceeded or followed by whitespace > remove space
+        // bracket, colon, semicolon or comma preceded or followed by whitespace > remove space
         $content = preg_replace('/\s*([\{:;,])\s*/', '$1', $content);
 
-        // preceeding/trailing whitespace > remove
+        // preceding/trailing whitespace > remove
         $content = preg_replace('/^\s*|\s*$/m', '', $content);
 
         // newlines > remove
