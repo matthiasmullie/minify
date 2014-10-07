@@ -274,6 +274,15 @@ alert("this is another test")',
             'if(currentElement.attr(\'type\')!=\'text\'){currentElement.remove()}else newElement=currentElement',
         );
 
+        $tests[] = array(
+            'var jsBackend =
+             {
+                 debug: false,
+                 current: {}
+             }',
+            'var jsBackend={debug:false,current:{}}'
+        );
+
         return $tests;
     }
 }
