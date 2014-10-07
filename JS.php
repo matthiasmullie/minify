@@ -106,7 +106,7 @@ class JS extends Minify
     protected $keywordsAfter = array();
 
     public function __construct() {
-        parent::__construct();
+        call_user_func_array(array('parent', '__construct'), func_get_args());
 
         $this->keywordsBefore = file(__DIR__ . '/data/js/keywords_before.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         $this->keywordsAfter = file(__DIR__ . '/data/js/keywords_after.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -147,7 +147,6 @@ class JS extends Minify
         $this->extractRegex();
         $content = $this->replace($content);
 
-        // @todo: blah blah comment
         $content = $this->terminateStatements($content);
         $content = $this->stripWhitespace($content);
 
@@ -303,20 +302,20 @@ class JS extends Minify
         $content = preg_replace('/(' . implode('|', $before) . ')\s*$\s*/m', '\\1 ', $content);
         $content = preg_replace('/\s*^\s*(' . implode('|', $after) . ')/m', ' \\1', $content);
 
-		// collapse consecutive whitespace with newline into just newline
-		$content = preg_replace('/\s*\n\s*/', "\n", $content);
+        // collapse consecutive whitespace with newline into just newline
+        $content = preg_replace('/\s*\n\s*/', "\n", $content);
 
-		// statements like if(...) with a single line of conditional code should
-		// not have a semicolon between the statement & the conditional code
-		// (like if(...);)
-		$keywords = array('if', 'for', 'while', 'catch', 'switch');
-		$content = preg_replace('/(\b(' . implode('|', $keywords) . ')\s*\(.*\))\n/', '\\1', $content);
+        // statements like if(...) with a single line of conditional code should
+        // not have a semicolon between the statement & the conditional code
+        // (like if(...);)
+        $keywords = array('if', 'for', 'while', 'catch', 'switch');
+        $content = preg_replace('/(\b(' . implode('|', $keywords) . ')\s*\(.*\))\n/', '\\1', $content);
 
-		// terminate remaining non-empty lines by ;
+        // terminate remaining non-empty lines by ;
         $content = preg_replace('/;?\s*\n/', ';', $content);
 
         // semicolons don't make sense at end of source, where ASI will kick in
-		$content = trim($content, ';');
+        $content = trim($content, ';');
 
         /*
          * We also don't really want to terminate statements preceded/followed
