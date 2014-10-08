@@ -126,7 +126,7 @@ class JSTest extends PHPUnit_Framework_TestCase
             '-1+2',
         );
 
-        // make sure ; is added where it should
+        // test where newline should be preserved (for ASI) or semicolon added
         $tests[] = array(
             'alert("this is a test");',
             'alert("this is a test")',
@@ -139,30 +139,35 @@ class JSTest extends PHPUnit_Framework_TestCase
         $tests[] = array(
             'alert("this is a test")
 alert("this is another test")',
-            'alert("this is a test");alert("this is another test")',
+            'alert("this is a test")
+alert("this is another test")',
         );
         $tests[] = array(
             'a=b+c
              d=e+f',
-            'a=b+c;d=e+f',
+            'a=b+c
+d=e+f',
         );
         $tests[] = array(
             'a++
 
              ++b',
-            'a++;++b',
+            'a++
+++b',
         );
         $tests[] = array(
             '!a
              !b',
-            '!a;!b',
+            '!a
+!b',
         );
         $tests[] = array(
             // don't confuse with 'if'
             'digestif
             (true)
             statement',
-            'digestif(true);statement',
+            'digestif(true)
+statement',
         );
 
         $tests[] = array(
@@ -177,7 +182,8 @@ alert("this is another test")',
                  )
             )
             statement',
-            'if((true)&&(true))statement',
+            'if((true)&&(true))
+statement',
         );
 
         $tests[] = array(
@@ -205,7 +211,8 @@ alert("this is another test")',
              else
              {
              }',
-            'if(true){}else{}',
+            'if(true){}
+else{}',
         );
         $tests[] = array(
             'if ( true ) {
@@ -222,14 +229,17 @@ alert("this is another test")',
              (
                  i<1
              )',
-            'do{i++}while(i<1)',
+            'do{i++}
+while(i<1)',
         );
         $tests[] = array(
             'if ( true )
                  statement
              else
                  statement',
-            'if(true)statement;else statement',
+            'if(true)
+statement
+else statement',
         );
 
         // remove whitespace around operators
@@ -271,7 +281,8 @@ alert("this is another test")',
                 // already a text element
                 else newElement = currentElement;
 ',
-            'if(currentElement.attr(\'type\')!=\'text\'){currentElement.remove()}else newElement=currentElement',
+            'if(currentElement.attr(\'type\')!=\'text\'){currentElement.remove()}
+else newElement=currentElement',
         );
 
         $tests[] = array(
@@ -281,6 +292,18 @@ alert("this is another test")',
                  current: {}
              }',
             'var jsBackend={debug:false,current:{}}'
+        );
+
+        $tests[] = array(
+            'var utils =
+             {
+                 debug: false
+             }
+             utils.array =
+             {
+             }',
+            'var utils={debug:false}
+utils.array={}'
         );
 
         return $tests;
