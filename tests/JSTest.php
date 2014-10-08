@@ -68,6 +68,11 @@ class JSTest extends PHPUnit_Framework_TestCase
             '/abc\/def\//.test("abc")',
         );
 
+        $tests[] = array(
+            'var a = /abc\/def\//.test("abc")',
+            'var a=/abc\/def\//.test("abc")',
+        );
+
         // mixture of quotes starting in comment/regex, to make sure strings are
         // matched correctly, not inside comment/regex.
         $tests[] = array(
@@ -320,6 +325,19 @@ deferred.reject();else deferred.resolve(data)',
             "if(typeof jQuery==='undefined')
 throw new Error('.editManager.js: jQuery is required and must be loaded first')",
         );
+
+        // https://github.com/matthiasmullie/minify/issues/14
+        $tests[] = array(
+            'function foo (a, b) {
+    return a / b;
+}
+function foo (a, b) {
+    return a / b;
+}',
+            'function foo(a,b){return a/b}
+function foo(a,b){return a/b}',
+        );
+
 
         return $tests;
     }

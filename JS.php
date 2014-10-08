@@ -260,7 +260,15 @@ class JS extends Minify
             return '/' . $placeholder . '/';
         };
 
-        $this->registerPattern('/^\/(.+?)(?<!\\\\)\//s', $callback, true);
+        // make sure we ignore slashes that can't be a regex (like when they're
+        // preceded by anything variable-like), or that look like a comment
+        // we don't want to match consecutive \ (as division), like in:
+        // a = b \ c; d = e \ f
+        preg_match_all('/\[(.*?)\]/', $this->variable, $parts);
+        $last = $parts[1][1];
+        $this->registerPattern('/^[' . $last . ']\s*\/(?!\/)/u', '\\0', true);
+
+        $this->registerPattern('/^\/(.+?)(?<!\\\\)\//', $callback, true);
     }
 
     /**
@@ -277,7 +285,15 @@ class JS extends Minify
             return '/' . $original . '/';
         };
 
-        $this->registerPattern('/^\/(.+?)(?<!\\\\)\//s', $callback, true);
+        // make sure we ignore slashes that can't be a regex (like when they're
+        // preceded by anything variable-like), or that look like a comment
+        // we don't want to match consecutive \ (as division), like in:
+        // a = b \ c; d = e \ f
+        preg_match_all('/\[(.*?)\]/', $this->variable, $parts);
+        $last = $parts[1][1];
+        $this->registerPattern('/^[' . $last . ']\s*\/(?!\/)/u', '\\0', true);
+
+        $this->registerPattern('/^\/(.+?)(?<!\\\\)\//', $callback, true);
     }
 
     /**
@@ -326,12 +342,11 @@ class JS extends Minify
 
         // find & replace all non-line feed whitespace between non-variable-like
         // characters (like: "} else", where the space can be omitted)
-        if(preg_match_all('/\[(.*?)\]/', $this->variable, $parts)) {
-            $first = $parts[1][0];
-            $last = $parts[1][1];
-            $content = preg_replace('/([^' . $last. '])[^\S\n]+([' . $first . '])/u', '\\1\\2', $content);
-            $content = preg_replace('/([' . $last. '])[^\S\n]+([^' . $first . '])/u', '\\1\\2', $content);
-        }
+        preg_match_all('/\[(.*?)\]/', $this->variable, $parts);
+        $first = $parts[1][0];
+        $last = $parts[1][1];
+        $content = preg_replace('/([^' . $last. '])[^\S\n]+([' . $first . '])/u', '\\1\\2', $content);
+        $content = preg_replace('/([' . $last. '])[^\S\n]+([^' . $first . '])/u', '\\1\\2', $content);
 
         // semicolons don't make sense at end of source, where ASI will kick in
         $content = trim($content, ';');
