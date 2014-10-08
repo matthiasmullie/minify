@@ -291,7 +291,7 @@ else newElement=currentElement',
                  debug: false,
                  current: {}
              }',
-            'var jsBackend={debug:false,current:{}}'
+            'var jsBackend={debug:false,current:{}}',
         );
 
         $tests[] = array(
@@ -303,7 +303,22 @@ else newElement=currentElement',
              {
              }',
             'var utils={debug:false}
-utils.array={}'
+utils.array={}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/15
+        $tests[] = array(
+            'if ( !data.success )
+    deferred.reject(); else
+    deferred.resolve(data);',
+            'if(!data.success)
+deferred.reject();else deferred.resolve(data)',
+        );
+        $tests[] = array(
+            "if ( typeof jQuery === 'undefined' )
+    throw new Error('.editManager.js: jQuery is required and must be loaded first');",
+            "if(typeof jQuery==='undefined')
+throw new Error('.editManager.js: jQuery is required and must be loaded first')",
         );
 
         return $tests;
