@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/../Minify.php';
-require_once __DIR__ . '/../JS.php';
-require_once __DIR__ . '/../Exception.php';
+require_once __DIR__ . '/../../Minify.php';
+require_once __DIR__ . '/../../JS.php';
+require_once __DIR__ . '/../../Exception.php';
 
 use MatthiasMullie\Minify;
 
@@ -337,7 +337,6 @@ function foo (a, b) {
             'function foo(a,b){return a/b}
 function foo(a,b){return a/b}',
         );
-
 
         return $tests;
     }

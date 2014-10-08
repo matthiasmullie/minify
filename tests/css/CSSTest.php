@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/../Minify.php';
-require_once __DIR__ . '/../CSS.php';
-require_once __DIR__ . '/../Exception.php';
+require_once __DIR__ . '/../../Minify.php';
+require_once __DIR__ . '/../../CSS.php';
+require_once __DIR__ . '/../../Exception.php';
 
 use MatthiasMullie\Minify;
 
@@ -69,7 +69,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
         $tests = array();
 
         $tests[] = array(
-            __DIR__ . '/sample/css/combine_imports/index.css',
+            __DIR__ . '/sample/combine_imports/index.css',
             'body{color:red}',
         );
 
@@ -79,8 +79,8 @@ class CSSTest extends PHPUnit_Framework_TestCase
         );
 
         $tests[] = array(
-            __DIR__ . '/sample/css/import_files/index.css',
-            'background:url(data:image/png;base64,' . base64_encode(file_get_contents(__DIR__ . '/sample/css/import_files/file.png')) . ');',
+            __DIR__ . '/sample/import_files/index.css',
+            'background:url(data:image/png;base64,' . base64_encode(file_get_contents(__DIR__ . '/sample/import_files/file.png')) . ');',
         );
 
         $tests[] = array(
@@ -117,8 +117,8 @@ class CSSTest extends PHPUnit_Framework_TestCase
     public function dataProviderPaths() {
         $tests = array();
 
-        $source = __DIR__ . '/sample/css/convert_relative_path/source';
-        $target = __DIR__ . '/sample/css/convert_relative_path/target';
+        $source = __DIR__ . '/sample/convert_relative_path/source';
+        $target = __DIR__ . '/sample/convert_relative_path/target';
 
         $tests[] = array(
             $source . '/external.css',
