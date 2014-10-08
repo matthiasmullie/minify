@@ -16,7 +16,7 @@ This is roughly equivalent to the constructor.
     $minifier->add($path3);
     $minifier->add($css);
 
-### minify($path, $options)
+### minify($path)
 This will minify the files' content, save the result to $path and return the resulting content.
 If the $path parameter is false, the result will not be written anywhere. CAUTION: Only use this for "simple" CSS: if no target directory ($path) is known, relative uris to e.g. images can not be fixed!
 
