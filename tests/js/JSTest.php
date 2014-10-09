@@ -267,7 +267,6 @@ else statement',
             'if(currentElement.attr(\'type\')!=\'text\'){currentElement.remove()}
 else newElement=currentElement',
         );
-
         $tests[] = array(
             'var jsBackend =
              {
@@ -276,7 +275,6 @@ else newElement=currentElement',
              }',
             'var jsBackend={debug:false,current:{}}',
         );
-
         $tests[] = array(
             'var utils =
              {
@@ -287,6 +285,21 @@ else newElement=currentElement',
              }',
             'var utils={debug:false}
 utils.array={}',
+        );
+        $tests[] = array(
+            'rescape = /\'|\\\\/g,
+
+            // blablabla here was some more code but the point was that somewhere
+            // down below, there would be a closing quote which would cause the
+            // regex (confused for escaped closing tag) not to be recognized,
+            // taking the opening single quote & looking for a string.
+            // So here\'s <-- the closing quote
+            runescape = \'blabla\'',
+            'rescape=/\'|\\\\/g,runescape=\'blabla\'',
+        );
+        $tests[] = array(
+            'var rsingleTag = (/^<(\w+)\s*\/?>(?:<\/\1>|)$/)',
+            'var rsingleTag=(/^<(\w+)\s*\/?>(?:<\/\1>|)$/)',
         );
 
         // https://github.com/matthiasmullie/minify/issues/10

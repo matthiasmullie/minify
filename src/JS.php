@@ -257,14 +257,16 @@ class JS extends Minify
         };
 
         // make sure we ignore slashes that can't be a regex (like when they're
-        // preceded by anything variable-like), or that look like a comment
+        // preceded by anything variable-like, or a closing bracket), or that
+        // look like a comment
         // we don't want to match consecutive \ (as division), like in:
         // a = b \ c; d = e \ f
         preg_match_all('/\[(.*?)\]/', $this->variable, $parts);
         $last = $parts[1][1];
-        $this->registerPattern('/^[' . $last . ']\s*\/(?!\/)/u', '\\0', true);
+        $this->registerPattern('/^[' . $last . '\}\]\)]\s*\/(?![\/\*])/u', '\\0', true);
 
-        $this->registerPattern('/^\/(.+?)(?<!\\\\)\//', $callback, true);
+        // it's a regex if we can find a (non-escaped) closing /
+        $this->registerPattern('/^\/(.*?(?<!\\\\)(\\\\\\\\)*)\//', $callback, true);
     }
 
     /**
@@ -284,14 +286,16 @@ class JS extends Minify
         };
 
         // make sure we ignore slashes that can't be a regex (like when they're
-        // preceded by anything variable-like), or that look like a comment
+        // preceded by anything variable-like, or a closing bracket), or that
+        // look like a comment
         // we don't want to match consecutive \ (as division), like in:
         // a = b \ c; d = e \ f
         preg_match_all('/\[(.*?)\]/', $this->variable, $parts);
         $last = $parts[1][1];
-        $this->registerPattern('/^[' . $last . ']\s*\/(?!\/)/u', '\\0', true);
+        $this->registerPattern('/^[' . $last . '\}\]\)]\s*\/(?![\/\*])/u', '\\0', true);
 
-        $this->registerPattern('/^\/(.+?)(?<!\\\\)\//', $callback, true);
+        // it's a regex if we can find a (non-escaped) closing /
+        $this->registerPattern('/^\/(.*?(?<!\\\\)(\\\\\\\\)*)\//', $callback, true);
     }
 
     /**
