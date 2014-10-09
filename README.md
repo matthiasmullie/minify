@@ -77,4 +77,10 @@ Although it's recommended to use Composer, you can actually include these files 
 
 
 ## License
+
 Minify is [MIT](http://opensource.org/licenses/MIT) licensed.
+
+
+## Challenges
+
+If you're interested in learning some of the harder technical challenges I've encounterd building this, you probably want to take a look at [what I wrote about it](http://www.mullie.eu/dont-build-your-own-minifier/) on my blog.
