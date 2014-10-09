@@ -64,7 +64,6 @@ class JSTest extends PHPUnit_Framework_TestCase
             '/abc\/def\//.test("abc")',
             '/abc\/def\//.test("abc")',
         );
-
         $tests[] = array(
             'var a = /abc\/def\//.test("abc")',
             'var a=/abc\/def\//.test("abc")',
@@ -86,24 +85,6 @@ class JSTest extends PHPUnit_Framework_TestCase
             '/* This is a JS comment */',
             '',
         );
-        // https://github.com/matthiasmullie/minify/issues/10
-        $tests[] = array(
-            '// first mutation patch
-// second mutation patch
-// third mutation patch
-// fourth mutation patch',
-            '',
-        );
-        // https://github.com/matthiasmullie/minify/issues/10
-        $tests[] = array(
-            '/////////////////////////
-// first mutation patch
-// second mutation patch
-// third mutation patch
-// fourth mutation patch
-/////////////////////////',
-            '',
-        );
 
         // make sure no ; is added in places it shouldn't
         $tests[] = array(
@@ -120,20 +101,19 @@ class JSTest extends PHPUnit_Framework_TestCase
         );
         $tests[] = array(
             'for (i = 0; (i < 10); i++) statement',
-            'for(i=0;(i<10);i++)statement', // @todo: ideally, we could get rid of some () too, here
+            'for(i=0;(i<10);i++)statement',
         );
         $tests[] = array(
             '-1
              +2',
             '-1+2',
         );
-
-        // test where newline should be preserved (for ASI) or semicolon added
         $tests[] = array(
             'alert("this is a test");',
             'alert("this is a test")',
         );
 
+        // test where newline should be preserved (for ASI) or semicolon added
         $tests[] = array(
             'function(){console.log("this is a test");}',
             'function(){console.log("this is a test")}',
@@ -171,7 +151,6 @@ d=e+f',
             'digestif(true)
 statement',
         );
-
         $tests[] = array(
             'if
              (
@@ -187,22 +166,6 @@ statement',
             'if((true)&&(true))
 statement',
         );
-
-        $tests[] = array(
-            'var
-             variable
-             =
-             "value";',
-            'var variable="value"',
-        );
-        $tests[] = array(
-            'var variable = {
-                 test:
-                 {
-                 }
-             }',
-            'var variable={test:{}}',
-        );
         $tests[] = array(
             'if
              (
@@ -215,12 +178,6 @@ statement',
              }',
             'if(true){}
 else{}',
-        );
-        $tests[] = array(
-            'if ( true ) {
-             } else {
-             }',
-            'if(true){}else{}',
         );
         $tests[] = array(
             'do
@@ -242,6 +199,29 @@ while(i<1)',
             'if(true)
 statement
 else statement',
+        );
+
+        // test if whitespace around keywords is properly collapsed
+        $tests[] = array(
+            'var
+             variable
+             =
+             "value";',
+            'var variable="value"',
+        );
+        $tests[] = array(
+            'var variable = {
+                 test:
+                 {
+                 }
+             }',
+            'var variable={test:{}}',
+        );
+        $tests[] = array(
+            'if ( true ) {
+             } else {
+             }',
+            'if(true){}else{}',
         );
 
         // remove whitespace around operators
@@ -271,6 +251,7 @@ else statement',
             'object.property',
         );
 
+        // random bits of code that tripped errors during development
         $tests[] = array(
             '
                 // check if it isn\'t a text-element
@@ -308,19 +289,22 @@ else newElement=currentElement',
 utils.array={}',
         );
 
-        // https://github.com/matthiasmullie/minify/issues/15
+        // https://github.com/matthiasmullie/minify/issues/10
         $tests[] = array(
-            'if ( !data.success )
-    deferred.reject(); else
-    deferred.resolve(data);',
-            'if(!data.success)
-deferred.reject();else deferred.resolve(data)',
+            '// first mutation patch
+// second mutation patch
+// third mutation patch
+// fourth mutation patch',
+            '',
         );
         $tests[] = array(
-            "if ( typeof jQuery === 'undefined' )
-    throw new Error('.editManager.js: jQuery is required and must be loaded first');",
-            "if(typeof jQuery==='undefined')
-throw new Error('.editManager.js: jQuery is required and must be loaded first')",
+            '/////////////////////////
+// first mutation patch
+// second mutation patch
+// third mutation patch
+// fourth mutation patch
+/////////////////////////',
+            '',
         );
 
         // https://github.com/matthiasmullie/minify/issues/14
@@ -335,6 +319,21 @@ function foo (a, b)
 }',
             'function foo(a,b){return a/b}
 function foo(a,b){return a/b}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/15
+        $tests[] = array(
+            'if ( !data.success )
+    deferred.reject(); else
+    deferred.resolve(data);',
+            'if(!data.success)
+deferred.reject();else deferred.resolve(data)',
+        );
+        $tests[] = array(
+            "if ( typeof jQuery === 'undefined' )
+    throw new Error('.editManager.js: jQuery is required and must be loaded first');",
+            "if(typeof jQuery==='undefined')
+throw new Error('.editManager.js: jQuery is required and must be loaded first')",
         );
 
         return $tests;
