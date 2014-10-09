@@ -78,7 +78,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
 
         $tests[] = array(
             __DIR__ . '/sample/import_files/index.css',
-            'background:url(data:image/png;base64,' . base64_encode(file_get_contents(__DIR__ . '/sample/import_files/file.png')) . ');',
+            'body{background:url(data:image/png;base64,' . base64_encode(file_get_contents(__DIR__ . '/sample/import_files/file.png')) . ')}',
         );
 
         $tests[] = array(
