@@ -79,7 +79,7 @@ abstract class Minify
     /**
      * Load data.
      *
-     * @param string $data Either a path to a file or the content itself.
+     * @param  string $data Either a path to a file or the content itself.
      * @return string
      */
     protected function load($data)
@@ -97,8 +97,8 @@ abstract class Minify
     /**
      * Save to file
      *
-     * @param string $content The minified data.
-     * @param string $path The path to save the minified data to.
+     * @param  string    $content The minified data.
+     * @param  string    $path    The path to save the minified data to.
      * @throws Exception
      */
     protected function save($content, $path)
@@ -120,7 +120,8 @@ abstract class Minify
      *
      * @param bool $debug
      */
-    public function debug($debug) {
+    public function debug($debug)
+    {
         $this->debug = (bool) $debug;
     }
 
@@ -130,7 +131,8 @@ abstract class Minify
      *
      * @param mixed $vars Can be overloaded with multiple vars
      */
-    protected function dump($vars /* [, $var2 [, ...]] */) {
+    protected function dump($vars /* [, $var2 [, ...]] */)
+    {
         if(!$this->debug) return;
 
         var_dump(func_get_args());
@@ -140,8 +142,8 @@ abstract class Minify
     /**
      * Minify the data.
      *
-     * @param string[optional] $path Path to write the data to.
-     * @return string The minified data.
+     * @param  string[optional] $path Path to write the data to.
+     * @return string           The minified data.
      */
     abstract public function minify($path = null);
 
@@ -152,14 +154,15 @@ abstract class Minify
      * character by character, so we need the pattern to start matching
      * exactly at the first character of the content at that point.
      *
-     * @param string $pattern PCRE pattern.
-     * @param string|callable $replacement Replacement value for matched pattern.
-     * @param bool $skip Identifies if this match should be skipped by the rest of the patterns, once matched.
+     * @param  string          $pattern     PCRE pattern.
+     * @param  string|callable $replacement Replacement value for matched pattern.
+     * @param  bool            $skip        Identifies if this match should be skipped by the rest of the patterns, once matched.
      * @throws Exception
      */
-    protected function registerPattern($pattern, $replacement = '', $skip = false) {
+    protected function registerPattern($pattern, $replacement = '', $skip = false)
+    {
         // doublecheck if pattern actually starts at beginning of content
-        if(substr($pattern, 1, 1) !== '^') {
+        if (substr($pattern, 1, 1) !== '^') {
             throw new Exception('Pattern "' . $pattern . '" should start processing at the beginning of the string.');
         }
 
@@ -174,7 +177,7 @@ abstract class Minify
      * The only way to accurately replace these pieces is to traverse the JS one
      * character at a time and try to find whatever starts first.
      *
-     * @param string $content The content to replace patterns in.
+     * @param  string $content The content to replace patterns in.
      * @return string The (manipulated) content.
      */
     protected function replace($content)
@@ -184,10 +187,10 @@ abstract class Minify
 
         // update will keep shrinking, character by character, until all of it
         // has been processed
-        while($content) {
+        while ($content) {
             $ignore = -1;
 
-            for($i = 0; $i < count($this->patterns); $i++) {
+            for ($i = 0; $i < count($this->patterns); $i++) {
                 // pattern to ignore (if it was previously matched)
                 if($i === $ignore) continue;
 
@@ -197,11 +200,11 @@ abstract class Minify
                 list($content, $replacement, $match) = $this->replacePattern($pattern, $content, $replacement);
 
                 // pattern matched & content replaced; save replacement value
-                if($match != '' || $replacement != '') {
+                if ($match != '' || $replacement != '') {
                     // some patterns will want to make sure that the replaced
                     // content is not touched by any other patterns (like
                     // strings are comments)
-                    if($skip) {
+                    if ($skip) {
                         $processed .= $replacement;
                         $content = (string) substr($content, strlen($replacement));
                         continue 2;
@@ -233,13 +236,14 @@ abstract class Minify
      * This function will be called plenty of times, where $content will always
      * move up 1 character.
      *
-     * @param string $pattern Pattern to match.
-     * @param string $content Content to match pattern against.
-     * @param string|callable $replacement Replacement value.
-     * @return array [content, replacement, match]
+     * @param  string          $pattern     Pattern to match.
+     * @param  string          $content     Content to match pattern against.
+     * @param  string|callable $replacement Replacement value.
+     * @return array           [content, replacement, match]
      */
-    protected function replacePattern($pattern, $content, $replacement) {
-        if(is_callable($replacement)) {
+    protected function replacePattern($pattern, $content, $replacement)
+    {
+        if (is_callable($replacement)) {
             return $this->replaceWithCallback($pattern, $content, $replacement);
         } else {
             return $this->replaceWithString($pattern, $content, $replacement);
@@ -249,12 +253,13 @@ abstract class Minify
     /**
      * Replaces pattern by a value from a callback, via preg_replace_callback.
      *
-     * @param string $pattern Pattern to match.
-     * @param string $content Content to match pattern against.
-     * @param string|callable $replacement Replacement value.
-     * @return array [content, replacement, match]
+     * @param  string          $pattern     Pattern to match.
+     * @param  string          $content     Content to match pattern against.
+     * @param  string|callable $replacement Replacement value.
+     * @return array           [content, replacement, match]
      */
-    protected function replaceWithCallback($pattern, $content, $replacement) {
+    protected function replaceWithCallback($pattern, $content, $replacement)
+    {
         $matched = '';
         $replaced = '';
 
@@ -263,9 +268,10 @@ abstract class Minify
          * callback around it to also allow us to catch the match & replacement
          * value.
          */
-        $callback = function($match) use ($replacement, &$replaced, &$matched) {
+        $callback = function ($match) use ($replacement, &$replaced, &$matched) {
             $matched = $match;
             $replaced = call_user_func($replacement, $match);
+
             return $replaced;
         };
         $content = preg_replace_callback($pattern, $callback, $content, 1, $count);
@@ -276,19 +282,20 @@ abstract class Minify
     /**
      * Replaces pattern by a value from a callback, via preg_replace.
      *
-     * @param string $pattern Pattern to match.
-     * @param string $content Content to match pattern against.
-     * @param string|callable $replacement Replacement value.
-     * @return array [content, replacement, match]
+     * @param  string          $pattern     Pattern to match.
+     * @param  string          $content     Content to match pattern against.
+     * @param  string|callable $replacement Replacement value.
+     * @return array           [content, replacement, match]
      */
-    protected function replaceWithString($pattern, $content, $replacement) {
+    protected function replaceWithString($pattern, $content, $replacement)
+    {
         /*
          * This preg_match is really only meant to capture $match, which we can
          * then also use to deduce the replacement value. We can't just assume
          * $replacement as replacement value, because it may be a back-reference
          * (e.g. \\1)
          */
-        if(!preg_match($pattern, $content, $match)) {
+        if (!preg_match($pattern, $content, $match)) {
             return array($content, '', '');
         }
 

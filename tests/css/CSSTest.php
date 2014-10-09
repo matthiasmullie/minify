@@ -49,7 +49,8 @@ class CSSTest extends PHPUnit_Framework_TestCase
      * @test
      * @dataProvider dataProviderPaths
      */
-    public function convertRelativePath($source, $target, $expected, $options) {
+    public function convertRelativePath($source, $target, $expected, $options)
+    {
         $this->minifier->add($source);
         $result = $this->minifier->minify($target, $options);
 
@@ -111,7 +112,8 @@ class CSSTest extends PHPUnit_Framework_TestCase
         return $tests;
     }
 
-    public function dataProviderPaths() {
+    public function dataProviderPaths()
+    {
         $tests = array();
 
         $source = __DIR__ . '/sample/convert_relative_path/source';

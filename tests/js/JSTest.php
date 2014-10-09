@@ -325,10 +325,12 @@ throw new Error('.editManager.js: jQuery is required and must be loaded first')"
 
         // https://github.com/matthiasmullie/minify/issues/14
         $tests[] = array(
-            'function foo (a, b) {
+            'function foo (a, b)
+{
     return a / b;
 }
-function foo (a, b) {
+function foo (a, b)
+{
     return a / b;
 }',
             'function foo(a,b){return a/b}
