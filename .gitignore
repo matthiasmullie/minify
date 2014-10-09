@@ -1,7 +1,8 @@
-.idea
-.project
-.cache
-.buildpath
-.settings
+/vendor
+/.idea
+/.project
+/.cache
+/.buildpath
+/.settings
 .*.swp
 .DS_Store

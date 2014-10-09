@@ -1,7 +1,4 @@
 <?php
-require_once __DIR__ . '/../../Minify.php';
-require_once __DIR__ . '/../../JS.php';
-require_once __DIR__ . '/../../Exception.php';
 
 use MatthiasMullie\Minify;
 

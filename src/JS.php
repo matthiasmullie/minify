@@ -1,4 +1,5 @@
 <?php
+
 namespace MatthiasMullie\Minify;
 
 /**
@@ -106,10 +107,10 @@ class JS extends Minify
     public function __construct() {
         call_user_func_array(array('parent', '__construct'), func_get_args());
 
-        $this->keywordsBefore = file(__DIR__ . '/data/js/keywords_before.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        $this->keywordsAfter = file(__DIR__ . '/data/js/keywords_after.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        $this->operatorsBefore = file(__DIR__ . '/data/js/operators_before.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        $this->operatorsAfter = file(__DIR__ . '/data/js/operators_after.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $this->keywordsBefore = file(__DIR__ . '/../data/js/keywords_before.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $this->keywordsAfter = file(__DIR__ . '/../data/js/keywords_after.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $this->operatorsBefore = file(__DIR__ . '/../data/js/operators_before.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $this->operatorsAfter = file(__DIR__ . '/../data/js/operators_after.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     }
 
     /**
