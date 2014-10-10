@@ -68,6 +68,12 @@ class JSTest extends PHPUnit_Framework_TestCase
             'var a = /abc\/def\//.test("abc")',
             'var a=/abc\/def\//.test("abc")',
         );
+        
+        // don't confuse multiple slashes for regexes
+        $tests[] = array(
+            'a = b / c; d = e / f',
+            'a=b/c;d=e/f',
+        );
 
         // mixture of quotes starting in comment/regex, to make sure strings are
         // matched correctly, not inside comment/regex.
