@@ -335,8 +335,8 @@ class JS extends Minify
         $operators = array_combine($operators, $escaped);
 
         // make sure + and - can't be mistaken for ++ and --, which are special
-        $operators['+'] = '(?<!\+)\+(?!\+)';
-        $operators['-'] = '(?<!\-)\-(?!\-)';
+        $operators['+'] = '(?<!\+)\+(?!\s*\+)';
+        $operators['-'] = '(?<!\-)\-(?!\s*\-)';
 
         return $operators;
     }

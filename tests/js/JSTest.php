@@ -249,6 +249,16 @@ else statement',
             'alert("this is a test")',
         );
 
+        // mix of ++ and +: three consecutive +es will be interpreted as ++ +
+        $tests[] = array(
+            'a++ +b',
+            'a+++b',
+        );
+        $tests[] = array(
+            'a+ ++b',
+            'a+ ++b',
+        );
+
         // add comment in between whitespace that needs to be stripped
         $tests[] = array(
             'object
