@@ -153,9 +153,7 @@ class JS extends Minify
          * Earlier, we extracted strings & regular expressions and replaced them
          * with placeholder text. This will restore them.
          */
-        $this->restoreStrings();
-        $this->restoreRegex();
-        $content = $this->replace($content);
+        $content = $this->restoreExtractedData($content);
 
         // save to path
         if($path !== null) $this->save($content, $path);
@@ -179,29 +177,10 @@ class JS extends Minify
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
-            $placeholder = 'STRING' . count($minifier->extracted);
-            $minifier->extracted[$placeholder] = $match[2];
+            $placeholder = $match[1] . 'STRING' . count($minifier->extracted) . $match[1];
+            $minifier->extracted[$placeholder] = $match[1] . $match[2] . $match[1];
 
-            return $match[1] . $placeholder . $match[1];
-        };
-
-        $this->registerPattern('/^([\'"])(.*?)(?<!\\\\)\\1/s', $callback, true);
-    }
-
-    /**
-     * This method will restore are strings that were replaced with placeholder
-     * text in extractStrings(). The original content was saved in
-     * $this->extracted.
-     */
-    protected function restoreStrings()
-    {
-        // PHP only supports $this inside anonymous functions since 5.4
-        $minifier = $this;
-        $callback = function ($match) use ($minifier) {
-            $original = $minifier->extracted[$match[2]];
-            unset($minifier->extracted[$match[2]]);
-
-            return $match[1] . $original . $match[1];
+            return $placeholder;
         };
 
         $this->registerPattern('/^([\'"])(.*?)(?<!\\\\)\\1/s', $callback, true);
@@ -241,10 +220,10 @@ class JS extends Minify
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
-            $placeholder = 'REGEX' . count($minifier->extracted);
-            $minifier->extracted[$placeholder] = $match[1];
+            $placeholder = '/REGEX' . count($minifier->extracted) . '/';
+            $minifier->extracted[$placeholder] = '/' . $match[1] . '/';
 
-            return '/' . $placeholder . '/';
+            return $placeholder;
         };
 
         // make sure we ignore slashes that can't be a regex (like when they're
@@ -261,32 +240,18 @@ class JS extends Minify
     }
 
     /**
-     * This method will restore are regular expressions that were replaced with
-     * placeholder text in extractRegex(). The original content was saved in
-     * $this->extracted.
+     * This method will restore all extracted data (strings, regexes) that were
+     * replaced with placeholder text in extract*(). The original content was
+     * saved in $this->extracted.
+     *
+     * @param string $content
+     * @return string
      */
-    protected function restoreRegex()
+    protected function restoreExtractedData($content)
     {
-        // PHP only supports $this inside anonymous functions since 5.4
-        $minifier = $this;
-        $callback = function ($match) use ($minifier) {
-            $original = $minifier->extracted[$match[1]];
-            unset($minifier->extracted[$match[1]]);
-
-            return '/' . $original . '/';
-        };
-
-        // make sure we ignore slashes that can't be a regex (like when they're
-        // preceded by anything variable-like, or a closing bracket), or that
-        // look like a comment
-        // we don't want to match consecutive \ (as division), like in:
-        // a = b \ c; d = e \ f
-        preg_match_all('/\[(.*?)\]/', $this->variable, $parts);
-        $last = $parts[1][1];
-        $this->registerPattern('/^[' . $last . '\}\]\)]\s*\/(?![\/\*])/u', '\\0', true);
-
-        // it's a regex if we can find a (non-escaped) closing /
-        $this->registerPattern('/^\/(.*?(?<!\\\\)(\\\\\\\\)*)\//', $callback, true);
+        $content = str_replace(array_keys($this->extracted), $this->extracted, $content);
+        $this->extracted = array();
+        return $content;
     }
 
     /**
