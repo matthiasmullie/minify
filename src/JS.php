@@ -212,15 +212,6 @@ class JS extends Minify
      */
     protected function stripComments()
     {
-        /*
-         * We'll move character by character to find matches.
-         * Downside is that it's quite impossible to do a lookbehind assertion,
-         * to make sure the / starting the comment is not escaped, in which case
-         * the slashes don't form a comment, as in this example:
-         * /abc\/def\//.test("abc")
-         */
-        $this->registerPattern('/^\\\\\//', '\\0', true);
-
         // single-line comments
         $this->registerPattern('/^\/\/.*$[\r\n]*/m', '', true);
 
@@ -260,7 +251,7 @@ class JS extends Minify
         // preceded by anything variable-like, or a closing bracket), or that
         // look like a comment
         // we don't want to match consecutive \ (as division), like in:
-        // a = b \ c; d = e \ f
+        // a = b / c; d = e / f
         preg_match_all('/\[(.*?)\]/', $this->variable, $parts);
         $last = $parts[1][1];
         $this->registerPattern('/^[' . $last . '\}\]\)]\s*\/(?![\/\*])/u', '\\0', true);
