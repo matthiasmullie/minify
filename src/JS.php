@@ -278,11 +278,11 @@ class JS extends Minify
         $content = preg_replace('/^\s+/m', '', $content);
         $content = preg_replace('/\s+$/m', '', $content);
 
-        // collapse consecutive line feeds into just 1
-        $content = preg_replace('/\n+/', "\n", $content);
-
         // collapse all non-line feed whitespace into single space
         $content = preg_replace('/[^\S\n]+/', ' ', $content);
+
+        // collapse consecutive line feeds into just 1
+        $content = preg_replace('/\n+/', "\n", $content);
 
         // strip whitespace that ends in (or next line begin with) an operator
         // that allows statements to be broken up over multiple lines
@@ -297,13 +297,24 @@ class JS extends Minify
         $content = preg_replace('/(' . implode('|', $before) . ')\s+/', '\\1 ', $content);
         $content = preg_replace('/\s+(' . implode('|', $after) . ')/', ' \\1', $content);
 
-        // find & replace all non-line feed whitespace between non-variable-like
-        // characters (like: "} else", where the space can be omitted)
-        preg_match_all('/\[(.*?)\]/', $this->variable, $parts);
-        $first = $parts[1][0];
-        $last = $parts[1][1];
-        $content = preg_replace('/([^' . $last. '])[^\S\n]+([' . $first . '])/u', '\\1\\2', $content);
-        $content = preg_replace('/([' . $last. '])[^\S\n]+([^' . $first . '])/u', '\\1\\2', $content);
+        /*
+         * Get rid of whitespace after a variable/keyword that is not followed
+         * by another variable/keyword.
+         */
+        $content = preg_replace('/(' . $this->variable . ')[^\S\n]+(?!' . $this->variable . ')/u', '\\1', $content);
+
+        /*
+         * Now get rid of whitespace before a variable/keyword that is not
+         * preceded by another variable/keyword.
+         * This one's more complex since PHP doesn't allow non-fixed length
+         * lookbehind assertions, so we'll first find all variables preceded by
+         * variables & change that space to a tab; after that, find remaining
+         * spaces followed by variable (which now are all variables not preceded
+         * by other vars); then restore the tab to a space.
+         */
+        $content = preg_replace('/(' . $this->variable . ')[^\S\n]+(?=' . $this->variable . ')/u', "\\1\t", $content);
+        $content = preg_replace('/ (' . $this->variable . ')/u', "\\1", $content);
+        $content = str_replace("\t", ' ', $content);
 
         // semicolons don't make sense at end of source, where ASI will kick in
         $content = trim($content, ';');
@@ -337,6 +348,10 @@ class JS extends Minify
         // make sure + and - can't be mistaken for ++ and --, which are special
         $operators['+'] = '(?<!\+)\+(?!\s*\+)';
         $operators['-'] = '(?<!\-)\-(?!\s*\-)';
+
+        // dot can not just immediately follow a number; it can be confused
+        // between decimal point, or calling a method on it, e.g. 42 .toString()
+        $operators['.'] = '(?<![0-9]\s)\.';
 
         return $operators;
     }

@@ -101,10 +101,12 @@ class JSTest extends PHPUnit_Framework_TestCase
             'do{i++}while(i<1)',
             'do{i++}while(i<1)',
         );
+
         $tests[] = array(
             'if(true)statement;else statement',
             'if(true)statement;else statement',
         );
+
         $tests[] = array(
             'for (i = 0; (i < 10); i++) statement',
             'for(i=0;(i<10);i++)statement',
@@ -257,6 +259,12 @@ else statement',
         $tests[] = array(
             'a+ ++b',
             'a+ ++b',
+        );
+
+        // SyntaxError: identifier starts immediately after numeric literal
+        $tests[] = array(
+            '42 .toString()',
+            '42 .toString()',
         );
 
         // add comment in between whitespace that needs to be stripped
