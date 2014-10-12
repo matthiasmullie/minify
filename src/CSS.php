@@ -15,22 +15,47 @@ namespace MatthiasMullie\Minify;
 class CSS extends Minify
 {
     /**
-     * Files larger than this value (in kB) will not be imported into the CSS.
+     * @var int
+     */
+    protected $maxImportSize = 5;
+
+    /**
+     * @var string[]
+     */
+    protected $importExtensions = array(
+        'gif' => 'data:image/gif',
+        'png' => 'data:image/png',
+        'jpg' => 'data:image/jpg',
+        'jpeg' => 'data:image/jpeg',
+        'svg' => 'data:image/svg+xml',
+        'woff' => 'data:application/x-font-woff',
+    );
+
+    /**
+     * Set the maximum size if files to be imported.
+     *
+     * Files larger than this size (in kB) will not be imported into the CSS.
      * Importing files into the CSS as data-uri will save you some connections,
      * but we should only import relatively small decorative images so that our
      * CSS file doesn't get too bulky.
      *
-     * @var int
+     * @param int $size Size in kB
      */
-    const FILE_MAX_SIZE = 5;
+    public function setMaxImportSize($size) {
+        $this->maxImportSize = $size;
+    }
 
     /**
-     * Extensions of files that can be imported into the CSS (to save network
-     * connections)
+     * Set the type of extensions to be imported into the CSS (to save network
+     * connections).
+     * Keys of the array should be the file extensions & respective values
+     * should be the data type.
      *
-     * @var string
+     * @param string[] $extensions Array of file extensions
      */
-    const FILE_EXTENSIONS = '(gif|png|jpg|jpeg|svg|woff)';
+    public function setImportExtensions(array $extensions) {
+        $this->importExtensions = $extensions;
+    }
 
     /**
      * Combine CSS from import statements.
@@ -279,7 +304,9 @@ class CSS extends Minify
      */
     protected function importFiles($source, $content)
     {
-        if (preg_match_all('/url\((["\']?)((?!["\']?data:).*?\.' . static::FILE_EXTENSIONS . ')\\1\)/i', $content, $matches, PREG_SET_ORDER)) {
+        $extensions = array_keys($this->importExtensions);
+        $regex = '/url\((["\']?)((?!["\']?data:).*?\.(' . implode('|', $extensions) . '))\\1\)/i';
+        if (preg_match_all($regex, $content, $matches, PREG_SET_ORDER)) {
             $search = array();
             $replace = array();
 
@@ -294,7 +321,7 @@ class CSS extends Minify
                 // the content of the file, and it's relatively small
                 $import = @file_exists($path);
                 $import &= is_file($path);
-                $import &= filesize($path) <= (static::FILE_MAX_SIZE * 1024);
+                $import &= filesize($path) <= $this->maxImportSize * 1024;
                 if (!$import) {
                     continue;
                 }
@@ -307,20 +334,7 @@ class CSS extends Minify
 
                 // build replacement
                 $search[] = $match[0];
-
-                switch ($extension) {
-                    case 'woff':
-                        $replace[] = 'url(data:application/x-font-woff;base64,' . $importContent  . ')';
-                        break;
-
-                    case 'svg':
-                        $replace[] = 'url(data:image/svg+xml;base64,' . $importContent  . ')';
-                        break;
-
-                    default:
-                        $replace[] = 'url(data:image/' . $extension . ';base64,' . $importContent  . ')';
-                        break;
-                }
+                $replace[] = 'url(' . $this->importExtensions[$extension] . ';base64,' . $importContent  . ')';
             }
 
             // replace the import statements
