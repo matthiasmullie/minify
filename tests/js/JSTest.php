@@ -7,6 +7,9 @@ use MatthiasMullie\Minify;
  */
 class JSTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Minify\JS
+     */
     private $minifier;
 
     /**
@@ -42,9 +45,7 @@ class JSTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test cases [input, expected result, options]
-     *
-     * @return array
+     * @return array [input, expected result]
      */
     public function dataProvider()
     {

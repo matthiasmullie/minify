@@ -7,6 +7,9 @@ use MatthiasMullie\Minify;
  */
 class CSSTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Minify\CSS
+     */
     private $minifier;
 
     /**
@@ -28,7 +31,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test CSS minifier rules, provided by dataProvider
+     * Test CSS minifier rules, provided by dataProvider.
      *
      * @test
      * @dataProvider dataProvider
@@ -42,7 +45,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test conversion of relative paths, provided by dataProviderPaths
+     * Test conversion of relative paths, provided by dataProviderPaths.
      *
      * @test
      * @dataProvider dataProviderPaths
@@ -56,16 +59,40 @@ class CSSTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test cases [input, expected result, options]
+     * Test minifier import configuration methods.
      *
-     * @return array
+     * @test
+     */
+    public function setConfig() {
+        $this->minifier->setMaxImportSize(10);
+        $this->minifier->setImportExtensions(array('gif' => 'data:image/gif'));
+
+        $object = new ReflectionObject($this->minifier);
+
+        $property = $object->getProperty('maxImportSize');
+        $property->setAccessible(true);
+        $this->assertEquals($property->getValue($this->minifier), 10);
+
+        $property = $object->getProperty('importExtensions');
+        $property->setAccessible(true);
+        $this->assertEquals($property->getValue($this->minifier), array('gif' => 'data:image/gif'));
+
+    }
+
+    /**
+     * @return array [input, expected result]
      */
     public function dataProvider()
     {
         $tests = array();
 
+        // try importing, with both @import syntax types
         $tests[] = array(
             __DIR__ . '/sample/combine_imports/index.css',
+            'body{color:red}',
+        );
+        $tests[] = array(
+            __DIR__ . '/sample/combine_imports/index2.css',
             'body{color:red}',
         );
 
@@ -110,6 +137,9 @@ class CSSTest extends PHPUnit_Framework_TestCase
         return $tests;
     }
 
+    /**
+     * @return array [input, expected result]
+     */
     public function dataProviderPaths()
     {
         $tests = array();
