@@ -128,8 +128,8 @@ class JS extends Minify
 
         // loop files
         foreach ($this->data as $source => $js) {
-            // combine js
-            $content .= $js;
+            // combine js (seperate sources with line feed)
+            $content .= "\n" . $js;
         }
 
         /*

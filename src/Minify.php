@@ -54,15 +54,10 @@ abstract class Minify
 
             // load data
             $value = $this->load($data);
-            $key = ($data != $value) ? $data : 0;
-
-            // initialize key
-            if (!array_key_exists($key, $this->data)) {
-                $this->data[$key] = '';
-            }
+            $key = ($data != $value) ? $data : count($this->data);
 
             // store data
-            $this->data[$key] .= $value;
+            $this->data[$key] = $value;
         }
     }
 
