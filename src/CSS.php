@@ -250,9 +250,7 @@ class CSS extends Minify
 
         // add .. for every directory that needs to be traversed for new path
         $new = str_repeat('../', count($to));
-        if (empty($new)) {
-            $new = '/';
-        }
+        $new = $new ?: '/';
 
         /*
          * At this point:
@@ -266,7 +264,7 @@ class CSS extends Minify
         $new .= implode('/', $from);
 
         // if $from contained no elements, we still have a redundant trailing /
-        if (empty($from)) {
+        if (!$from) {
             $new = rtrim($new, '/');
         }
 
@@ -393,14 +391,20 @@ class CSS extends Minify
      */
     protected function move($source, $destination, $content)
     {
-        // regex to match paths
-        $pathsRegex = '/
-
-        # enable possiblity of giving multiple subpatterns same name
-        (?J)
-
-        # url(xxx)
-
+        /*
+         * Relative path references will usually be enclosed by url(). @import
+         * is an exception, where url() is not necessary around the path (but is
+         * allowed).
+         * This *could* be 1 regular expression, where both regular expressions
+         * in this array are on different sides of a |. But we're using named
+         * patterns in both regexes, the same name on both regexes. This is only
+         * possible with a (?J) modifier, but that only works after a fairly
+         * recent PCRE version. That's why I'm doing 2 separate regular
+         * expressions & combining the matches after executing of both.
+         */
+        $regexes = array(
+            // url(xxx)
+            '/
             # open url()
             url\(
 
@@ -425,10 +429,10 @@ class CSS extends Minify
             # close url()
             \)
 
-        |
+            /ix',
 
-        # @import "xxx"
-
+            // @import "xxx"
+            '/
             # import statement
             @import
 
@@ -456,33 +460,39 @@ class CSS extends Minify
                 # close path enclosure
                 (?P=quotes)
 
-        /ix';
+            /ix'
+        );
 
         // find all relative urls in css
-        if (preg_match_all($pathsRegex, $content, $matches, PREG_SET_ORDER)) {
-            $search = array();
-            $replace = array();
-
-            // loop all urls
-            foreach ($matches as $match) {
-                // determine if it's a url() or an @import match
-                $type = (strpos($match[0], '@import') === 0 ? 'import' : 'url');
-
-                // fix relative url
-                $url = $this->convertRelativePath($match['path'], dirname($source), dirname($destination));
-
-                // build replacement
-                $search[] = $match[0];
-                if ($type == 'url') {
-                    $replace[] = 'url(' . $url . ')';
-                } elseif ($type == 'import') {
-                    $replace[] = '@import "' . $url . '"';
-                }
+        $matches = array();
+        foreach ($regexes as $regex) {
+            if (preg_match_all($regex, $content, $regexMatches, PREG_SET_ORDER)) {
+                $matches = array_merge($matches, $regexMatches);
             }
-
-            // replace urls
-            $content = str_replace($search, $replace, $content);
         }
+
+        $search = array();
+        $replace = array();
+
+        // loop all urls
+        foreach ($matches as $match) {
+            // determine if it's a url() or an @import match
+            $type = (strpos($match[0], '@import') === 0 ? 'import' : 'url');
+
+            // fix relative url
+            $url = $this->convertRelativePath($match['path'], dirname($source), dirname($destination));
+
+            // build replacement
+            $search[] = $match[0];
+            if ($type == 'url') {
+                $replace[] = 'url(' . $url . ')';
+            } elseif ($type == 'import') {
+                $replace[] = '@import "' . $url . '"';
+            }
+        }
+
+        // replace urls
+        $content = str_replace($search, $replace, $content);
 
         return $content;
     }

@@ -95,6 +95,10 @@ class CSSTest extends PHPUnit_Framework_TestCase
             __DIR__ . '/sample/combine_imports/index2.css',
             'body{color:red}',
         );
+        $tests[] = array(
+            __DIR__ . '/sample/combine_imports/index3.css',
+            'body{color:red}body{color:red}',
+        );
 
         $tests[] = array(
             'color:#FF00FF;',
