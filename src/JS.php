@@ -274,12 +274,11 @@ class JS extends Minify
         // uniform line endings, make them all line feed
         $content = str_replace(array("\r\n", "\r"), "\n", $content);
 
-        // strip leading & trailing whitespace
-        $content = preg_replace('/^\s+/m', '', $content);
-        $content = preg_replace('/\s+$/m', '', $content);
-
-        // collapse all non-line feed whitespace into single space
+        // collapse all non-line feed whitespace into a single space
         $content = preg_replace('/[^\S\n]+/', ' ', $content);
+
+        // strip leading & trailing whitespace
+        $content = str_replace(array(" \n", "\n "), "\n", $content);
 
         // collapse consecutive line feeds into just 1
         $content = preg_replace('/\n+/', "\n", $content);
@@ -326,7 +325,7 @@ class JS extends Minify
          */
         $content = preg_replace('/;\}/s', '}', $content);
 
-        return $content;
+        return trim($content);
     }
 
     /**
