@@ -306,9 +306,6 @@ class JS extends Minify
         $content = preg_replace('/(' . $this->variable . ')[^\S\n]+(?!' . $this->variable . '|[0-9]+)/u', '\\1', $content);
         $content = preg_replace('/(?:(?!' . $this->variable . '|[0-9]+).)\K[^\S\n]+(?=' . $this->variable . ')/u', '\\1', $content);
 
-        // semicolons don't make sense at end of source, where ASI will kick in
-        $content = trim($content, ';');
-
         /*
          * We also don't really want to terminate statements followed by closing
          * curly braces (which we've ignored completely up until now): ASI will
@@ -316,7 +313,9 @@ class JS extends Minify
          */
         $content = preg_replace('/;\}/s', '}', $content);
 
-        return trim($content);
+        // get rid of remaining whitespace af beginning/end, as well as
+        // semicolon, which doesn't make sense there: ASI will kick in here too
+        return trim($content, "\n ;");
     }
 
     /**
