@@ -183,7 +183,7 @@ class JS extends Minify
             return $placeholder;
         };
 
-        $this->registerPattern('/^([\'"])(.*?)(?<!\\\\)\\1/s', $callback, true);
+        $this->registerPattern('/^([\'"])(.*?)(?<!\\\\)\\1/s', $callback);
     }
 
     /**
@@ -192,10 +192,10 @@ class JS extends Minify
     protected function stripComments()
     {
         // single-line comments
-        $this->registerPattern('/^\/\/.*$[\r\n]*/m', '', true);
+        $this->registerPattern('/^\/\/.*$[\r\n]*/m', '');
 
         // multi-line comments
-        $this->registerPattern('/^\/\*.*?\*\//s', '', true);
+        $this->registerPattern('/^\/\*.*?\*\//s', '');
     }
 
     /**
@@ -233,10 +233,10 @@ class JS extends Minify
         // a = b / c; d = e / f
         preg_match_all('/\[(.*?)\]/', $this->variable, $parts);
         $last = $parts[1][1];
-        $this->registerPattern('/^[' . $last . '\}\]\)]\s*\/(?![\/\*])/u', '\\0', true);
+        $this->registerPattern('/^[' . $last . '\}\]\)]\s*\/(?![\/\*])/u', '\\0');
 
-        // it's a regex if we can find a (non-escaped) closing /
-        $this->registerPattern('/^\/(.*?(?<!\\\\)(\\\\\\\\)*)\//', $callback, true);
+        // it's a regex if we can find an opening & (non-escaped) closing /
+        $this->registerPattern('/^\/(.*?(?<!\\\\)(\\\\\\\\)*)\//', $callback);
     }
 
     /**

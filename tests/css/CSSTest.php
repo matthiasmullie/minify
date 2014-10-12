@@ -33,10 +33,8 @@ class CSSTest extends PHPUnit_Framework_TestCase
      * @test
      * @dataProvider dataProvider
      */
-    public function minify($input, $expected, $debug = false)
+    public function minify($input, $expected)
     {
-        $this->minifier->debug((bool) $debug);
-
         $this->minifier->add($input);
         $result = $this->minifier->minify();
 

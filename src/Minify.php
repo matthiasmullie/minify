@@ -32,15 +32,6 @@ abstract class Minify
     protected $patterns = array();
 
     /**
-     * Quite a useless variable, for dev-purpose only.
-     * Can be helpful when running the test suite, to single out a specific
-     * test to debug.
-     *
-     * @var bool
-     */
-    protected $debug = false;
-
-    /**
      * Init the minify class - optionally, code may be passed along already.
      *
      * @param string[optional] $css
@@ -114,32 +105,6 @@ abstract class Minify
     }
 
     /**
-     * Sets the debug state.
-     * Can be helpful when running the test suite, to single out a specific test
-     * to debug.
-     *
-     * @param bool $debug
-     */
-    public function debug($debug)
-    {
-        $this->debug = (bool) $debug;
-    }
-
-    /**
-     * Prints a var_dump of all vars tossed in, then exits.
-     * Only when $this->debug is set to true.
-     *
-     * @param mixed $vars Can be overloaded with multiple vars
-     */
-    protected function dump($vars /* [, $var2 [, ...]] */)
-    {
-        if(!$this->debug) return;
-
-        var_dump(func_get_args());
-        exit;
-    }
-
-    /**
      * Minify the data.
      *
      * @param  string[optional] $path Path to write the data to.
@@ -156,17 +121,16 @@ abstract class Minify
      *
      * @param  string          $pattern     PCRE pattern.
      * @param  string|callable $replacement Replacement value for matched pattern.
-     * @param  bool            $skip        Identifies if this match should be skipped by the rest of the patterns, once matched.
      * @throws Exception
      */
-    protected function registerPattern($pattern, $replacement = '', $skip = false)
+    protected function registerPattern($pattern, $replacement = '')
     {
         // doublecheck if pattern actually starts at beginning of content
         if (substr($pattern, 1, 1) !== '^') {
             throw new Exception('Pattern "' . $pattern . '" should start processing at the beginning of the string.');
         }
 
-        $this->patterns[] = array($pattern, $replacement, $skip);
+        $this->patterns[] = array($pattern, $replacement);
     }
 
     /**
@@ -194,27 +158,18 @@ abstract class Minify
                 // pattern to ignore (if it was previously matched)
                 if($i === $ignore) continue;
 
-                list($pattern, $replacement, $skip) = $this->patterns[$i];
+                list($pattern, $replacement) = $this->patterns[$i];
 
                 // replace pattern occurrences starting at this character
                 list($content, $replacement, $match) = $this->replacePattern($pattern, $content, $replacement);
 
-                // pattern matched & content replaced; save replacement value
+                // pattern matched or content replaced; save replacement value
                 if ($match != '' || $replacement != '') {
-                    // some patterns will want to make sure that the replaced
-                    // content is not touched by any other patterns (like
-                    // strings are comments)
-                    if ($skip) {
-                        $processed .= $replacement;
-                        $content = (string) substr($content, strlen($replacement));
-                        continue 2;
-                    }
-
-                    // since there's been a change in the content, let's re-run
-                    // all patterns at the start of the new content, but make
-                    // sure the same pattern is ignored time
-                    $ignore = $i;
-                    $i = -1;
+                    // make sure that the replaced content is not touched by any
+                    // other patterns
+                    $processed .= $replacement;
+                    $content = (string) substr($content, strlen($replacement));
+                    continue 2;
                 }
             }
 
