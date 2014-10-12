@@ -125,10 +125,10 @@ abstract class Minify
      */
     protected function registerPattern($pattern, $replacement = '')
     {
-        // doublecheck if pattern actually starts at beginning of content
-        if (substr($pattern, 1, 1) !== '^') {
-            throw new Exception('Pattern "' . $pattern . '" should start processing at the beginning of the string.');
-        }
+        // make sure pattern actually starts at beginning of content - we'll be
+        // looping the content character by character, executing patterns
+        // starting on exactly that character.
+        if ($pattern[0] !== '^') $pattern = $pattern[0] . '^' . substr($pattern, 1);
 
         $this->patterns[] = array($pattern, $replacement);
     }
