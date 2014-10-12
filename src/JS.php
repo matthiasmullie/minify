@@ -19,7 +19,7 @@ class JS extends Minify
      * been extracted from the JS source code, so we can reliably match "code",
      * without having to worry about potential "code-like" characters inside.
      *
-     * @var array
+     * @var string[]
      */
     public $extracted = array();
 
@@ -35,7 +35,7 @@ class JS extends Minify
      * Will be loaded from /data/js/operators_before.txt
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
-     * @var array
+     * @var string[]
      */
     protected $operatorsBefore = array();
 
@@ -53,7 +53,7 @@ class JS extends Minify
      * Will be loaded from /data/js/operators_after.txt
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
-     * @var array
+     * @var string[]
      */
     protected $operatorsAfter = array();
 
@@ -69,7 +69,7 @@ class JS extends Minify
      * Will be loaded from /data/js/reserved_before.txt
      *
      * @see https://mathiasbynens.be/notes/reserved-keywords
-     * @var array
+     * @var string[]
      */
     protected $keywordsBefore = array();
 
@@ -86,7 +86,7 @@ class JS extends Minify
      * Will be loaded from /data/js/reserved_after.txt
      *
      * @see https://mathiasbynens.be/notes/reserved-keywords
-     * @var array
+     * @var string[]
      */
     protected $keywordsAfter = array();
 
@@ -327,9 +327,9 @@ class JS extends Minify
      * We'll strip whitespace around certain operators with regular expressions.
      * This will prepare the given array by escaping all characters.
      *
-     * @param  array  $operators
-     * @param  string $delimiter
-     * @return array
+     * @param  string[] $operators
+     * @param  string   $delimiter
+     * @return string[]
      */
     protected function getOperatorsForRegex(array $operators, $delimiter = '/')
     {
@@ -354,9 +354,9 @@ class JS extends Minify
      * We'll strip whitespace around certain keywords with regular expressions.
      * This will prepare the given array by escaping all characters.
      *
-     * @param  array  $keywords
-     * @param  string $delimiter
-     * @return array
+     * @param  string[] $keywords
+     * @param  string   $delimiter
+     * @return string[]
      */
     protected function getKeywordsForRegex(array $keywords, $delimiter = '/')
     {

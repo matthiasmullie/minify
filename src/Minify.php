@@ -16,14 +16,14 @@ abstract class Minify
     /**
      * The data to be minified
      *
-     * @var array
+     * @var string[]
      */
     protected $data = array();
 
     /**
      * Array of patterns to match.
      *
-     * @var array
+     * @var string[]
      */
     protected $patterns = array();
 
