@@ -229,6 +229,10 @@ else statement',
              }',
             'if(true){}else{}',
         );
+        $tests[] = array(
+            '53  instanceof  String',
+            '53 instanceof String'
+        );
 
         // remove whitespace around operators
         $tests[] = array(

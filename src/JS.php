@@ -298,22 +298,13 @@ class JS extends Minify
 
         /*
          * Get rid of whitespace after a variable/keyword that is not followed
-         * by another variable/keyword.
+         * by another variable/keyword/number or vice versa.
+         * The latter is a nasty trick because PHP doesn't support lookbehind
+         * with variable length: we'll do an inverse match first (we'd want a
+         * negative lookbehind), then omit that from the result with \K
          */
-        $content = preg_replace('/(' . $this->variable . ')[^\S\n]+(?!' . $this->variable . ')/u', '\\1', $content);
-
-        /*
-         * Now get rid of whitespace before a variable/keyword that is not
-         * preceded by another variable/keyword.
-         * This one's more complex since PHP doesn't allow non-fixed length
-         * lookbehind assertions, so we'll first find all variables preceded by
-         * variables & change that space to a tab; after that, find remaining
-         * spaces followed by variable (which now are all variables not preceded
-         * by other vars); then restore the tab to a space.
-         */
-        $content = preg_replace('/(' . $this->variable . ')[^\S\n]+(?=' . $this->variable . ')/u', "\\1\t", $content);
-        $content = preg_replace('/ (' . $this->variable . ')/u', "\\1", $content);
-        $content = str_replace("\t", ' ', $content);
+        $content = preg_replace('/(' . $this->variable . ')[^\S\n]+(?!' . $this->variable . '|[0-9]+)/u', '\\1', $content);
+        $content = preg_replace('/(?:(?!' . $this->variable . '|[0-9]+).)\K[^\S\n]+(?=' . $this->variable . ')/u', '\\1', $content);
 
         // semicolons don't make sense at end of source, where ASI will kick in
         $content = trim($content, ';');
