@@ -175,6 +175,20 @@ class CSSTest extends PHPUnit_Framework_TestCase
             0
         );
 
+        // relative paths
+        $tests[] = array(
+            $source . '/relative.css',
+            $target . '/relative.css',
+            file_get_contents($source . '/relative.css'),
+            0
+        );
+        $tests[] = array(
+            $source . '/relative.css',
+            $target . '/target/relative.css',
+            '@import url(../../target/image.jpg);',
+            0
+        );
+
         return $tests;
     }
 }
