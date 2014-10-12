@@ -29,8 +29,6 @@ abstract class Minify
 
     /**
      * Init the minify class - optionally, code may be passed along already.
-     *
-     * @param string[optional] $data
      */
     public function __construct(/* $data = null, ... */)
     {
@@ -47,8 +45,14 @@ abstract class Minify
      */
     public function add($data /* $data = null, ... */)
     {
+        // bogus "usage" of parameter $data: scrutinizer warns this variable is
+        // not used (we're using func_get_args instead to support overloading),
+        // but it still needs to be defined because it makes no sense to have
+        // this function without argument :)
+        $args = array($data) + func_get_args();
+
         // this method can be overloaded
-        foreach (func_get_args() as $data) {
+        foreach ($args as $data) {
             // redefine var
             $data = (string) $data;
 
@@ -189,7 +193,7 @@ abstract class Minify
      * @param  string          $pattern     Pattern to match.
      * @param  string          $content     Content to match pattern against.
      * @param  string|callable $replacement Replacement value.
-     * @return array           [content, replacement, match]
+     * @return string[]        [content, replacement, match]
      */
     protected function replacePattern($pattern, $content, $replacement)
     {
@@ -203,10 +207,10 @@ abstract class Minify
     /**
      * Replaces pattern by a value from a callback, via preg_replace_callback.
      *
-     * @param  string          $pattern     Pattern to match.
-     * @param  string          $content     Content to match pattern against.
-     * @param  string|callable $replacement Replacement value.
-     * @return array           [content, replacement, match]
+     * @param  string   $pattern     Pattern to match.
+     * @param  string   $content     Content to match pattern against.
+     * @param  callable $replacement Replacement value.
+     * @return string[] [content, replacement, match]
      */
     protected function replaceWithCallback($pattern, $content, $replacement)
     {
@@ -232,10 +236,10 @@ abstract class Minify
     /**
      * Replaces pattern by a value from a callback, via preg_replace.
      *
-     * @param  string          $pattern     Pattern to match.
-     * @param  string          $content     Content to match pattern against.
-     * @param  string|callable $replacement Replacement value.
-     * @return array           [content, replacement, match]
+     * @param  string   $pattern     Pattern to match.
+     * @param  string   $content     Content to match pattern against.
+     * @param  string   $replacement Replacement value.
+     * @return string[] [content, replacement, match]
      */
     protected function replaceWithString($pattern, $content, $replacement)
     {
