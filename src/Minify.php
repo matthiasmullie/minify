@@ -128,7 +128,7 @@ abstract class Minify
         // make sure pattern actually starts at beginning of content - we'll be
         // looping the content character by character, executing patterns
         // starting on exactly that character.
-        if ($pattern[0] !== '^') $pattern = $pattern[0] . '^' . substr($pattern, 1);
+        if ($pattern[1] !== '^') $pattern = $pattern[0] . '^' . substr($pattern, 1);
 
         $this->patterns[] = array($pattern, $replacement);
     }
@@ -152,12 +152,7 @@ abstract class Minify
         // update will keep shrinking, character by character, until all of it
         // has been processed
         while ($content) {
-            $ignore = -1;
-
             for ($i = 0; $i < count($this->patterns); $i++) {
-                // pattern to ignore (if it was previously matched)
-                if($i === $ignore) continue;
-
                 list($pattern, $replacement) = $this->patterns[$i];
 
                 // replace pattern occurrences starting at this character
