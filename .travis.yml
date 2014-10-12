@@ -9,3 +9,6 @@ php:
 
 before_script:
   - composer self-update && composer install --dev
+
+after_script:
+  - php vendor/bin/coveralls

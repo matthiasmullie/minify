@@ -17,7 +17,8 @@
         "ext-pcre": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.3.*"
+        "phpunit/phpunit": "4.3.*",
+        "satooshi/php-coveralls": "dev-master"
     },
     "autoload": {
         "psr-4": {
