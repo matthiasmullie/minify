@@ -113,7 +113,7 @@ class CSS extends Minify
             # (optional) closing semi-colon
             ;?
 
-            /ix';
+            $/mix';
 
         // find all relative imports in css (for now we don't support imports
         // with media, and imports should use url(xxx))

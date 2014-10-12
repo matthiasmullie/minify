@@ -86,7 +86,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
     {
         $tests = array();
 
-        // try importing, with both @import syntax types
+        // try importing, with both @import syntax types & media queries
         $tests[] = array(
             __DIR__ . '/sample/combine_imports/index.css',
             'body{color:red}',
@@ -98,6 +98,10 @@ class CSSTest extends PHPUnit_Framework_TestCase
         $tests[] = array(
             __DIR__ . '/sample/combine_imports/index3.css',
             'body{color:red}body{color:red}',
+        );
+        $tests[] = array(
+            __DIR__ . '/sample/combine_imports/index4.css',
+            '@media only screen{body{color:red}}@media only screen{body{color:red}}',
         );
 
         $tests[] = array(
