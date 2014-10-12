@@ -318,16 +318,14 @@ class CSS extends Minify
                 // only replace the import with the content if we're able to get
                 // the content of the file, and it's relatively small
                 $import = @file_exists($path);
-                $import &= is_file($path);
-                $import &= filesize($path) <= $this->maxImportSize * 1024;
+                $import = $import && is_file($path);
+                $import = $import && filesize($path) <= $this->maxImportSize * 1024;
                 if (!$import) {
                     continue;
                 }
 
-                // grab content
+                // grab content && base64-ize
                 $importContent = @file_get_contents($path);
-
-                // base-64-ize
                 $importContent = base64_encode($importContent);
 
                 // build replacement

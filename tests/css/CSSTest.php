@@ -104,24 +104,34 @@ class CSSTest extends PHPUnit_Framework_TestCase
             '@media only screen{body{color:red}}@media only screen{body{color:red}}',
         );
 
+        // shorthand hex color codes
         $tests[] = array(
             'color:#FF00FF;',
             'color:#F0F;',
         );
 
+        // import files
         $tests[] = array(
             __DIR__ . '/sample/import_files/index.css',
             'body{background:url(data:image/png;base64,' . base64_encode(file_get_contents(__DIR__ . '/sample/import_files/file.png')) . ')}',
         );
 
+        // strip comments
         $tests[] = array(
             '/* This is a CSS comment */',
             '',
         );
 
+        // strip whitespace
         $tests[] = array(
             'body { color: red; }',
             'body{color:red}',
+        );
+
+        // whitespace inside strings shouldn't be replaced
+        $tests[] = array(
+            'content:"preserve   whitespace',
+            'content:"preserve   whitespace',
         );
 
         /*
@@ -134,12 +144,6 @@ class CSSTest extends PHPUnit_Framework_TestCase
         $tests[] = array(
             '.iconic.map-pin:before { content: "\\\\"; }',
             '.iconic.map-pin:before{content:"\\\\"}',
-        );
-
-        // whitespace inside strings shouldn't be replaced
-        $tests[] = array(
-            'content:"preserve   whitespace',
-            'content:"preserve   whitespace',
         );
 
         return $tests;
@@ -155,10 +159,19 @@ class CSSTest extends PHPUnit_Framework_TestCase
         $source = __DIR__ . '/sample/convert_relative_path/source';
         $target = __DIR__ . '/sample/convert_relative_path/target';
 
+        // external link
         $tests[] = array(
             $source . '/external.css',
             $target . '/external.css',
             file_get_contents($source . '/external.css'),
+            0
+        );
+
+        // absolute path
+        $tests[] = array(
+            $source . '/absolute.css',
+            $target . '/absolute.css',
+            file_get_contents($source . '/absolute.css'),
             0
         );
 
