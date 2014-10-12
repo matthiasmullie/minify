@@ -1,14 +1,10 @@
 <?php
-
 namespace MatthiasMullie\Minify;
 
 /**
- * Minify\CSS class
+ * CSS minifier.
  *
- * This source file can be used to minify CSS files.
- *
- * The class is documented in the file itself. If you find any bugs help me out and report them. Reporting can be done by sending an email to minify@mullie.eu.
- * If you report a bug, make sure you give me enough information (include your code).
+ * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
@@ -27,6 +23,14 @@ class CSS extends Minify
      * @var int
      */
     const FILE_MAX_SIZE = 5;
+
+    /**
+     * Extensions of files that can be imported into the CSS (to save network
+     * connections)
+     *
+     * @var string
+     */
+    const FILE_EXTENSIONS = '(gif|png|jpg|jpeg|svg|woff)';
 
     /**
      * Combine CSS from import statements.
@@ -86,7 +90,8 @@ class CSS extends Minify
 
             /ix';
 
-        // find all relative imports in css (for now we don't support imports with media, and imports should use url(xxx))
+        // find all relative imports in css (for now we don't support imports
+        // with media, and imports should use url(xxx))
         if (preg_match_all($importRegex, $content, $matches, PREG_SET_ORDER)) {
             $search = array();
             $replace = array();
@@ -96,7 +101,8 @@ class CSS extends Minify
                 // get the path for the file that will be imported
                 $importPath = dirname($source) . '/' . $match['path'];
 
-                // only replace the import with the content if we can grab the content of the file
+                // only replace the import with the content if we can grab the
+                // content of the file
                 if (@file_exists($importPath) && is_file($importPath)) {
                     // grab content
                     $importContent = @file_get_contents($importPath);
@@ -105,7 +111,9 @@ class CSS extends Minify
                     $importContent = $this->move($importPath, $source, $importContent);
 
                     // check if this is only valid for certain media
-                    if($match['media']) $importContent = '@media ' . $match['media'] . '{' . "\n" . $importContent . "\n" . '}';
+                    if ($match['media']) {
+                        $importContent = '@media ' . $match['media'] . '{' . "\n" . $importContent . "\n" . '}';
+                    }
 
                     // add to replacement array
                     $search[] = $match[0];
@@ -117,7 +125,9 @@ class CSS extends Minify
             $content = str_replace($search, $replace, $content);
 
             // ge recursive (if imports have occurred)
-            if($search) $content = $this->combineImports($source, $content);
+            if ($search) {
+                $content = $this->combineImports($source, $content);
+            }
         }
 
         return $content;
@@ -127,8 +137,10 @@ class CSS extends Minify
      * Convert relative paths based upon 1 path to another.
      *
      * E.g.
-     * ../images/img.gif based upon /home/forkcms/frontend/core/layout/css, should become
-     * ../../core/layout/images/img.gif based upon /home/forkcms/frontend/cache/minified_css
+     * ../images/img.gif (relative to /home/forkcms/frontend/core/layout/css)
+     * should become:
+     * ../../core/layout/images/img.gif (relative to
+     * /home/forkcms/frontend/cache/minified_css)
      *
      * @param  string $path The relative path that needs to be converted.
      * @param  string $from The original base path.
@@ -147,7 +159,9 @@ class CSS extends Minify
         $to = rtrim(str_replace(DIRECTORY_SEPARATOR, '/', $to), '/');
 
         // if we're not dealing with a relative path, just return absolute
-        if(strpos($path, '/') === 0) return $path;
+        if (strpos($path, '/') === 0) {
+            return $path;
+        }
 
         /*
          * Example:
@@ -179,7 +193,9 @@ class CSS extends Minify
             $path = preg_replace('/^\.\.\//', '', $path, 1, $count);
 
             // for every level up, adjust dirname
-            if($count) $from = dirname($from);
+            if ($count) {
+                $from = dirname($from);
+            }
         } while ($count);
 
         /*
@@ -193,8 +209,11 @@ class CSS extends Minify
         $from = explode('/', $from);
         $to = explode('/', $to);
         foreach ($from as $i => $chunk) {
-            if(isset($to[$i]) && $from[$i] == $to[$i]) unset($from[$i], $to[$i]);
-            else break;
+            if (isset($to[$i]) && $from[$i] == $to[$i]) {
+                unset($from[$i], $to[$i]);
+            } else {
+                break;
+            }
         }
 
         /*
@@ -206,7 +225,9 @@ class CSS extends Minify
 
         // add .. for every directory that needs to be traversed for new path
         $new = str_repeat('../', count($to));
-        if(empty($new)) $new = '/';
+        if (empty($new)) {
+            $new = '/';
+        }
 
         /*
          * At this point:
@@ -219,8 +240,10 @@ class CSS extends Minify
         // add path, relative from this point, to traverse to image
         $new .= implode('/', $from);
 
-        // if $from contained no elements, we still have a redundant trailing slash
-        if(empty($from)) $new = rtrim($new, '/');
+        // if $from contained no elements, we still have a redundant trailing /
+        if (empty($from)) {
+            $new = rtrim($new, '/');
+        }
 
         /*
          * At this point:
@@ -247,7 +270,8 @@ class CSS extends Minify
 
     /**
      * Import files into the CSS, base64-ized.
-     * @url(image.jpg) images will be loaded and their content merged into the original file, to save HTTP requests.
+     * @url(image.jpg) images will be loaded and their content merged into the
+     * original file, to save HTTP requests.
      *
      * @param  string $source  The file to import files for.
      * @param  string $content The CSS content to import files for.
@@ -255,7 +279,7 @@ class CSS extends Minify
      */
     protected function importFiles($source, $content)
     {
-        if (preg_match_all('/url\((["\']?)((?!["\']?data:).*?\.(gif|png|jpg|jpeg|svg|woff))\\1\)/i', $content, $matches, PREG_SET_ORDER)) {
+        if (preg_match_all('/url\((["\']?)((?!["\']?data:).*?\.' . static::FILE_EXTENSIONS . ')\\1\)/i', $content, $matches, PREG_SET_ORDER)) {
             $search = array();
             $replace = array();
 
@@ -266,30 +290,36 @@ class CSS extends Minify
                 $path = dirname($source) . '/' . $path;
                 $extension = $match[3];
 
-                // only replace the import with the content if we can grab the content of the file
-                if (@file_exists($path) && is_file($path) && (filesize($path) <= (static::FILE_MAX_SIZE * 1024) || in_array($extension, array('svg', 'woff')))) {
-                    // grab content
-                    $importContent = @file_get_contents($path);
+                // only replace the import with the content if we're able to get
+                // the content of the file, and it's relatively small
+                $import = @file_exists($path);
+                $import &= is_file($path);
+                $import &= filesize($path) <= (static::FILE_MAX_SIZE * 1024);
+                if (!$import) {
+                    continue;
+                }
 
-                    // base-64-ize
-                    $importContent = base64_encode($importContent);
+                // grab content
+                $importContent = @file_get_contents($path);
 
-                    // build replacement
-                    $search[] = $match[0];
+                // base-64-ize
+                $importContent = base64_encode($importContent);
 
-                    switch ($match[3]) {
-                        case 'woff':
-                            $replace[] = 'url(data:application/x-font-woff;base64,' . $importContent  . ')';
-                            break;
+                // build replacement
+                $search[] = $match[0];
 
-                        case 'svg':
-                            $replace[] = 'url(data:image/svg+xml;base64,' . $importContent  . ')';
-                            break;
+                switch ($extension) {
+                    case 'woff':
+                        $replace[] = 'url(data:application/x-font-woff;base64,' . $importContent  . ')';
+                        break;
 
-                        default:
-                            $replace[] = 'url(data:image/' . $match[3] . ';base64,' . $importContent  . ')';
-                            break;
-                    }
+                    case 'svg':
+                        $replace[] = 'url(data:image/svg+xml;base64,' . $importContent  . ')';
+                        break;
+
+                    default:
+                        $replace[] = 'url(data:image/' . $extension . ';base64,' . $importContent  . ')';
+                        break;
                 }
             }
 
@@ -313,8 +343,10 @@ class CSS extends Minify
 
         // loop files
         foreach ($this->data as $source => $css) {
-            // if we're saving to a new path, we'll have to fix the relative paths
-            if($source !== 0) $css = $this->move($source, $path, $css);
+            // if we'll save to a new path, we'll have to fix the relative paths
+            if ($source !== 0) {
+                $css = $this->move($source, $path, $css);
+            }
 
             // combine css
             $content .= $css;
@@ -327,15 +359,18 @@ class CSS extends Minify
         $content = $this->stripWhitespace($content);
 
         // save to path
-        if($path !== null) $this->save($content, $path);
+        if ($path !== null) {
+            $this->save($content, $path);
+        }
 
         return $content;
     }
 
     /**
      * Moving a css file should update all relative urls.
-     * Relative references (e.g. ../images/image.gif) in a certain css file, will have to be updated when a file is
-     * being saved at another location (e.g. ../../images/image.gif, if the new CSS file is 1 folder deeper)
+     * Relative references (e.g. ../images/image.gif) in a certain css file,
+     * will have to be updated when a file is being saved at another location
+     * (e.g. ../../images/image.gif, if the new CSS file is 1 folder deeper)
      *
      * @param  string $source      The file to update relative urls for.
      * @param  string $destination The path the data will be written to.
@@ -386,7 +421,8 @@ class CSS extends Minify
             # whitespace
             \s+
 
-                # we don\'t have to check for @import url(), because the condition above will already catch these
+                # we don\'t have to check for @import url(), because the
+                # condition above will already catch these
 
                 # open path enclosure
                 (?P<quotes>["\'])
@@ -423,8 +459,11 @@ class CSS extends Minify
 
                 // build replacement
                 $search[] = $match[0];
-                if($type == 'url') $replace[] = 'url(' . $url . ')';
-                elseif($type == 'import') $replace[] = '@import "' . $url . '"';
+                if ($type == 'url') {
+                    $replace[] = 'url(' . $url . ')';
+                } elseif ($type == 'import') {
+                    $replace[] = '@import "' . $url . '"';
+                }
             }
 
             // replace urls
@@ -443,7 +482,6 @@ class CSS extends Minify
      */
     protected function shortenHex($content)
     {
-        // shorthand hex color codes
         $content = preg_replace('/(?<![\'"])#([0-9a-z])\\1([0-9a-z])\\2([0-9a-z])\\3(?![\'"])/i', '#$1$2$3', $content);
 
         return $content;
@@ -457,7 +495,6 @@ class CSS extends Minify
      */
     protected function stripComments($content)
     {
-        // strip comments
         $content = preg_replace('/\/\*(.*?)\*\//is', '', $content);
 
         return $content;
@@ -471,16 +508,16 @@ class CSS extends Minify
      */
     protected function stripWhitespace($content)
     {
-        // semicolon/space before closing bracket > replace by bracket
+        // remove semicolon/whitespace followed by closing bracket
         $content = preg_replace('/;?\s*}/', '}', $content);
 
-        // bracket, colon, semicolon or comma preceded or followed by whitespace > remove space
+        // remove whitespace following bracket, colon, semicolon or comma
         $content = preg_replace('/\s*([\{:;,])\s*/', '$1', $content);
 
-        // preceding/trailing whitespace > remove
+        // remove leading & trailing whitespace
         $content = preg_replace('/^\s*|\s*$/m', '', $content);
 
-        // newlines > remove
+        // remove newlines
         $content = preg_replace('/\n/', '', $content);
 
         return $content;

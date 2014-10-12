@@ -1,14 +1,10 @@
 <?php
-
 namespace MatthiasMullie\Minify;
 
 /**
- * Minify abstract class
+ * Abstract minifier class.
  *
- * This source file can be used to write minifiers for multiple file types.
- *
- * The class is documented in the file itself. If you find any bugs help me out and report them. Reporting can be done by sending an email to minify@mullie.eu.
- * If you report a bug, make sure you give me enough information (include your code).
+ * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
  * @author Matthias Mullie <minify@mullie.eu>
  *
@@ -34,13 +30,14 @@ abstract class Minify
     /**
      * Init the minify class - optionally, code may be passed along already.
      *
-     * @param string[optional] $css
+     * @param string[optional] $data
      */
-    public function __construct()
+    public function __construct(/* $data = null, ... */)
     {
-        // it's possible to add the css through the constructor as well ;)
-        $arguments = func_get_args();
-        if(func_num_args()) call_user_func_array(array($this, 'add'), $arguments);
+        // it's possible to add the source through the constructor as well ;)
+        if (func_num_args()) {
+            call_user_func_array(array($this, 'add'), func_get_args());
+        }
     }
 
     /**
@@ -48,7 +45,7 @@ abstract class Minify
      *
      * @param string $data
      */
-    public function add($data)
+    public function add($data /* $data = null, ... */)
     {
         // this method can be overloaded
         foreach (func_get_args() as $data) {
@@ -60,7 +57,9 @@ abstract class Minify
             $key = ($data != $value) ? $data : 0;
 
             // initialize key
-            if(!array_key_exists($key, $this->data)) $this->data[$key] = '';
+            if (!array_key_exists($key, $this->data)) {
+                $this->data[$key] = '';
+            }
 
             // store data
             $this->data[$key] .= $value;
@@ -95,10 +94,14 @@ abstract class Minify
     protected function save($content, $path)
     {
         // create file & open for writing
-        if(($handler = @fopen($path, 'w')) === false) throw new Exception('The file "' . $path . '" could not be opened. Check if PHP has enough permissions.');
+        if (($handler = @fopen($path, 'w')) === false) {
+            throw new Exception('The file "' . $path . '" could not be opened. Check if PHP has enough permissions.');
+        }
 
         // write to file
-        if(@fwrite($handler, $content) === false) throw new Exception('The file "' . $path . '" could not be written to. Check if PHP has enough permissions.');
+        if (@fwrite($handler, $content) === false) {
+            throw new Exception('The file "' . $path . '" could not be written to. Check if PHP has enough permissions.');
+        }
 
         // close the file
         @fclose($handler);
@@ -128,7 +131,9 @@ abstract class Minify
         // make sure pattern actually starts at beginning of content - we'll be
         // looping the content character by character, executing patterns
         // starting on exactly that character.
-        if ($pattern[1] !== '^') $pattern = $pattern[0] . '^' . substr($pattern, 1);
+        if ($pattern[1] !== '^') {
+            $pattern = $pattern[0] . '^' . substr($pattern, 1);
+        }
 
         $this->patterns[] = array($pattern, $replacement);
     }
