@@ -196,43 +196,54 @@ class CSS extends Minify
          */
 
         // normalize paths
-        do {
-            $path = preg_replace('/[^\.\.\/]+?\/\.\.\//', '', $path, -1, $count);
-        } while ($count);
-        do {
-            $from = preg_replace('/[^\/]+?\/\.\.\//', '', $from, -1, $count);
-        } while ($count);
-        do {
-            $to = preg_replace('/[^\/]+?\/\.\.\//', '', $to, -1, $count);
-        } while ($count);
+        $callback = function ($carry, $item) {
+            if ($item === '..' && $carry) {
+                // if we should move up a directory, just get rid of the one we
+                // descended in
+                array_pop($carry);
+            } else {
+                $carry[] = $item;
+            }
+
+            return $carry;
+        };
+
+        $path = explode('/', $path);
+        $path = array_reduce($path, $callback);
+
+        $from = explode('/', $from);
+        $from = array_reduce($from, $callback);
+
+        $to = explode('/', $to);
+        $to = array_reduce($to, $callback);
 
         /*
          * At this point:
-         * $path = ../images/img.gif
-         * $from = /home/forkcms/frontend/core/layout/css
-         * $to = /home/forkcms/frontend/cache/minified_css
+         * $path = array('..', 'images'. 'img.gif')
+         * $from = array('', 'home', 'forkcms', 'frontend', 'core', 'layout', 'css')
+         * $to = array('', 'home', 'forkcms', 'frontend', 'cache', 'minified_css')
          */
 
         // resolve path the relative url is based upon
-        do {
-            $path = preg_replace('/^\.\.\//', '', $path, 1, $count);
-
-            // for every level up, adjust dirname
-            if ($count) {
-                $from = dirname($from);
+        foreach ($path as $dir) {
+            if ($dir === '..') {
+                // $path is relative to $form, so if $path needs to move up a
+                // directory, just don't descend it in $from
+                array_shift($path);
+                array_pop($from);
+            } else {
+                break;
             }
-        } while ($count);
+        }
 
         /*
          * At this point:
-         * $path = images/img.gif
-         * $from = /home/forkcms/frontend/core/layout
-         * $to = /home/forkcms/frontend/cache/minified_css
+         * $path = array('images'. 'img.gif')
+         * $from = array('', 'home', 'forkcms', 'frontend', 'core', 'layout')
+         * $to = array('', 'home', 'forkcms', 'frontend', 'cache', 'minified_css')
          */
 
         // compare paths & strip identical parents
-        $from = explode('/', $from);
-        $to = explode('/', $to);
         foreach ($from as $i => $chunk) {
             if (isset($to[$i]) && $from[$i] == $to[$i]) {
                 unset($from[$i], $to[$i]);
@@ -243,7 +254,7 @@ class CSS extends Minify
 
         /*
          * At this point:
-         * $path = images/img.gif
+         * $path = array('images', 'img.gif')
          * $from = array('core', 'layout')
          * $to = array('cache', 'minified_css')
          */
@@ -254,7 +265,7 @@ class CSS extends Minify
 
         /*
          * At this point:
-         * $path = images/img.gif
+         * $path = array('images', 'img.gif')
          * $from = array('core', 'layout')
          * $to = *no longer matters*
          * $new = ../../
@@ -270,14 +281,14 @@ class CSS extends Minify
 
         /*
          * At this point:
-         * $path = images/img.gif
+         * $path = array('images', 'img.gif')
          * $from = *no longer matters*
          * $to = *no longer matters*
          * $new = ../../core/layout
          */
 
         // add remaining path
-        $new .= '/' . $path;
+        $new .= '/' . implode('/', $path);
 
         /*
          * At this point:

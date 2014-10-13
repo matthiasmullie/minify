@@ -183,7 +183,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
             0
         );
         $tests[] = array(
-            $source . '/relative.css',
+            $source . '/../source/relative.css',
             $target . '/target/relative.css',
             '@import url(../../target/image.jpg);',
             0
