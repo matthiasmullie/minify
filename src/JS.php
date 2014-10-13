@@ -231,17 +231,11 @@ class JS extends Minify
             return $placeholder;
         };
 
-        // make sure we ignore slashes that can't be a regex (like when they're
-        // preceded by anything variable-like, or a closing bracket), or that
-        // look like a comment
-        // we don't want to match consecutive \ (as division), like in:
-        // a = b / c; d = e / f
-        preg_match_all('/\[(.*?)\]/', $this->variable, $parts);
-        $last = $parts[1][1];
-        $this->registerPattern('/[' . $last . '\}\]\)]\s*\/(?![\/\*])/u', '\\0');
-
-        // it's a regex if we can find an opening & (non-escaped) closing /
-        $this->registerPattern('/\/(.*?(?<!\\\\)(\\\\\\\\)*)\//', $callback);
+        // it's a regex if we can find an opening (not preceded by variable,
+        // value or similar) & (non-escaped) closing /,
+        $before = $this->getOperatorsForRegex($this->operatorsBefore, '/');
+        $this->registerPattern('/^\s*\K\/(.*?(?<!\\\\)(\\\\\\\\)*)\//', $callback);
+        $this->registerPattern('/(?:' . implode('|', $before) . ')\s*\K\/(.*?(?<!\\\\)(\\\\\\\\)*)\//', $callback);
     }
 
     /**
