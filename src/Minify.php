@@ -150,6 +150,7 @@ abstract class Minify
             foreach ($this->patterns as $i => $pattern) {
                 list($pattern, $replacement) = $pattern;
 
+                $match = null;
                 if (preg_match($pattern, $content, $match)) {
                     $matches[$i] = $match;
                 }
