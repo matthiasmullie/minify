@@ -12,29 +12,33 @@
 
 ### CSS
 
-    use MatthiasMullie\Minify;
+```php
+use MatthiasMullie\Minify;
 
-    $sourcePath = '/path/to/source/css/file.css';
-    $minifier = new Minify($file);
+$sourcePath = '/path/to/source/css/file.css';
+$minifier = new Minify($file);
 
-    // we can even add another file, they'll then be joined in 1 output file
-    $sourcePath2 = '/path/to/second/source/css/file.css';
-    $minifier->add($sourcePath2);
+// we can even add another file, they'll then be joined in 1 output file
+$sourcePath2 = '/path/to/second/source/css/file.css';
+$minifier->add($sourcePath2);
 
-    // or we can just add plain CSS
-    $css = 'body { color: #000000; }';
-    $minifier->add($css);
+// or we can just add plain CSS
+$css = 'body { color: #000000; }';
+$minifier->add($css);
 
-    // save minified file to disk
-    $minifiedPath = '/path/to/minified/css/file.css';
-    $minifier->minify($minifiedPath);
+// save minified file to disk
+$minifiedPath = '/path/to/minified/css/file.css';
+$minifier->minify($minifiedPath);
 
-    // or just output the content
-    echo $minifier->minify();
+// or just output the content
+echo $minifier->minify();
+```
 
 ### JS
 
-    // just look at the CSS example; it's exactly the same, but with JS files :)
+```php
+// just look at the CSS example; it's exactly the same, but with JS files :)
+```
 
 
 ## Methods
@@ -45,15 +49,19 @@ Available methods, for both CSS & JS minifier, are:
 The object constructor accepts 0, 1 or multiple paths of files, or even complete CSS/JS content, that should be minified.
 All CSS/JS passed along, will be combined into 1 minified file.
 
-    use MatthiasMullie\Minify;
-    $minifier = new Minify\JS($path1, $path2);
+```php
+use MatthiasMullie\Minify;
+$minifier = new Minify\JS($path1, $path2);
+```
 
 ### add($path, /* overload paths */)
 
 This is roughly equivalent to the constructor.
 
-    $minifier->add($path3);
-    $minifier->add($js);
+```php
+$minifier->add($path3);
+$minifier->add($js);
+```
 
 ### minify($path)
 
@@ -62,18 +70,22 @@ If the $path parameter is false, the result will not be written anywhere.
 
 *CAUTION: If you have CSS with relative paths (to imports, images, ...), you should always specify a target path! Then those relative paths will be adjusted in accordance with the new path.*
 
-    $minifier->minify('/target/path.js');
+```php
+$minifier->minify('/target/path.js');
+```
 
 
 ## Installation
 
 Simply add a dependency on matthiasmullie/minify to your project's composer.json file if you use [Composer](https://getcomposer.org/) to manage the dependencies of your project:
 
-    {
-        "require": {
-            "matthiasmullie/minify": "1.3.*"
-        }
+```json
+{
+    "require": {
+        "matthiasmullie/minify": "1.3.*"
     }
+}
+```
 
 Although it's recommended to use Composer, you can actually include these files anyway you want.
 
@@ -85,4 +97,4 @@ Minify is [MIT](http://opensource.org/licenses/MIT) licensed.
 
 ## Challenges
 
-If you're interested in learning some of the harder technical challenges I've encounterd building this, you probably want to take a look at [what I wrote about it](http://www.mullie.eu/dont-build-your-own-minifier/) on my blog.
+If you're interested in learning some of the harder technical challenges I've encountered building this, you probably want to take a look at [what I wrote about it](http://www.mullie.eu/dont-build-your-own-minifier/) on my blog.
