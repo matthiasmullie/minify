@@ -165,15 +165,17 @@ abstract class Minify
             // see which of the patterns actually found the first thing (we'll
             // only want to execute that one, since we're unsure if what the
             // other found was not inside what the first found)
+            $positions = array();
             foreach ($matches as $i => $match) {
-                $matches[$i] = strpos($content, $match[0]);
+                $positions[$i] = strpos($content, $match[0]);
             }
-            $discardLength = min($matches);
-            $firstPattern = array_search($discardLength, $matches);
+            $discardLength = min($positions);
+            $firstPattern = array_search($discardLength, $positions);
+            $match = $matches[$firstPattern][0];
 
             // execute the pattern that matches earliest in the content string
             list($pattern, $replacement) = $this->patterns[$firstPattern];
-            list($replacement, $match) = $this->replacePattern($pattern, $replacement, $content);
+            $replacement = $this->replacePattern($pattern, $replacement, $content);
 
             // figure out which part of the string was unmatched; that's the
             // part we'll execute the patterns on again next
@@ -198,57 +200,14 @@ abstract class Minify
      * @param  string          $pattern     Pattern to match.
      * @param  string|callable $replacement Replacement value.
      * @param  string          $content     Content to match pattern against.
-     * @return string[]        [content, match]
+     * @return string
      */
     protected function replacePattern($pattern, $replacement, $content)
     {
         if (is_callable($replacement)) {
-            return $this->replaceWithCallback($pattern, $replacement, $content);
+            return preg_replace_callback($pattern, $replacement, $content, 1, $count);
         } else {
-            return $this->replaceWithString($pattern, $replacement, $content);
+            return preg_replace($pattern, $replacement, $content, 1, $count);
         }
-    }
-
-    /**
-     * Replaces pattern by a value from a callback, via preg_replace_callback.
-     *
-     * @param  string   $pattern     Pattern to match.
-     * @param  callable $replacement Replacement value.
-     * @param  string   $content     Content to match pattern against.
-     * @return string[] [content, match]
-     */
-    protected function replaceWithCallback($pattern, $replacement, $content)
-    {
-        $matched = '';
-
-        // instead of just passing the $replacement callback, we'll wrap another
-        // callback around it to also allow us to catch the match
-        $callback = function ($match) use ($replacement, &$matched) {
-            $matched = $match;
-            return call_user_func($replacement, $match);
-        };
-        $content = preg_replace_callback($pattern, $callback, $content, 1, $count);
-
-        return array($content, $matched[0]);
-    }
-
-    /**
-     * Replaces pattern by a value from a callback, via preg_replace.
-     *
-     * @param  string   $pattern     Pattern to match.
-     * @param  string   $content     Content to match pattern against.
-     * @param  string   $replacement Replacement value.
-     * @return string[] [content, match]
-     */
-    protected function replaceWithString($pattern, $replacement, $content)
-    {
-        // this preg_match is really only meant to capture $match
-        if (!preg_match($pattern, $content, $match)) {
-            return array($content, '', '');
-        }
-
-        $content = preg_replace($pattern, $replacement, $content, 1, $count);
-
-        return array($content, $match[0]);
     }
 }
