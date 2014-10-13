@@ -188,49 +188,33 @@ class CSS extends Minify
             return $path;
         }
 
+        // get full path to file referenced from $from
+        $path = $from . '/' . $path;
+
         /*
          * Example:
-         * $path = ../images/img.gif
-         * $from = /home/forkcms/frontend/cache/compiled_templates/../../core/layout/css
+         * $path = /home/forkcms/frontend/cache/compiled_templates/../../core/layout/css/../images/img.gif
          * $to = /home/forkcms/frontend/cache/minified_css
          */
 
         // normalize paths
-        $callback = function ($carry, $item) {
-            if ($item === '..' && $carry) {
-                // if we should move up a directory, just get rid of the one we
-                // descended in
-                array_pop($carry);
-            } else {
-                $carry[] = $item;
-            }
+        do {
+            list($path, $to) = preg_replace('/[^\/]+(?<!\.\.)\/\.\.\//', '', array($path, $to), -1, $count );
+        } while ($count);
 
-            return $carry;
-        };
+        /*
+         * Example:
+         * $path = /home/forkcms/frontend/core/layout/images/img.gif
+         * $to = /home/forkcms/frontend/cache/minified_css
+         */
 
         $path = explode('/', $path);
-        $path = array_reduce($path, $callback);
-
-        $from = explode('/', $from);
-        $from = array_reduce($from, $callback);
-
         $to = explode('/', $to);
-        $to = array_reduce($to, $callback);
 
-        /*
-         * At this point:
-         * $path = array('..', 'images'. 'img.gif')
-         * $from = array('', 'home', 'forkcms', 'frontend', 'core', 'layout', 'css')
-         * $to = array('', 'home', 'forkcms', 'frontend', 'cache', 'minified_css')
-         */
-
-        // resolve path the relative url is based upon
-        foreach ($path as $dir) {
-            if ($dir === '..') {
-                // $path is relative to $form, so if $path needs to move up a
-                // directory, just don't descend it in $from
-                array_shift($path);
-                array_pop($from);
+        // compare paths & strip identical ancestors
+        foreach ($path as $i => $chunk) {
+            if (isset($to[$i]) && $path[$i] == $to[$i]) {
+                unset($path[$i], $to[$i]);
             } else {
                 break;
             }
@@ -238,68 +222,23 @@ class CSS extends Minify
 
         /*
          * At this point:
-         * $path = array('images'. 'img.gif')
-         * $from = array('', 'home', 'forkcms', 'frontend', 'core', 'layout')
-         * $to = array('', 'home', 'forkcms', 'frontend', 'cache', 'minified_css')
-         */
-
-        // compare paths & strip identical parents
-        foreach ($from as $i => $chunk) {
-            if (isset($to[$i]) && $from[$i] == $to[$i]) {
-                unset($from[$i], $to[$i]);
-            } else {
-                break;
-            }
-        }
-
-        /*
-         * At this point:
-         * $path = array('images', 'img.gif')
-         * $from = array('core', 'layout')
+         * $path = array('core', 'layout', 'images', 'img.gif')
          * $to = array('cache', 'minified_css')
          */
 
+        $path = implode('/', $path);
+
         // add .. for every directory that needs to be traversed for new path
-        $new = str_repeat('../', count($to));
-        $new = $new ?: '/';
+        $to = str_repeat('../', count($to));
 
         /*
          * At this point:
-         * $path = array('images', 'img.gif')
-         * $from = array('core', 'layout')
-         * $to = *no longer matters*
-         * $new = ../../
-         */
-
-        // add path, relative from this point, to traverse to image
-        $new .= implode('/', $from);
-
-        // if $from contained no elements, we still have a redundant trailing /
-        if (!$from) {
-            $new = rtrim($new, '/');
-        }
-
-        /*
-         * At this point:
-         * $path = array('images', 'img.gif')
-         * $from = *no longer matters*
-         * $to = *no longer matters*
-         * $new = ../../core/layout
-         */
-
-        // add remaining path
-        $new .= '/' . implode('/', $path);
-
-        /*
-         * At this point:
-         * $path = *no longer matters*
-         * $from = *no longer matters*
-         * $to = *no longer matters*
-         * $new = ../../core/layout/images/img.gif
+         * $path = core/layout/images/img.gif
+         * $to = ../../
          */
 
         // Tada!
-        return $new;
+        return $to . $path;
     }
 
     /**

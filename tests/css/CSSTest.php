@@ -179,13 +179,13 @@ class CSSTest extends PHPUnit_Framework_TestCase
         $tests[] = array(
             $source . '/relative.css',
             $target . '/relative.css',
-            file_get_contents($source . '/relative.css'),
+            '@import url(image.jpg);',
             0
         );
         $tests[] = array(
             $source . '/../source/relative.css',
             $target . '/target/relative.css',
-            '@import url(../../target/image.jpg);',
+            '@import url(../image.jpg);',
             0
         );
 
