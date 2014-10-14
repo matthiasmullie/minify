@@ -27,7 +27,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
         $minifier = new Minify\JS($content1, $content2);
         $result = $minifier->minify();
 
-        $this->assertEquals($content1 . "\n" . $content2, $result);
+        $this->assertEquals($content1 . ';' . $content2, $result);
 
 
         // file in constructor
@@ -40,7 +40,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
         $minifier = new Minify\JS($path1, $path2);
         $result = $minifier->minify();
 
-        $this->assertEquals($content1 . "\n" . $content2, $result);
+        $this->assertEquals($content1 . ';' . $content2, $result);
     }
 
     /**
@@ -66,7 +66,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
         $minifier->add($content2);
         $result = $minifier->minify();
 
-        $this->assertEquals($content1 . "\n" . $content2, $result);
+        $this->assertEquals($content1 . ';' . $content2, $result);
 
 
         // file in add
@@ -82,7 +82,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
         $minifier->add($path2);
         $result = $minifier->minify();
 
-        $this->assertEquals($content1 . "\n" . $content2, $result);
+        $this->assertEquals($content1 . ';' . $content2, $result);
     }
 
     /**

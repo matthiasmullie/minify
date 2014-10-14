@@ -116,6 +116,11 @@ class JSTest extends PHPUnit_Framework_TestCase
             '-1+2',
         );
         $tests[] = array(
+            '-1+
+             2',
+            '-1+2',
+        );
+        $tests[] = array(
             'alert("this is a test");',
             'alert("this is a test")',
         );
@@ -257,11 +262,11 @@ else statement',
         // mix of ++ and +: three consecutive +es will be interpreted as ++ +
         $tests[] = array(
             'a++ +b',
-            'a+++b',
+            'a++ +b',
         );
         $tests[] = array(
             'a+ ++b',
-            'a+ ++b',
+            'a+ ++b', // +++ would actually be allowed as well
         );
 
         // SyntaxError: identifier starts immediately after numeric literal

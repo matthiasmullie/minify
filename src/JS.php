@@ -118,8 +118,8 @@ class JS extends Minify
 
         // loop files
         foreach ($this->data as $source => $js) {
-            // combine js (seperate sources with line feed)
-            $content .= "\n" . $js;
+            // combine js (separate sources with semicolon)
+            $content .= $js . ';';
         }
 
         /*
@@ -279,6 +279,10 @@ class JS extends Minify
         $content = preg_replace('/(' . implode('|', $before) . ')\s+/', '\\1', $content);
         $content = preg_replace('/\s+(' . implode('|', $after) . ')/', '\\1', $content);
 
+        // make sure + and - can't be mistaken for, or joined into ++ and --
+        $content = preg_replace('/(?<![\+\-])\s*([\+\-])/', '\\1', $content);
+        $content = preg_replace('/([\+\-])\s*(?!\\1)/', '\\1', $content);
+
         // collapse whitespace around reserved words into single space
         $before = $this->getKeywordsForRegex($this->keywordsBefore, '/');
         $after = $this->getKeywordsForRegex($this->keywordsAfter, '/');
@@ -322,9 +326,8 @@ class JS extends Minify
 
         $operators = array_combine($operators, $escaped);
 
-        // make sure + and - can't be mistaken for ++ and --, which are special
-        $operators['+'] = '(?<!\+)\+(?!\s*\+)';
-        $operators['-'] = '(?<!\-)\-(?!\s*\-)';
+        // ignore + & - for now, they'll get special treatment
+        unset($operators['+'], $operators['-']);
 
         // dot can not just immediately follow a number; it can be confused
         // between decimal point, or calling a method on it, e.g. 42 .toString()
