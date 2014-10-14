@@ -79,12 +79,8 @@ $minifier->minify('/target/path.js');
 
 Simply add a dependency on matthiasmullie/minify to your project's composer.json file if you use [Composer](https://getcomposer.org/) to manage the dependencies of your project:
 
-```json
-{
-    "require": {
-        "matthiasmullie/minify": "1.3.*"
-    }
-}
+```shell
+composer require matthiasmullie/minify
 ```
 
 Although it's recommended to use Composer, you can actually include these files anyway you want.
