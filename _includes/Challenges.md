@@ -1,0 +1,1 @@
+If you're interested in learning some of the harder technical challenges I've encountered building this, you probably want to take a look at [what I wrote about it](http://www.mullie.eu/dont-build-your-own-minifier/) on my blog.

@@ -1,0 +1,31 @@
+/* 320px (iPhone) */
+@media screen and (max-width:320px) {
+}
+/* 480px (WVGA - Low End Windows Phone) */
+@media screen and (max-width:480px) {
+	.wrapper { background: #f3f5f8; height: 640px; }
+	.iphone { display: none; }
+	.fluid-white { display: none; }
+	.wp2, .wp4, .wp5, .light-box { margin-bottom: 30px; }
+	.legals { text-align: center; margin: 0; padding: 0; }
+	.credit { text-align: center; }
+}
+/* xGA iPad */
+@media screen and (max-width:1024px) {
+	.wp3 { background-position: 50px 0; }
+	.swag { background-attachment: scroll; }
+	.subscribe { background-attachment: scroll; }
+}
+/* 1200px (Small Desktop, Netbook) */
+@media screen and (max-width:1280px) {
+	.wp3 { background-position: 50px 0; }
+}
+/* Bootstrap 990px Breakpoint to 480px */
+@media screen and (min-width:480px) and (max-width:991px) {
+	.iphone { display: none; }
+	.fluid-white { display: none; }
+	.wrapper { background: #f3f5f8; height: 540px; }
+	.wp2, .wp4, .wp5, .light-box { margin-bottom: 30px; }
+	.legals { text-align: center; margin: 0; padding: 0; }
+	.credit { text-align: center; }
+}

@@ -1,76 +1,216 @@
+---
+---
+
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <title>Minify by matthiasmullie</title>
-  </head>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Minify - JavaScript and CSS minifier</title>
+	<link href='http://fonts.googleapis.com/css?family=Varela+Round'
+		  rel='stylesheet' type='text/css'>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css"
+		  rel="stylesheet">
+	<link href="css/styles.css" rel="stylesheet">
+	<link href="css/queries.css" rel="stylesheet">
+	<link href="css/animate.css" rel="stylesheet">
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
 
-  <body>
-    <div id="container">
-      <div class="inner">
+	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
+	<link rel="shortcut icon" href="/img/favicon.ico">
 
-        <header>
-          <h1>Minify</h1>
-          <h2>CSS &amp; JS minifier</h2>
-        </header>
+	<link rel="author" href="https://plus.google.com/u/0/114103174273569238978" />
 
-        <section id="downloads" class="clearfix">
-          <a href="https://github.com/matthiasmullie/minify/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-          <a href="https://github.com/matthiasmullie/minify/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/matthiasmullie/minify" id="view-on-github" class="button"><span>View on GitHub</span></a>
-        </section>
+	<link rel="canonical" href="http://www.minifier.org/" />
+	<meta name="description" content="Online JavaScript and CSS minifier" />
 
-        <hr>
+	<meta property="og:title" content="JavaScript and CSS minifier" />
+	<meta property="og:description" content="Online JavaScript and CSS minifier" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="http://www.mullie.eu/dont-build-your-own-minifier/" />
+	<meta property="og:image" content="http://www.minifier.org/img/logo_150.png" />
+	<meta property="og:site_name" content="Matthias Mullie" />
 
-        <section id="main_content">
-          <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+	<meta name="twitter:card" content="product" />
+	<meta name="twitter:site" content="@minifier" />
+	<meta name="twitter:creator" content="@matthiasmullie" />
+	<meta name="twitter:domain" content="minifier.org" />
+	<meta name="twitter:title" content="JavaScript and CSS minifier" />
+	<meta name="twitter:description" content="Online JavaScript and CSS minifier" />
+	<meta name="twitter:image" content="http://www.minifier.org/img/logo_150.png" />
+	<meta name="twitter:url" content="http://www.minifier.org/" />
+</head>
+<body id="top">
+<header id="home">
+	<section class="hero" id="hero">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-4 col-md-offset-2 text-left">
+					<h1 class="animated fadeInDown">Min<span>ify</span></h1>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+					<p class="animated fadeInUp delay-05s">CSS and JavaScript minifier</p>
+				</div>
+				<div class="col-md-4 col-md-offset-0 text-right">
+					<a href="https://github.com/matthiasmullie/minify"
+					   class="learn-more-btn">Code on GitHub</a>
+				</div>
+			</div>
+		</div>
+	</section>
+</header>
+<section class="intro text-center section-padding" id="intro">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2 wp1">
+				<h1 class="arrow">Minify a JavaScript of CSS file</h1>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+				<form action="http://minify.minifier.org" method="GET">
+					<input type="text"
+						   placeholder="http://example.com/your-file.js"
+						   value=""/>
+					<input type="submit" value="Minify"/>
+				</form>
+			</div>
+		</div>
+	</div>
+</section>
+<section class="contribute text-center section-padding" id="contribute">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div>
+					<div class="col-md-4 wp2">
+						<div class="icon"><i class="fa fa-code shadow"></i></div>
+						<h2>Use</h2>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+						{% capture use %}{% include use.md %}{% endcapture %}
+						{{ use | markdownify }}
+					</div>
+					<div class="col-md-4 wp2 delay-05s">
+						<div class="icon"><i class="fa fa-code-fork shadow"></i></div>
+						<h2>Contribute</h2>
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+						{% capture contribute %}{% include contribute.md %}{% endcapture %}
+						{{ contribute | markdownify }}
+					</div>
+					<div class="col-md-4 wp2 delay-1s">
+						<div class="icon"><i class="fa fa-bug shadow"></i></div>
+						<h2>Bugs?</h2>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+						{% capture bugs %}{% include bugs.md %}{% endcapture %}
+						{{ bugs | markdownify }}
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<section class="swag text-center">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+				<h1>Documentation</h1>
+				<a href="#docs" class="down-arrow-btn"><i class="fa fa-chevron-down"></i></a>
+			</div>
+		</div>
+	</div>
+</section>
+<section class="section-padding text-center" id="docs">
+	<div class="container inner">
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+				{% capture status %}{% include status.md %}{% endcapture %}
+				{{ status | markdownify }}
+			</div>
 
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+			<div class="col-md-8 col-md-offset-2 text-left">
+				{% capture methods %}{% include methods.md %}{% endcapture %}
+				{{ methods | markdownify }}
+			</div>
+		</div>
+	</div>
+</section>
+<section class="text-center" id="examples">
+	<div class="container-fluid nopadding">
+		<div class="container">
+			<div class="row">
+				<h1 class="arrow">Example usage</h1>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+				<div class="col-md-6">
+					<h2 class="arrow">JavaScript</h2>
 
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+					<div class="text-left">
+						{% capture example_js %}{% include example-js.md %}{% endcapture %}
+						{{ example_js | markdownify }}
+					</div>
+				</div>
+				<div class="col-md-6">
+					<h2 class="arrow">CSS</h2>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+					<div class="text-left">
+						{% capture example_css %}{% include example-css.md %}{% endcapture %}
+						{{ example_css | markdownify }}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<section class="section-padding text-center" id="challenges">
+	<div class="container inner">
+		<div class="row">
+			<h1 class="arrow">Challenges</h1>
 
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-        </section>
-
-        <footer>
-          Minify is maintained by <a href="https://github.com/matthiasmullie">matthiasmullie</a><br>
-          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
-        </footer>
-
-        
-      </div>
-    </div>
-  </body>
+			<div class="col-md-8 col-md-offset-2 text-left">
+				{% capture challenges %}{% include challenges.md %}{% endcapture %}
+				{{ challenges | markdownify }}
+			</div>
+		</div>
+	</div>
+</section>
+<footer>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<ul class="social-buttons">
+					<li><a href="https://twitter.com/matthiasmullie/"
+						   class="social-btn"><i class="fa fa-twitter"></i></a>
+					</li>
+					<li><a href="https://www.linkedin.com/in/matthiasmullie"
+						   class="social-btn"><i class="fa fa-linkedin"></i></a>
+					</li>
+					<li><a href="https://github.com/matthiasmullie"
+						   class="social-btn"><i class="fa fa-github"></i></a>
+					</li>
+					<li>
+						<a href="http://stackoverflow.com/users/802993/matthiasmullie"
+						   class="social-btn"><i class="fa fa-stack-overflow"></i></a>
+					</li>
+					<li><a href="http://www.mullie.eu/contact.html"
+						   class="social-btn"><i class="fa fa-envelope"></i></a>
+					</li>
+				</ul>
+			</div>
+			<div class="col-md-6 credit">
+				<p>Design: <a href="http://tympanus.net/codrops/2014/07/14/freebie-halcyon-days-one-page-website-template/">Halcyon Days</a> by <a href="http://www.peterfinlan.com/">Peter Finlan</a></p>
+			</div>
+		</div>
+	</div>
+</footer>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="js/waypoints.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/scripts.js"></script>
+<script src="js/modernizr.js"></script>
+</body>
 </html>
