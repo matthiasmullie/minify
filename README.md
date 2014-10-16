@@ -117,6 +117,11 @@ composer require matthiasmullie/minify
 Although it's recommended to use Composer, you can actually include these files anyway you want.
 
 
+## Try it
+
+Simply try it out online at <http://www.minifier.org>.
+
+
 ## License
 
 Minify is [MIT](http://opensource.org/licenses/MIT) licensed.
