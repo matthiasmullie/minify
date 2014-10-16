@@ -1,6 +1,6 @@
 $(function() {
 	var selectType = function() {
-		var content = $(this ).val(),
+		var content = $(this).val(),
 			extension = content.split('.').pop(),
 			// check if we have a valid extension (.css of .js), in which case the
 			// content of the textarea is likely a link to a file, instead of code
@@ -14,16 +14,30 @@ $(function() {
 		}
 	},
 	checkType = function(e) {
+		e.preventDefault();
+
 		var extension = $('#intro input[name=type]:checked').val();
 
-		if (!extension) {
-			e.preventDefault();
-
+		if (extension) {
+			minify(minifyDone);
+		} else {
 			// Show error message when type is not selected
 			$('#intro #types')
 				.addClass('error')
 				.append('<span class="error"><br />Select script type!</span>');
 		}
+	},
+	minify = function(callback) {
+		var $form = $('#intro form');
+
+		$.ajax({
+			url: $form.attr('action'),
+			type: $form.attr('method'),
+			data: $form.serialize()
+		} ).done(callback);
+	},
+	minifyDone = function(data, textStatus, jqXHR) {
+		$('#intro #source' ).val(data);
 	},
 	discardError = function(e) {
 		$('#intro #types').removeClass('error');
