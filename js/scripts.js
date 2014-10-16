@@ -76,3 +76,6 @@ $(document).ready(function(){
         });
     }
 });
+
+/************ Bust out of iframe *************/
+$('a').attr('target', '_top');
