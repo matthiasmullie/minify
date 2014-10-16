@@ -2,7 +2,7 @@
 use MatthiasMullie\Minify;
 
 $sourcePath = '/path/to/source/css/file.css';
-$minifier = new Minify\css($file);
+$minifier = new Minify\CSS($sourcePath);
 
 // we can even add another file, they'll then be
 // joined in 1 output file

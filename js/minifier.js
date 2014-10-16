@@ -19,7 +19,7 @@ $(function() {
 		var extension = $('#intro input[name=type]:checked').val();
 
 		if (extension) {
-			minify(minifyDone);
+			minify();
 		} else {
 			// Show error message when type is not selected
 			$('#intro #types')
@@ -27,17 +27,24 @@ $(function() {
 				.append('<span class="error"><br />Select script type!</span>');
 		}
 	},
-	minify = function(callback) {
-		var $form = $('#intro form');
+	minify = function() {
+		var $form = $('#intro form' ),
+			$submitButton = $('#intro input[type=submit]' ),
+			$spinner = $('<button><i class="fa fa-spinner fa-spin"></i></button>' );
+
+			$submitButton.replaceWith($spinner);
 
 		$.ajax({
 			url: $form.attr('action'),
 			type: $form.attr('method'),
 			data: $form.serialize()
-		} ).done(callback);
-	},
-	minifyDone = function(data, textStatus, jqXHR) {
-		$('#intro #source' ).val(data);
+		}).done(function(data, textStatus, jqXHR) {
+			$('#intro #source' ).val(data);
+
+			$spinner.replaceWith($submitButton);
+		}).fail(function() {
+			$spinner.replaceWith($submitButton);
+		});
 	},
 	discardError = function(e) {
 		$('#intro #types').removeClass('error');
