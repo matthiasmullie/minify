@@ -8,7 +8,7 @@ $(function() {
 
 		$('#intro input[name=type]').prop('checked', false);
 		if (knownType) {
-			$('#intro #type_' + extension)
+			$('#type_' + extension)
 				.prop('checked', true)
 				.trigger('change');
 		}
@@ -22,9 +22,8 @@ $(function() {
 			minify();
 		} else {
 			// Show error message when type is not selected
-			$('#intro #types')
-				.addClass('error')
-				.append('<span class="error"><br />Select script type!</span>');
+			$('#types').addClass('error')
+			showError('Select type!');
 		}
 	},
 	minify = function() {
@@ -37,21 +36,26 @@ $(function() {
 		$.ajax({
 			url: $form.attr('action'),
 			type: $form.attr('method'),
-			data: $form.serialize()
+			data: $form.serialize(),
+			dataType: 'text'
 		}).done(function(data, textStatus, jqXHR) {
-			$('#intro #source' ).val(data);
+			$('#source' ).val(data);
 
 			$spinner.replaceWith($submitButton);
 		}).fail(function() {
+			showError('Minify failed!');
 			$spinner.replaceWith($submitButton);
 		});
 	},
-	discardError = function(e) {
-		$('#intro #types').removeClass('error');
-		$('#intro #types .error').remove();
+	showError = function(message) {
+		$('#error' ).text(message);
+	},
+	discardError = function() {
+		$('#types').removeClass('error');
+		showError('');
 	};
 
-	$('#intro #source').on('change, keyup', selectType);
+	$('#source').on('change, keyup', selectType);
 	$('#intro form').on('submit', checkType);
 	$('#intro input[name=type]').on('change', discardError);
 });
