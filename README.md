@@ -16,9 +16,10 @@
 use MatthiasMullie\Minify;
 
 $sourcePath = '/path/to/source/css/file.css';
-$minifier = new Minify\CSS($file);
+$minifier = new Minify\CSS($sourcePath);
 
-// we can even add another file, they'll then be joined in 1 output file
+// we can even add another file, they'll then be
+// joined in 1 output file
 $sourcePath2 = '/path/to/second/source/css/file.css';
 $minifier->add($sourcePath2);
 
@@ -42,6 +43,7 @@ echo $minifier->minify();
 
 
 ## Methods
+
 Available methods, for both CSS & JS minifier, are:
 
 ### __construct(/* overload paths */)
@@ -66,7 +68,7 @@ $minifier->add($js);
 ### minify($path)
 
 This will minify the files' content, save the result to $path and return the resulting content.
-If the $path parameter is false, the result will not be written anywhere.
+If the $path parameter is omitted, the result will not be written anywhere.
 
 *CAUTION: If you have CSS with relative paths (to imports, images, ...), you should always specify a target path! Then those relative paths will be adjusted in accordance with the new path.*
 
@@ -74,12 +76,41 @@ If the $path parameter is false, the result will not be written anywhere.
 $minifier->minify('/target/path.js');
 ```
 
+### setMaxImportSize($size) *(CSS only)*
+
+The CSS minifier will automatically embed referenced files (like images, fonts, ...) into the minified CSS, so they don't have to be fetched over multiple connections.
+
+However, for really large files, it's likely better to load them separately (as it would increase the CSS load time if they were included.)
+
+This method allows the max size of files to import into the minified CSS to be set (in kB). The default size is 5.
+
+```php
+$minifier->setMaxImportSize(10);
+```
+
+### setImportExtensions(extensions) *(CSS only)*
+
+The CSS minifier will automatically embed referenced files (like images, fonts, ...) into minified CSS, so they don't have to be fetched over multiple connections.
+
+This methods allows the type of files to be specified, along with their data:mime type.
+
+The default embedded file types are gif, png, jpg, jpeg, svg & woff.
+
+```php
+$extensions = array(
+    'gif' => 'data:image/gif',
+    'png' => 'data:image/png',
+);
+
+$minifier->setImportExtensions($extensions);
+```
+
 
 ## Installation
 
-Simply add a dependency on matthiasmullie/minify to your project's composer.json file if you use [Composer](https://getcomposer.org/) to manage the dependencies of your project:
+Simply add a dependency on matthiasmullie/minify to your composer.json file if you use [Composer](https://getcomposer.org/) to manage the dependencies of your project:
 
-```shell
+```sh
 composer require matthiasmullie/minify
 ```
 
