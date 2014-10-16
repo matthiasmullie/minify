@@ -223,9 +223,10 @@ Intro
 .intro { background: #f3f5f8; }
 .intro p { margin: 50px 0 0; }
 h1.arrow { font-size: 15px; text-transform: uppercase; color: #353535; letter-spacing: 1px; background: url('../img/h1-bg.png') no-repeat center bottom; padding-bottom: 30px; font-weight: bold; }
-.intro input[type=text] { background-color: rgba(255, 255, 255, 0.5); border: solid 1px #999; padding: 20px; width: 80%; color: #000; }
+.intro input[type=text], .intro textarea { background-color: rgba(255, 255, 255, 0.5); border: solid 1px #999; padding: 20px; width: 100%; color: #000; }
 .intro input[type=submit] { background: rgba(15, 131, 213, 0.5); border: solid 1px rgba(13, 115, 188, 0.5); padding: 20px; color: #fff; text-transform: uppercase; letter-spacing: 1px; transition: all 0.5s ease; -moz-transition: all 0.5s ease; -webkit-transition: all 0.5s ease; -o-transition: all 0.5s ease; }
 .intro input[type=submit]:hover { background: rgba(15, 131, 213, 1); border: solid 1px rgba(13, 115, 188, 1); color: #fff; }
+.intro input[type=submit] { position: absolute; bottom: 0; }
 /* ==========================================================================
 Contribute
 ========================================================================== */
@@ -269,3 +270,7 @@ Waypoints
 .bounceInLeft, .bounceInRight, .fadeInUp, .fadeInUpDelay, .fadeInDown, .fadeInUpD, .fadeInLeft, .fadeInRight { visibility: visible; }
 .delay-05s { animation-delay: 0.5s; -webkit-animation-delay: 0.5s; }
 .delay-1s { animation-delay: 1s; -webkit-animation-delay: 1s; }
+/* ==========================================================================
+Errors
+========================================================================== */
+.error { color: red; }

@@ -73,12 +73,21 @@
 			<div class="col-md-8 col-md-offset-2 wp1">
 				<h1 class="arrow">Minify a JavaScript or CSS file</h1>
 
-				<form action="http://minify.minifier.org" method="GET">
-					<input name="url"
-						   type="text"
-						   placeholder="http://example.com/your-file.js or .css"
-						   value=""/>
-					<input type="submit" value="Minify"/>
+				<form action="http://minify.minifier.org" method="POST">
+					<div class="col-md-10">
+						<textarea id="source"
+								  name="source"
+								  rows="5"
+								  placeholder="http://example.com/your-file.js or .css, or just plain JavaScript or CSS code"></textarea>
+					</div>
+					<div class="text-left">
+						<input type="submit" value="Minify" />
+
+						<div id="types">
+							<input type="radio" name="type" value="js" id="type_js" /> <label for="type_js">JS</label><br />
+							<input type="radio" name="type" value="css" id="type_css" /> <label for="type_css">CSS</label>
+						</div>
+					</div>
 				</form>
 			</div>
 		</div>
@@ -215,5 +224,6 @@
 <script src="js/bootstrap.min.js"></script>
 <script src="js/scripts.js"></script>
 <script src="js/modernizr.js"></script>
+<script src="js/minifier.js"></script>
 </body>
 </html>
