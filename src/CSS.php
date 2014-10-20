@@ -130,7 +130,7 @@ class CSS extends Minify
                 // content of the file
                 if (@file_exists($importPath) && is_file($importPath)) {
                     // grab content
-                    $importContent = @file_get_contents($importPath);
+                    $importContent = $this->load($importPath);
 
                     // fix relative paths
                     $importContent = $this->move($importPath, $source, $importContent);
@@ -275,7 +275,7 @@ class CSS extends Minify
                 }
 
                 // grab content && base64-ize
-                $importContent = @file_get_contents($path);
+                $importContent = $this->load($path);
                 $importContent = base64_encode($importContent);
 
                 // build replacement

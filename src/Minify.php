@@ -75,12 +75,15 @@ abstract class Minify
     {
         // check if the data is a file
         if (@file_exists($data) && is_file($data)) {
-            // grab content
-            return @file_get_contents($data);
+            $data = @file_get_contents($data);
+
+            // strip BOM, if any
+            if (substr($data, 0, 3) == "\xef\xbb\xbf") {
+                $data = substr($data, 3);
+            }
         }
 
-        // no file, just return the data itself
-        else return $data;
+        return $data;
     }
 
     /**
