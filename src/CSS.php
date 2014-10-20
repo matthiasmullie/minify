@@ -68,9 +68,9 @@ class CSS extends Minify
      */
     protected function combineImports($source, $content)
     {
-		$regexes = array(
-			// @import url(xxx)
-			'/
+        $importRegexes = array(
+            // @import url(xxx)
+            '/
             # import statement
             @import
 
@@ -115,8 +115,8 @@ class CSS extends Minify
 
             /ix',
 
-			// @import 'xxx'
-			'/
+            // @import 'xxx'
+            '/
 
             # import statement
             @import
@@ -124,23 +124,23 @@ class CSS extends Minify
             # whitespace
             \s+
 
-				# open path enclosure
-				(?P<quotes>["\'])
+                # open path enclosure
+                (?P<quotes>["\'])
 
-					# fetch path
-					(?P<path>
+                    # fetch path
+                    (?P<path>
 
-						# do not fetch data uris or external sources
-						(?!(
-							["\']?
-							(data|https?):
-						))
+                        # do not fetch data uris or external sources
+                        (?!(
+                            ["\']?
+                            (data|https?):
+                        ))
 
-						.+?
-					)
+                        .+?
+                    )
 
-				# close path enclosure
-				(?P=quotes)
+                # close path enclosure
+                (?P=quotes)
 
                 # (optional) trailing whitespace
                 \s*
@@ -155,51 +155,51 @@ class CSS extends Minify
             ;?
 
             /ix'
-		);
+        );
 
         // find all relative imports in css
-		$matches = array();
-		foreach ($regexes as $regex) {
-			if (preg_match_all($regex, $content, $regexMatches, PREG_SET_ORDER)) {
-				$matches = array_merge($matches, $regexMatches);
-			}
-		}
+        $matches = array();
+        foreach ($importRegexes as $importRegex) {
+            if (preg_match_all($importRegex, $content, $regexMatches, PREG_SET_ORDER)) {
+                $matches = array_merge($matches, $regexMatches);
+            }
+        }
 
-		$search = array();
-		$replace = array();
+        $search = array();
+        $replace = array();
 
-		// loop the matches
-		foreach ($matches as $match) {
-			// get the path for the file that will be imported
-			$importPath = dirname($source) . '/' . $match['path'];
+        // loop the matches
+        foreach ($matches as $match) {
+            // get the path for the file that will be imported
+            $importPath = dirname($source) . '/' . $match['path'];
 
-			// only replace the import with the content if we can grab the
-			// content of the file
-			if (@file_exists($importPath) && is_file($importPath)) {
-				// grab content
-				$importContent = $this->load($importPath);
+            // only replace the import with the content if we can grab the
+            // content of the file
+            if (@file_exists($importPath) && is_file($importPath)) {
+                // grab content
+                $importContent = $this->load($importPath);
 
-				// fix relative paths
-				$importContent = $this->move($importPath, $source, $importContent);
+                // fix relative paths
+                $importContent = $this->move($importPath, $source, $importContent);
 
-				// check if this is only valid for certain media
-				if ($match['media']) {
-					$importContent = '@media ' . $match['media'] . '{' . "\n" . $importContent . "\n" . '}';
-				}
+                // check if this is only valid for certain media
+                if ($match['media']) {
+                    $importContent = '@media ' . $match['media'] . '{' . "\n" . $importContent . "\n" . '}';
+                }
 
-				// add to replacement array
-				$search[] = $match[0];
-				$replace[] = $importContent;
-			}
-		}
+                // add to replacement array
+                $search[] = $match[0];
+                $replace[] = $importContent;
+            }
+        }
 
-		// replace the import statements
-		$content = str_replace($search, $replace, $content);
+        // replace the import statements
+        $content = str_replace($search, $replace, $content);
 
-		// ge recursive (if imports have occurred)
-		if ($search) {
-			$content = $this->combineImports($source, $content);
-		}
+        // ge recursive (if imports have occurred)
+        if ($search) {
+            $content = $this->combineImports($source, $content);
+        }
 
         return $content;
     }
@@ -396,7 +396,7 @@ class CSS extends Minify
          * recent PCRE version. That's why I'm doing 2 separate regular
          * expressions & combining the matches after executing of both.
          */
-        $regexes = array(
+        $relativeRegexes = array(
             // url(xxx)
             '/
             # open url()
@@ -459,8 +459,8 @@ class CSS extends Minify
 
         // find all relative urls in css
         $matches = array();
-        foreach ($regexes as $regex) {
-            if (preg_match_all($regex, $content, $regexMatches, PREG_SET_ORDER)) {
+        foreach ($relativeRegexes as $relativeRegex) {
+            if (preg_match_all($relativeRegex, $content, $regexMatches, PREG_SET_ORDER)) {
                 $matches = array_merge($matches, $regexMatches);
             }
         }

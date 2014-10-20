@@ -17,6 +17,11 @@ class CSSTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+/*
+        file_put_contents(__DIR__ . '/sample/bom/bom.css', chr(239) . chr(187) . chr(191) . "
+");
+*/
+
         parent::setUp();
         $this->minifier = new Minify\CSS();
     }
@@ -103,6 +108,10 @@ class CSSTest extends PHPUnit_Framework_TestCase
             __DIR__ . '/sample/combine_imports/index4.css',
             '@media only screen{body{color:red}}@media only screen{body{color:red}}',
         );
+        $tests[] = array(
+            __DIR__ . '/sample/combine_imports/index5.css',
+            'body{color:red}body{color:red}',
+        );
 
         // shorthand hex color codes
         $tests[] = array(
@@ -144,6 +153,12 @@ class CSSTest extends PHPUnit_Framework_TestCase
         $tests[] = array(
             '.iconic.map-pin:before { content: "\\\\"; }',
             '.iconic.map-pin:before{content:"\\\\"}',
+        );
+
+        // strip BOM
+        $tests[] = array(
+            __DIR__ . '/sample/bom/bom.css',
+            'body{color:red}',
         );
 
         return $tests;
