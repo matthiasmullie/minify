@@ -68,19 +68,19 @@ class CSS extends Minify
      */
     protected function combineImports($source, $content)
     {
-        // the regex to match import statements
-        $importRegex = '/
-
+		$regexes = array(
+			// @import url(xxx)
+			'/
             # import statement
             @import
 
             # whitespace
             \s+
 
-                # (optional) open url()
-                (?P<url>url\()?
+                # open url()
+                url\(
 
-                    # open path enclosure
+                    # (optional) open path enclosure
                     (?P<quotes>["\']?)
 
                         # fetch path
@@ -95,17 +95,17 @@ class CSS extends Minify
                             .+?
                         )
 
-                    # close path enclosure
+                    # (optional) close path enclosure
                     (?P=quotes)
 
-                # (optional) close url()
-                (?(url)\))
+                # close url()
+                \)
 
                 # (optional) trailing whitespace
                 \s*
 
                 # (optional) media statement(s)
-                (?P<media>.*?)
+                (?P<media>[^;]*)
 
                 # (optional) trailing whitespace
                 \s*
@@ -113,47 +113,93 @@ class CSS extends Minify
             # (optional) closing semi-colon
             ;?
 
-            $/mix';
+            /ix',
 
-        // find all relative imports in css (for now we don't support imports
-        // with media, and imports should use url(xxx))
-        if (preg_match_all($importRegex, $content, $matches, PREG_SET_ORDER)) {
-            $search = array();
-            $replace = array();
+			// @import 'xxx'
+			'/
 
-            // loop the matches
-            foreach ($matches as $match) {
-                // get the path for the file that will be imported
-                $importPath = dirname($source) . '/' . $match['path'];
+            # import statement
+            @import
 
-                // only replace the import with the content if we can grab the
-                // content of the file
-                if (@file_exists($importPath) && is_file($importPath)) {
-                    // grab content
-                    $importContent = $this->load($importPath);
+            # whitespace
+            \s+
 
-                    // fix relative paths
-                    $importContent = $this->move($importPath, $source, $importContent);
+				# open path enclosure
+				(?P<quotes>["\'])
 
-                    // check if this is only valid for certain media
-                    if ($match['media']) {
-                        $importContent = '@media ' . $match['media'] . '{' . "\n" . $importContent . "\n" . '}';
-                    }
+					# fetch path
+					(?P<path>
 
-                    // add to replacement array
-                    $search[] = $match[0];
-                    $replace[] = $importContent;
-                }
-            }
+						# do not fetch data uris or external sources
+						(?!(
+							["\']?
+							(data|https?):
+						))
 
-            // replace the import statements
-            $content = str_replace($search, $replace, $content);
+						.+?
+					)
 
-            // ge recursive (if imports have occurred)
-            if ($search) {
-                $content = $this->combineImports($source, $content);
-            }
-        }
+				# close path enclosure
+				(?P=quotes)
+
+                # (optional) trailing whitespace
+                \s*
+
+                # (optional) media statement(s)
+                (?P<media>[^;]*)
+
+                # (optional) trailing whitespace
+                \s*
+
+            # (optional) closing semi-colon
+            ;?
+
+            /ix'
+		);
+
+        // find all relative imports in css
+		$matches = array();
+		foreach ($regexes as $regex) {
+			if (preg_match_all($regex, $content, $regexMatches, PREG_SET_ORDER)) {
+				$matches = array_merge($matches, $regexMatches);
+			}
+		}
+
+		$search = array();
+		$replace = array();
+
+		// loop the matches
+		foreach ($matches as $match) {
+			// get the path for the file that will be imported
+			$importPath = dirname($source) . '/' . $match['path'];
+
+			// only replace the import with the content if we can grab the
+			// content of the file
+			if (@file_exists($importPath) && is_file($importPath)) {
+				// grab content
+				$importContent = $this->load($importPath);
+
+				// fix relative paths
+				$importContent = $this->move($importPath, $source, $importContent);
+
+				// check if this is only valid for certain media
+				if ($match['media']) {
+					$importContent = '@media ' . $match['media'] . '{' . "\n" . $importContent . "\n" . '}';
+				}
+
+				// add to replacement array
+				$search[] = $match[0];
+				$replace[] = $importContent;
+			}
+		}
+
+		// replace the import statements
+		$content = str_replace($search, $replace, $content);
+
+		// ge recursive (if imports have occurred)
+		if ($search) {
+			$content = $this->combineImports($source, $content);
+		}
 
         return $content;
     }
