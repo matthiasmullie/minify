@@ -17,11 +17,6 @@ class CSSTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-/*
-        file_put_contents(__DIR__ . '/sample/bom/bom.css', chr(239) . chr(187) . chr(191) . "
-");
-*/
-
         parent::setUp();
         $this->minifier = new Minify\CSS();
     }
@@ -81,7 +76,6 @@ class CSSTest extends PHPUnit_Framework_TestCase
         $property = $object->getProperty('importExtensions');
         $property->setAccessible(true);
         $this->assertEquals($property->getValue($this->minifier), array('gif' => 'data:image/gif'));
-
     }
 
     /**
