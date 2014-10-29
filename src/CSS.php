@@ -300,7 +300,7 @@ class CSS extends Minify
     {
         $extensions = array_keys($this->importExtensions);
         $regex = '/url\((["\']?)((?!["\']?data:).*?\.(' . implode('|', $extensions) . '))\\1\)/i';
-        if (preg_match_all($regex, $content, $matches, PREG_SET_ORDER)) {
+        if ($extensions && preg_match_all($regex, $content, $matches, PREG_SET_ORDER)) {
             $search = array();
             $replace = array();
 
