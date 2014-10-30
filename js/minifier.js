@@ -23,13 +23,13 @@ $(function() {
 		} else {
 			// Show error message when type is not selected
 			$('#types').addClass('error')
-			showError('Select type!');
+			showError('Please select the type (CSS or JavaScript) of your script!');
 		}
 	},
 	minify = function() {
-		var $form = $('#intro form' ),
-			$submitButton = $('#intro input[type=submit]' ),
-			$spinner = $('<button><i class="fa fa-spinner fa-spin"></i></button>' );
+		var $form = $('#intro form'),
+			$submitButton = $('#intro input[type=submit]'),
+			$spinner = $('<button><i class="fa fa-spinner fa-spin"></i></button>');
 
 			$submitButton.replaceWith($spinner);
 
@@ -39,23 +39,45 @@ $(function() {
 			data: $form.serialize(),
 			dataType: 'text'
 		}).done(function(data, textStatus, jqXHR) {
-			$('#source' ).val(data);
+			var $textarea = $('#source' ),
+				sizes = {
+					original: calculateSize($textarea.val()),
+					minified: calculateSize(data)
+				};
+
+			// replace textarea content with minified script
+			$textarea.val(data);
+
+			// display minifier gains
+			showSuccess(
+				'Original script: ' + sizes.original + 'b, ' +
+				'minified script: ' + sizes.minified + 'b. ' +
+				'Gain: ' + (sizes.original - sizes.minified) + 'b.'
+			);
 
 			$spinner.replaceWith($submitButton);
 		}).fail(function() {
-			showError('Minify failed!');
+			showError('Something, somewhere, somehow failed! Did you post a link to an unreachable script?');
 			$spinner.replaceWith($submitButton);
 		});
 	},
-	showError = function(message) {
-		$('#error' ).text(message);
+	calculateSize = function(text) {
+		return encodeURI(text).split(/%..|./).length - 1;
 	},
-	discardError = function() {
+	showError = function(message) {
+		$('#error').text(message);
+	},
+	showSuccess = function(message) {
+		$('#success').text(message);
+	},
+	discardErrorSuccess = function() {
 		$('#types').removeClass('error');
 		showError('');
+		showSuccess('');
 	};
 
 	$('#source').on('change, keyup', selectType);
 	$('#intro form').on('submit', checkType);
-	$('#intro input[name=type]').on('change', discardError);
+	$('#intro input[name=type]').on('change', discardErrorSuccess);
+	$('#intro #source').on('keyup', discardErrorSuccess);
 });
