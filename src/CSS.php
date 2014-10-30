@@ -214,6 +214,9 @@ class CSS extends Minify
      */
     protected function convertRelativePath($path, $from, $to)
     {
+        $from = realpath($from);
+        $to = realpath($to);
+
         // make sure we're dealing with directories
         $from = @is_file($from) ? dirname($from) : $from;
         $to = @is_file($to) ? dirname($to) : $to;
@@ -239,7 +242,7 @@ class CSS extends Minify
 
         // normalize paths
         do {
-            list($path, $to) = preg_replace('/[^\/]+(?<!\.\.)\/\.\.\//', '', array($path, $to), -1, $count );
+            list($path, $to) = preg_replace('/[^\/]+(?<!\.\.)\/\.\.\//', '', array($path, $to), -1, $count);
         } while ($count);
 
         /*

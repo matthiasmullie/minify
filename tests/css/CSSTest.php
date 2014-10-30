@@ -50,10 +50,10 @@ class CSSTest extends PHPUnit_Framework_TestCase
      * @test
      * @dataProvider dataProviderPaths
      */
-    public function convertRelativePath($source, $target, $expected, $options)
+    public function convertRelativePath($source, $target, $expected)
     {
         $this->minifier->add($source);
-        $result = $this->minifier->minify($target, $options);
+        $result = $this->minifier->minify($target);
 
         $this->assertEquals($expected, $result);
     }
@@ -208,7 +208,6 @@ p  [ remove ~= " spaces  " ]  :nth-child( 3 + 2n )  >  b span   i  ,   div::afte
             $source . '/external.css',
             $target . '/external.css',
             file_get_contents($source . '/external.css'),
-            0
         );
 
         // absolute path
@@ -216,7 +215,6 @@ p  [ remove ~= " spaces  " ]  :nth-child( 3 + 2n )  >  b span   i  ,   div::afte
             $source . '/absolute.css',
             $target . '/absolute.css',
             file_get_contents($source . '/absolute.css'),
-            0
         );
 
         // relative paths
@@ -224,13 +222,31 @@ p  [ remove ~= " spaces  " ]  :nth-child( 3 + 2n )  >  b span   i  ,   div::afte
             $source . '/relative.css',
             $target . '/relative.css',
             '@import url(image.jpg);',
-            0
         );
         $tests[] = array(
             $source . '/../source/relative.css',
             $target . '/target/relative.css',
             '@import url(../image.jpg);',
-            0
+        );
+
+        $sourceRelative = 'tests/css/sample/convert_relative_path/source';
+        $targetRelative = 'tests/css/sample/convert_relative_path/target';
+
+        // from and/or to are relative links
+        $tests[] = array(
+            $sourceRelative . '/relative.css',
+            $target . '/relative.css',
+            '@import url(image.jpg);',
+        );
+        $tests[] = array(
+            $source . '/relative.css',
+            $targetRelative . '/relative.css',
+            '@import url(image.jpg);',
+        );
+        $tests[] = array(
+            $sourceRelative . '/relative.css',
+            $targetRelative . '/relative.css',
+            '@import url(image.jpg);',
         );
 
         return $tests;
