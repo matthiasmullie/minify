@@ -214,8 +214,8 @@ class CSS extends Minify
      */
     protected function convertRelativePath($path, $from, $to)
     {
-        $from = realpath($from);
-        $to = realpath($to);
+        $from = $from ? realpath($from) : '';
+        $to = $to ? realpath($to) : '';
 
         // make sure we're dealing with directories
         $from = @is_file($from) ? dirname($from) : $from;
