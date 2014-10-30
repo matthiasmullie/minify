@@ -176,15 +176,14 @@ class CSS extends Minify
             // only replace the import with the content if we can grab the
             // content of the file
             if (@file_exists($importPath) && is_file($importPath)) {
-                // grab content
-                $importContent = $this->load($importPath);
-
-                // fix relative paths
-                $importContent = $this->move($importPath, $source, $importContent);
+                // grab referenced file & minify it (which may include importing
+                // yet other @import statements recursively)
+                $minifier = new static($importPath);
+                $importContent = $minifier->minify($source);
 
                 // check if this is only valid for certain media
                 if ($match['media']) {
-                    $importContent = '@media ' . $match['media'] . '{' . "\n" . $importContent . "\n" . '}';
+                    $importContent = '@media ' . $match['media'] . '{' . $importContent . '}';
                 }
 
                 // add to replacement array
@@ -195,11 +194,6 @@ class CSS extends Minify
 
         // replace the import statements
         $content = str_replace($search, $replace, $content);
-
-        // ge recursive (if imports have occurred)
-        if ($search) {
-            $content = $this->combineImports($source, $content);
-        }
 
         return $content;
     }
@@ -358,11 +352,24 @@ class CSS extends Minify
             $content .= $css;
         }
 
-        $content = $this->combineImports($path, $content);
-        $content = $this->shortenHex($content);
-        $content = $this->importFiles($path, $content);
-        $content = $this->stripComments($content);
+        /*
+         * Let's first take out strings & comments, since we can't just remove
+         * whitespace anywhere. If whitespace occurs inside a string, we should
+         * leave it alone. E.g.:
+         * p { content: "a   test" }
+         */
+        $this->extractStrings();
+        $this->stripComments();
+        $content = $this->replace($content);
+
         $content = $this->stripWhitespace($content);
+        $content = $this->shortenHex($content);
+
+        // restore the string we've extracted earlier
+        $content = $this->restoreExtractedData($content);
+
+        $content = $this->importFiles($path, $content);
+        $content = $this->combineImports($path, $content);
 
         // save to path
         if ($path !== null) {
@@ -506,16 +513,11 @@ class CSS extends Minify
     }
 
     /**
-     * Strip comments.
-     *
-     * @param  string $content The CSS content to strip the comments for.
-     * @return string
+     * Strip comments from source code.
      */
-    protected function stripComments($content)
+    protected function stripComments()
     {
-        $content = preg_replace('/\/\*(.*?)\*\//is', '', $content);
-
-        return $content;
+        $this->registerPattern('/\/\*.*?\*\//s', '');
     }
 
     /**
@@ -526,18 +528,23 @@ class CSS extends Minify
      */
     protected function stripWhitespace($content)
     {
-        // remove semicolon/whitespace followed by closing bracket
-        $content = preg_replace('/;?\s*}/', '}', $content);
-
-        // remove whitespace following bracket, colon, semicolon or comma
-        $content = preg_replace('/\s*([\{:;,])\s*/', '$1', $content);
-
         // remove leading & trailing whitespace
-        $content = preg_replace('/^\s*|\s*$/m', '', $content);
+        $content = preg_replace('/^\s*/m', '', $content);
+        $content = preg_replace('/\s*$/m', '', $content);
 
-        // remove newlines
-        $content = preg_replace('/\n/', '', $content);
+        // replace newlines with a single space
+        $content = preg_replace('/\s+/', ' ', $content);
 
-        return $content;
+        // remove whitespace around meta characters
+        // inspired by stackoverflow.com/questions/15195750/minify-compress-css-with-regex
+        $content = preg_replace('/\s*([\*$~^|]?+=|[{};,>~+-]|!important\b)\s*/', '$1', $content);
+        $content = preg_replace('/([\[(:])\s+/', '$1', $content);
+        $content = preg_replace('/\s+([\]\)])/', '$1', $content);
+        $content = preg_replace('/\s+(:)(?![^\}]*\{)/', '$1', $content);
+
+        // remove semicolon/whitespace followed by closing bracket
+        $content = preg_replace('/;}/', '}', $content);
+
+        return trim($content);
     }
 }

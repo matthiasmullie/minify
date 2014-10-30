@@ -106,6 +106,10 @@ class CSSTest extends PHPUnit_Framework_TestCase
             __DIR__ . '/sample/combine_imports/index5.css',
             'body{color:red}body{color:red}',
         );
+        $tests[] = array(
+            __DIR__ . '/sample/combine_imports/index6a.css',
+            'body{color:red}',
+        );
 
         // shorthand hex color codes
         $tests[] = array(
@@ -133,8 +137,39 @@ class CSSTest extends PHPUnit_Framework_TestCase
 
         // whitespace inside strings shouldn't be replaced
         $tests[] = array(
-            'content:"preserve   whitespace',
-            'content:"preserve   whitespace',
+            'content:"preserve   whitespace"',
+            'content:"preserve   whitespace"',
+        );
+
+        $tests[] = array(
+            'html
+            body {
+                color: red;
+            }',
+            'html body{color:red}'
+        );
+
+        $tests[] = array(
+            '
+p * i ,  html
+/* remove spaces */
+
+/* " comments have no escapes \*/
+body/* keep */ /* space */p,
+p  [ remove ~= " spaces  " ]  :nth-child( 3 + 2n )  >  b span   i  ,   div::after
+
+{
+  /* comment */
+    background :  url(  "  /* string */  " )   blue  !important ;
+    content  :  " escapes \" allowed \\" ;
+      width: calc( 100% - 3em + 5px ) ;
+  margin-top : 0;
+  margin-bottom : 0;
+  margin-left : 10px;
+  margin-right : 10px;
+}
+',
+            'p * i,html body p,p [remove~=" spaces  "] :nth-child(3+2n)>b span i,div::after{background:url("  /* string */  ") blue!important;content:" escapes \" allowed \\";width:calc(100%-3em+5px);margin-top:0;margin-bottom:0;margin-left:10px;margin-right:10px}'
         );
 
         /*
