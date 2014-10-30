@@ -15,15 +15,6 @@ namespace MatthiasMullie\Minify;
 class JS extends Minify
 {
     /**
-     * This array will hold content of strings and regular expressions that have
-     * been extracted from the JS source code, so we can reliably match "code",
-     * without having to worry about potential "code-like" characters inside.
-     *
-     * @var string[]
-     */
-    public $extracted = array();
-
-    /**
      * List of JavaScript operators that accept a <variable, value, ...> after
      * them. We'll insert semicolons if they're missing at EOL, but some
      * end of lines are not the end of a statement, like with these operators.
@@ -155,32 +146,6 @@ class JS extends Minify
     }
 
     /**
-     * Strings are a pattern we need to match, in order to ignore potential
-     * code-like content inside them, but we just want all of the string
-     * content to remain untouched.
-     *
-     * This method will replace all string content with simple STRING#
-     * placeholder text, so we've rid all strings from characters that may be
-     * misinterpreted. Original string content will be saved in $this->extracted
-     * and after doing all other minifying, we can restore the original content
-     * via restoreStrings()
-     */
-    protected function extractStrings()
-    {
-        // PHP only supports $this inside anonymous functions since 5.4
-        $minifier = $this;
-        $callback = function ($match) use ($minifier) {
-            $count = count($minifier->extracted);
-            $placeholder = $match[1] . 'STRING' . $count . $match[1];
-            $minifier->extracted[$placeholder] = $match[1] . $match[2] . $match[1];
-
-            return $placeholder;
-        };
-
-        $this->registerPattern('/([\'"])(.*?)(?<!\\\\)\\1/s', $callback);
-    }
-
-    /**
      * Strip comments from source code.
      */
     protected function stripComments()
@@ -226,21 +191,6 @@ class JS extends Minify
         $before = $this->getOperatorsForRegex($this->operatorsBefore, '/');
         $this->registerPattern('/^\s*\K\/(.*?(?<!\\\\)(\\\\\\\\)*)\//', $callback);
         $this->registerPattern('/(?:' . implode('|', $before) . ')\s*\K\/(.*?(?<!\\\\)(\\\\\\\\)*)\//', $callback);
-    }
-
-    /**
-     * This method will restore all extracted data (strings, regexes) that were
-     * replaced with placeholder text in extract*(). The original content was
-     * saved in $this->extracted.
-     *
-     * @param string $content
-     * @return string
-     */
-    protected function restoreExtractedData($content)
-    {
-        $content = str_replace(array_keys($this->extracted), $this->extracted, $content);
-        $this->extracted = array();
-        return $content;
     }
 
     /**
