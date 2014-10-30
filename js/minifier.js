@@ -37,22 +37,15 @@ $(function() {
 			url: $form.attr('action'),
 			type: $form.attr('method'),
 			data: $form.serialize(),
-			dataType: 'text'
 		}).done(function(data, textStatus, jqXHR) {
-			var $textarea = $('#source' ),
-				sizes = {
-					original: calculateSize($textarea.val()),
-					minified: calculateSize(data)
-				};
-
 			// replace textarea content with minified script
-			$textarea.val(data);
+			$('#source').val(data.minified);
 
 			// display minifier gains
 			showSuccess(
-				'Original script: ' + sizes.original + 'b, ' +
-				'minified script: ' + sizes.minified + 'b. ' +
-				'Gain: ' + (sizes.original - sizes.minified) + 'b.'
+				'Original script: ' + data.sizes.original + 'b, ' +
+				'minified script: ' + data.sizes.minified + 'b. ' +
+				'Gain: ' + (data.sizes.original - data.sizes.minified) + 'b.'
 			);
 
 			$spinner.replaceWith($submitButton);
@@ -60,9 +53,6 @@ $(function() {
 			showError('Something, somewhere, somehow failed! Did you post a link to an unreachable script?');
 			$spinner.replaceWith($submitButton);
 		});
-	},
-	calculateSize = function(text) {
-		return encodeURI(text).split(/%..|./).length - 1;
 	},
 	showError = function(message) {
 		$('#error').text(message);
