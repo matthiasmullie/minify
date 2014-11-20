@@ -169,7 +169,7 @@ p  [ remove ~= " spaces  " ]  :nth-child( 3 + 2n )  >  b span   i  ,   div::afte
   margin-right : 10px;
 }
 ',
-            'p * i,html body p,p [remove~=" spaces  "] :nth-child(3+2n)>b span i,div::after{background:url("  /* string */  ") blue!important;content:" escapes \" allowed \\";width:calc(100%-3em+5px);margin-top:0;margin-bottom:0;margin-left:10px;margin-right:10px}'
+            'p * i,html body p,p [remove~=" spaces  "] :nth-child(3+2n)>b span i,div::after{background:url("  /* string */  ") blue!important;content:" escapes \" allowed \\";width:calc(100% - 3em + 5px);margin-top:0;margin-bottom:0;margin-left:10px;margin-right:10px}'
         );
 
         /*
@@ -188,6 +188,12 @@ p  [ remove ~= " spaces  " ]  :nth-child( 3 + 2n )  >  b span   i  ,   div::afte
         $tests[] = array(
             __DIR__ . '/sample/bom/bom.css',
             'body{color:red}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/22
+        $tests[] = array(
+            'p { background-position: -0px -64px; }',
+            'p{background-position:-0px -64px}',
         );
 
         return $tests;

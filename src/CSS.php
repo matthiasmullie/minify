@@ -540,10 +540,15 @@ class CSS extends Minify
 
         // remove whitespace around meta characters
         // inspired by stackoverflow.com/questions/15195750/minify-compress-css-with-regex
-        $content = preg_replace('/\s*([\*$~^|]?+=|[{};,>~+-]|!important\b)\s*/', '$1', $content);
+        $content = preg_replace('/\s*([\*$~^|]?+=|[{};,>~]|!important\b)\s*/', '$1', $content);
         $content = preg_replace('/([\[(:])\s+/', '$1', $content);
         $content = preg_replace('/\s+([\]\)])/', '$1', $content);
         $content = preg_replace('/\s+(:)(?![^\}]*\{)/', '$1', $content);
+
+        // whitespace around + and - can only be stripped in selectors, like
+        // :nth-child(3+2n), not in things like calc(3px + 2px) or shorthands
+        // like 3px -2px
+        $content = preg_replace('/\s*([+-])\s*(?=[^}]*{)/', '$1', $content);
 
         // remove semicolon/whitespace followed by closing bracket
         $content = preg_replace('/;}/', '}', $content);
