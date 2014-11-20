@@ -367,6 +367,7 @@ class CSS extends Minify
 
         $content = $this->stripWhitespace($content);
         $content = $this->shortenHex($content);
+        $content = $this->shortenZeroes($content);
 
         // restore the string we've extracted earlier
         $content = $this->restoreExtractedData($content);
@@ -511,6 +512,19 @@ class CSS extends Minify
     protected function shortenHex($content)
     {
         $content = preg_replace('/(?<![\'"])#([0-9a-z])\\1([0-9a-z])\\2([0-9a-z])\\3(?![\'"])/i', '#$1$2$3', $content);
+
+        return $content;
+    }
+
+    /**
+     * Shorthand 0 values to plain 0, instead of e.g. -0em.
+     *
+     * @param  string $content The CSS content to shorten the zero values for.
+     * @return string
+     */
+    protected function shortenZeroes($content)
+    {
+        $content = preg_replace('/(?<![0-9])-?0(%|px|em)?/i', '0', $content);
 
         return $content;
     }

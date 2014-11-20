@@ -193,7 +193,7 @@ p  [ remove ~= " spaces  " ]  :nth-child( 3 + 2n )  >  b span   i  ,   div::afte
         // https://github.com/matthiasmullie/minify/issues/22
         $tests[] = array(
             'p { background-position: -0px -64px; }',
-            'p{background-position:-0px -64px}',
+            'p{background-position:0 -64px}',
         );
 
         return $tests;
