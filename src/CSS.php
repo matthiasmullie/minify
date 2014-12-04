@@ -524,7 +524,8 @@ class CSS extends Minify
      */
     protected function shortenZeroes($content)
     {
-        $content = preg_replace('/(?<![0-9])-?(0+|0+\.0+|\.0+)(?![\.0-9])(%|px|em)?/', '0', $content);
+        $units = array('em', 'ex', '%', 'px', 'cm', 'mm', 'in', 'pt', 'pc', 'ch', 'rem', 'vh', 'vw', 'vmin', 'vmax', 'vm');
+        $content = preg_replace('/(?<![0-9])-?(0+|0+\.0+|\.0+)(?![\.0-9])(' . implode('|', $units) . ')?/', '0', $content);
 
         return $content;
     }
