@@ -196,6 +196,26 @@ p  [ remove ~= " spaces  " ]  :nth-child( 3 + 2n )  >  b span   i  ,   div::afte
             'p{background-position:0 -64px}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/23
+        $tests[] = array(
+            'ul.pagination {
+display: block;
+min-height: 1.5rem;
+margin-left: -0.3125rem;
+}',
+            'ul.pagination{display:block;min-height:1.5rem;margin-left:-0.3125rem}',
+        );
+
+        // edge cases for stripping zeroes
+        $tests[] = array(
+            'p { margin: -0.01em; }',
+            'p{margin:-0.01em}',
+        );
+        $tests[] = array(
+            'p { margin: .0; }',
+            'p{margin:0}',
+        );
+
         return $tests;
     }
 

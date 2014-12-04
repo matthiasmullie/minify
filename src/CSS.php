@@ -524,7 +524,7 @@ class CSS extends Minify
      */
     protected function shortenZeroes($content)
     {
-        $content = preg_replace('/(?<![0-9])-?0(%|px|em)?/i', '0', $content);
+        $content = preg_replace('/(?<![0-9])-?(0+|0+\.0+|\.0+)(?![\.0-9])(%|px|em)?/', '0', $content);
 
         return $content;
     }
