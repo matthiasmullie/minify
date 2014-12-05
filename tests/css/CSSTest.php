@@ -220,6 +220,12 @@ margin-left: -0.3125rem;
             'p{margin:0}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/24
+        $tests[] = array(
+            '.col-1-1 { width: 100.00%; }',
+            '.col-1-1{width:100%}',
+        );
+
         return $tests;
     }
 
