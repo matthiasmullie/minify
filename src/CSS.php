@@ -528,8 +528,8 @@ class CSS extends Minify
         $content = preg_replace('/(?<![0-9])\.0+(?![1-9])/', '0', $content);
         $content = preg_replace('/\.0+(?![1-9])/', '', $content);
 
-        // truncate zeroes (00 -> 0)
-        $content = preg_replace('/(?<![1-9])0+(?![1-9])/', '0', $content);
+        // truncate zeroes (00 -> 0) (can't be preceded by # for #000 colors)
+        $content = preg_replace('/(?<![#0-9])0+(?![1-9])/', '0', $content);
 
         // strip negative zeroes (-0 -> 0)
         $content = preg_replace('/(?<![0-9])-0(?![\.0-9])/', '0', $content);

@@ -226,6 +226,12 @@ margin-left: -0.3125rem;
             '.col-1-1{width:100%}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/25
+        $tests[] = array(
+            'p { background-color: #000000; color: #000; }',
+            'p{background-color:#000;color:#000}',
+        );
+
         return $tests;
     }
 
