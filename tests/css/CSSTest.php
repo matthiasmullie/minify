@@ -219,6 +219,14 @@ margin-left: -0.3125rem;
             'p { margin: .0; }',
             'p{margin:0}',
         );
+        $tests[] = array(
+            'p { margin: 00px; }',
+            'p{margin:0}',
+        );
+        $tests[] = array(
+            'p.class00 { background-color: #000000; color: #000; }',
+            'p.class00{background-color:#000;color:#000}',
+        );
 
         // https://github.com/matthiasmullie/minify/issues/24
         $tests[] = array(

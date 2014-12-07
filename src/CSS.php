@@ -525,18 +525,21 @@ class CSS extends Minify
     protected function shortenZeroes($content)
     {
         // strip 0-digits (.0 -> 0, 50.00 -> 50)
+        // no risk of stripping selectors, a class name can't start with a digit
         $content = preg_replace('/(?<![0-9])\.0+(?![1-9])/', '0', $content);
         $content = preg_replace('/\.0+(?![1-9])/', '', $content);
 
-        // truncate zeroes (00 -> 0) (can't be preceded by # for #000 colors)
-        $content = preg_replace('/(?<![#0-9])0+(?![1-9])/', '0', $content);
-
         // strip negative zeroes (-0 -> 0)
-        $content = preg_replace('/(?<![0-9])-0(?![\.0-9])/', '0', $content);
+        $content = preg_replace('/(?<![0-9])-0+(?![\.1-9])/', '0', $content);
 
         // strip units after zeroes (0px -> 0)
         $units = array('em', 'ex', '%', 'px', 'cm', 'mm', 'in', 'pt', 'pc', 'ch', 'rem', 'vh', 'vw', 'vmin', 'vmax', 'vm');
-        $content = preg_replace('/(?<![0-9])0(' . implode('|', $units) . ')/', '0', $content);
+        $content = preg_replace('/(?<![0-9])0+(' . implode('|', $units) . ')/', '0', $content);
+
+        // truncate zeroes (00 -> 0) (can't be preceded by # for #000 colors)
+        // only before & after certain characters, to ensure we don't truncate
+        // zeroes in e.g. #000 or selectors
+        $content = preg_replace('/(?<=[ :\(])0+(?=[ :\)])/', '0', $content);
 
         return $content;
     }
