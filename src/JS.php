@@ -158,7 +158,7 @@ class JS extends Minify
     }
 
     /**
-     * JS kan have /-delimited regular expressions, like: /ab+c/.match(string)
+     * JS can have /-delimited regular expressions, like: /ab+c/.match(string)
      *
      * The content inside the regex can contain characters that may be confused
      * for JS code: e.g. it could contain whitespace it needs to match & we

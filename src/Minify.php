@@ -155,16 +155,34 @@ abstract class Minify
     protected function replace($content)
     {
         $processed = '';
+        $positions = array_fill(0, count($this->patterns), -1);
+        $matches = array();
 
         while ($content) {
-            // execute all patterns and find the first match
-            $matches = array();
+            // find first match for all patterns
             foreach ($this->patterns as $i => $pattern) {
                 list($pattern, $replacement) = $pattern;
+
+                // no need to re-run matches that are still in the part of the
+                // content that hasn't been processed
+                if ($positions[$i] >= 0) {
+                    continue;
+                }
 
                 $match = null;
                 if (preg_match($pattern, $content, $match)) {
                     $matches[$i] = $match;
+
+                    // we'll store the match position as well; that way, we
+                    // don't have to redo all preg_matches after changing only
+                    // the first (we'll still know where those others are)
+                    $positions[$i] = strpos($content, $match[0]);
+                } else {
+                    // if the pattern couldn't be matched, there's no point in
+                    // executing it again in later runs on this same content;
+                    // ignore this one until we reach end of content
+                    unset($matches[$i]);
+                    $positions[$i] = strlen($content);
                 }
             }
 
@@ -177,10 +195,6 @@ abstract class Minify
             // see which of the patterns actually found the first thing (we'll
             // only want to execute that one, since we're unsure if what the
             // other found was not inside what the first found)
-            $positions = array();
-            foreach ($matches as $i => $match) {
-                $positions[$i] = strpos($content, $match[0]);
-            }
             $discardLength = min($positions);
             $firstPattern = array_search($discardLength, $positions);
             $match = $matches[$firstPattern][0];
@@ -198,6 +212,13 @@ abstract class Minify
             // again match batch of patterns against
             $processed .= substr($replacement, 0, strlen($replacement) - strlen($unmatched));
             $content = $unmatched;
+
+            // first match has been replaced & that content is to be left alone,
+            // the next matches will start after this replacement, so we should
+            // fix their offsets
+            foreach ($positions as $i => $position) {
+                $positions[$i] -= $discardLength + strlen($match);
+            }
         }
 
         return $processed;
