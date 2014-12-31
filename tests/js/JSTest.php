@@ -334,6 +334,16 @@ utils.array={}',
             'var rsingleTag=(/^<(\w+)\s*\/?>(?:<\/\1>|)$/)',
         );
 
+        // replace associative array key references by property notation
+        $tests[] = array(
+            'array["key"][\'key2\']',
+            'array.key.key2',
+        );
+        $tests[] = array(
+            'array[ "key" ][ \'key2\' ]',
+            'array.key.key2',
+        );
+
         // https://github.com/matthiasmullie/minify/issues/10
         $tests[] = array(
             '// first mutation patch
