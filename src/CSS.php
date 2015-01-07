@@ -527,7 +527,7 @@ class CSS extends Minify
         // strip 0-digits (.0 -> 0, 50.00 -> 50)
         // no risk of stripping selectors, a class name can't start with a digit
         $content = preg_replace('/(?<![0-9])\.0+(?![1-9])/', '0', $content);
-        $content = preg_replace('/\.0+(?![1-9])/', '', $content);
+        $content = preg_replace('/\.0+(?!0*[1-9])/', '', $content);
 
         // strip negative zeroes (-0 -> 0)
         $content = preg_replace('/(?<![0-9])-0+(?![\.1-9])/', '0', $content);

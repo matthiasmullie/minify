@@ -240,6 +240,12 @@ margin-left: -0.3125rem;
             'p{background-color:#000;color:#000}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/26
+        $tests[] = array(
+            '.hr > :first-child { width: 0.0001%; }',
+            '.hr>:first-child{width:0.0001%}',
+        );
+
         return $tests;
     }
 
