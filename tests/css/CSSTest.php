@@ -220,6 +220,26 @@ margin-left: -0.3125rem;
             'p{margin:0}',
         );
         $tests[] = array(
+            'p { margin: .0%; }',
+            'p{margin:0}',
+        );
+        $tests[] = array(
+            'p { margin: 1.0; }',
+            'p{margin:1}',
+        );
+        $tests[] = array(
+            'p { margin: 1.0px; }',
+            'p{margin:1px}',
+        );
+        $tests[] = array(
+            'p { margin: 1.1; }',
+            'p{margin:1.1}',
+        );
+        $tests[] = array(
+            'p { margin: 1.1em; }',
+            'p{margin:1.1em}',
+        );
+        $tests[] = array(
             'p { margin: 00px; }',
             'p{margin:0}',
         );
@@ -244,6 +264,12 @@ margin-left: -0.3125rem;
         $tests[] = array(
             '.hr > :first-child { width: 0.0001%; }',
             '.hr>:first-child{width:0.0001%}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/28
+        $tests[] = array(
+            "@font-face { src: url(//netdna.bootstrapcdn.com/font-awesome/4.2.0/fonts/fontawesome-webfont.eot?v=4.2.0); }",
+            "@font-face{src:url(//netdna.bootstrapcdn.com/font-awesome/4.2.0/fonts/fontawesome-webfont.eot?v=4.2.0)}",
         );
 
         return $tests;

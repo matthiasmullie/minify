@@ -524,22 +524,25 @@ class CSS extends Minify
      */
     protected function shortenZeroes($content)
     {
-        // strip 0-digits (.0 -> 0, 50.00 -> 50)
-        // no risk of stripping selectors, a class name can't start with a digit
-        $content = preg_replace('/(?<![0-9])\.0+(?![1-9])/', '0', $content);
-        $content = preg_replace('/\.0+(?!0*[1-9])/', '', $content);
-
-        // strip negative zeroes (-0 -> 0)
-        $content = preg_replace('/(?<![0-9])-0+(?![\.1-9])/', '0', $content);
+        // reusable bits of code throughout these regexes:
+        // before & after are used to make sure we don't match lose unintended
+        // 0-like values (e.g. in #000, or in http://url/1.0)
+        // units can be stripped from 0 values, or used to recognize non 0
+        // values (where wa may be able to strip a .0 suffix)
+        $before = '(?<=[:(, ])';
+        $after = '(?=[ ,);}])';
+        $units = '(em|ex|%|px|cm|mm|in|pt|pc|ch|rem|vh|vw|vmin|vmax|vm)';
 
         // strip units after zeroes (0px -> 0)
-        $units = array('em', 'ex', '%', 'px', 'cm', 'mm', 'in', 'pt', 'pc', 'ch', 'rem', 'vh', 'vw', 'vmin', 'vmax', 'vm');
-        $content = preg_replace('/(?<![0-9])0+(' . implode('|', $units) . ')/', '0', $content);
+        $content = preg_replace('/' . $before . '(-?0*(\.0+)?)' . $units . $after . '/', '\\1', $content);
 
-        // truncate zeroes (00 -> 0) (can't be preceded by # for #000 colors)
-        // only before & after certain characters, to ensure we don't truncate
-        // zeroes in e.g. #000 or selectors
-        $content = preg_replace('/(?<=[ :\(])0+(?=[ :\)])/', '0', $content);
+        // strip 0-digits (.0 -> 0)
+        $content = preg_replace('/' . $before . '\.0+' . $after . '/', '0', $content);
+        // 50.00 -> 50, 50.00px -> 50px (non-0 can still be followed by units)
+        $content = preg_replace('/' . $before . '(-?[0-9]+)\.0+' . $units . '?' . $after . '/', '\\1\\2', $content);
+
+        // strip negative zeroes (-0 -> 0) & truncate zeroes (00 -> 0)
+        $content = preg_replace('/' . $before . '-?0+' . $after . '/', '0', $content);
 
         return $content;
     }
