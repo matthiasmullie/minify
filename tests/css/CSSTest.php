@@ -331,6 +331,13 @@ margin-left: -0.3125rem;
             '@import url(image.jpg);',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/29
+        $tests[] = array(
+            $sourceRelative . '/issue29.css',
+            $targetRelative . '/issue29.css',
+            "@import url('http://myurl.de');",
+        );
+
         return $tests;
     }
 }

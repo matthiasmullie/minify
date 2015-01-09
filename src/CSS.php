@@ -413,6 +413,8 @@ class CSS extends Minify
             # open url()
             url\(
 
+                \s*
+
                 # open path enclosure
                 (?P<quotes>["\'])?
 
@@ -421,6 +423,7 @@ class CSS extends Minify
 
                         # do not fetch data uris or external sources
                         (?!(
+                            \s?
                             ["\']?
                             (data|https?):
                         ))
@@ -430,6 +433,8 @@ class CSS extends Minify
 
                 # close path enclosure
                 (?(quotes)(?P=quotes))
+
+                \s*
 
             # close url()
             \)
