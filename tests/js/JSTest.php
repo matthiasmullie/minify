@@ -391,6 +391,12 @@ deferred.reject();else deferred.resolve(data)',
 throw new Error('.editManager.js: jQuery is required and must be loaded first')",
         );
 
+        // https://github.com/matthiasmullie/minify/issues/27
+        $tests[] = array(
+            '$.expr[":"]',
+            '$.expr[":"]',
+        );
+
         return $tests;
     }
 }
