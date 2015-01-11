@@ -329,6 +329,6 @@ class JS extends Minify
             return preg_match($variable, $property) ? '.' . $property : $match[0];
         };
 
-        return preg_replace_callback('/\[(([\'"])[A-Z0-9]+\\2)\]/', $callback, $content);
+        return preg_replace_callback('/\[(([\'"])[0-9]+\\2)\]/', $callback, $content);
     }
 }
