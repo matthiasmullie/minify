@@ -181,7 +181,7 @@ class JS extends Minify
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
             $count = count($minifier->extracted);
-            $placeholder = '/REGEX' . $count . '/';
+            $placeholder = '/' . $count . '/';
             $minifier->extracted[$placeholder] = '/' . $match[1] . '/';
 
             return $placeholder;

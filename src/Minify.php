@@ -261,7 +261,7 @@ abstract class Minify
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
             $count = count($minifier->extracted);
-            $placeholder = $match[1] . 'STRING' . $count . $match[1];
+            $placeholder = $match[1] . $count . $match[1];
             $minifier->extracted[$placeholder] = $match[1] . $match[2] . $match[1];
 
             return $placeholder;
