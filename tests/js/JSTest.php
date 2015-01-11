@@ -343,6 +343,10 @@ utils.array={}',
             'array[ "key" ][ \'key2\' ]',
             'array.key.key2',
         );
+        $tests[] = array(
+            'array["a","b","c"]',
+            'array["a","b","c"]',
+        );
 
         // https://github.com/matthiasmullie/minify/issues/10
         $tests[] = array(
