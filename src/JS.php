@@ -339,7 +339,7 @@ class JS extends Minify
              * array['key-here'] can't be replaced by array.key-here since '-'
              * is not a valid character there.
              */
-            return preg_match('/^' . static::REGEX_VARIABLE  . '$/u', $property) ? '.' . $property : $match[0];
+            return preg_match('/^' . $minifier::REGEX_VARIABLE  . '$/u', $property) ? '.' . $property : $match[0];
         };
 
         /*
