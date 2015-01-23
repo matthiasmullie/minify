@@ -539,7 +539,7 @@ class CSS extends Minify
         $units = '(em|ex|%|px|cm|mm|in|pt|pc|ch|rem|vh|vw|vmin|vmax|vm)';
 
         // strip units after zeroes (0px -> 0)
-        $content = preg_replace('/' . $before . '(-?0*(\.0+)?)' . $units . $after . '/', '\\1', $content);
+        $content = preg_replace('/' . $before . '(-?0*(\.0+)?)(?<=0)' . $units . $after . '/', '\\1', $content);
 
         // strip 0-digits (.0 -> 0)
         $content = preg_replace('/' . $before . '\.0+' . $after . '/', '0', $content);

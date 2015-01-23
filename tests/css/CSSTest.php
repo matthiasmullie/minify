@@ -272,6 +272,12 @@ margin-left: -0.3125rem;
             "@font-face{src:url(//netdna.bootstrapcdn.com/font-awesome/4.2.0/fonts/fontawesome-webfont.eot?v=4.2.0)}",
         );
 
+        // https://github.com/matthiasmullie/minify/issues/31
+        $tests[] = array(
+            "dfn,em,img{}",
+            "dfn,em,img{}",
+        );
+
         return $tests;
     }
 
