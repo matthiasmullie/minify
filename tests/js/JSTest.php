@@ -347,6 +347,15 @@ utils.array={}',
             'array["a","b","c"]',
             'array["a","b","c"]',
         );
+        //
+        $tests[] = array(
+            "['loader']",
+            "['loader']",
+        );
+        $tests[] = array(
+            'array["dont-replace"][\'key2\']',
+            'array["dont-replace"].key2',
+        );
 
         // https://github.com/matthiasmullie/minify/issues/10
         $tests[] = array(
@@ -399,6 +408,12 @@ throw new Error('.editManager.js: jQuery is required and must be loaded first')"
         $tests[] = array(
             '$.expr[":"]',
             '$.expr[":"]',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/31
+        $tests[] = array(
+            "$(_this).attr('src',this.src).trigger('adapt',['loader'])",
+            "$(_this).attr('src',this.src).trigger('adapt',['loader'])",
         );
 
         return $tests;
