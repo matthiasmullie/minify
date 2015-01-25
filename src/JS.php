@@ -134,7 +134,7 @@ class JS extends Minify
          * Comments will be removed altogether, strings and regular expressions
          * will be replaced by placeholder text, which we'll restore later.
          */
-        $this->extractStrings();
+        $this->extractStrings('\'"`');
         $this->stripComments();
         $this->extractRegex();
         $content = $this->replace($content);

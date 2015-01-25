@@ -254,8 +254,10 @@ abstract class Minify
      * misinterpreted. Original string content will be saved in $this->extracted
      * and after doing all other minifying, we can restore the original content
      * via restoreStrings()
+     *
+     * @param string[optional] $chars
      */
-    protected function extractStrings()
+    protected function extractStrings($chars = '\'"')
     {
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
@@ -267,7 +269,7 @@ abstract class Minify
             return $placeholder;
         };
 
-        $this->registerPattern('/([\'"])(.*?)(?<!\\\\)\\1/s', $callback);
+        $this->registerPattern('/([' . $chars . '])(.*?)(?<!\\\\)\\1/s', $callback);
     }
 
     /**

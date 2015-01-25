@@ -57,6 +57,12 @@ class JSTest extends PHPUnit_Framework_TestCase
             'alert("Escaped quote which is same as string quotes: \"; should not match")',
         );
 
+        // backtick string (allow string interpolation)
+        $tests[] = array(
+            'var str=`Hi, ${name}`',
+            'var str=`Hi, ${name}`',
+        );
+
         // regex delimiters need to be treated as strings
         // (two forward slashes could look like a comment)
         $tests[] = array(
