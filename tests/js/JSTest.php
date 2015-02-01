@@ -100,7 +100,7 @@ class JSTest extends PHPUnit_Framework_TestCase
         // make sure no ; is added in places it shouldn't
         $tests[] = array(
             'if(true){}else{}',
-            'if(true){}else{}',
+            'if(!0){}else{}',
         );
         $tests[] = array(
             'do{i++}while(i<1)',
@@ -109,7 +109,7 @@ class JSTest extends PHPUnit_Framework_TestCase
 
         $tests[] = array(
             'if(true)statement;else statement',
-            'if(true)statement;else statement',
+            'if(!0)statement;else statement',
         );
 
         $tests[] = array(
@@ -166,7 +166,7 @@ d=e+f',
             'digestif
             (true)
             statement',
-            'digestif(true)
+            'digestif(!0)
 statement',
         );
         $tests[] = array(
@@ -181,7 +181,7 @@ statement',
                  )
             )
             statement',
-            'if((true)&&(true))
+            'if((!0)&&(!0))
 statement',
         );
         $tests[] = array(
@@ -194,7 +194,7 @@ statement',
              else
              {
              }',
-            'if(true){}
+            'if(!0){}
 else{}',
         );
         $tests[] = array(
@@ -214,7 +214,7 @@ while(i<1)',
                  statement
              else
                  statement',
-            'if(true)
+            'if(!0)
 statement
 else statement',
         );
@@ -239,7 +239,7 @@ else statement',
             'if ( true ) {
              } else {
              }',
-            'if(true){}else{}',
+            'if(!0){}else{}',
         );
         $tests[] = array(
             '53  instanceof  String',
@@ -289,6 +289,16 @@ else statement',
             'object.property',
         );
 
+        // add comment in between whitespace that needs to be stripped
+        $tests[] = array(
+            'var test=true,test2=false',
+            'var test=!0,test2=!1',
+        );
+        $tests[] = array(
+            'var testtrue="testing if true as part of varname is ignored as it should"',
+            'var testtrue="testing if true as part of varname is ignored as it should"',
+        );
+
         // random bits of code that tripped errors during development
         $tests[] = array(
             '
@@ -311,7 +321,7 @@ else newElement=currentElement',
                  debug: false,
                  current: {}
              }',
-            'var jsBackend={debug:false,current:{}}',
+            'var jsBackend={debug:!1,current:{}}',
         );
         $tests[] = array(
             'var utils =
@@ -321,7 +331,7 @@ else newElement=currentElement',
              utils.array =
              {
              }',
-            'var utils={debug:false}
+            'var utils={debug:!1}
 utils.array={}',
         );
         $tests[] = array(

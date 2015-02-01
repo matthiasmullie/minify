@@ -141,6 +141,7 @@ class JS extends Minify
 
         $content = $this->stripWhitespace($content);
         $content = $this->propertyNotation($content);
+        $content = $this->shortenBools($content);
 
         /*
          * Earlier, we extracted strings & regular expressions and replaced them
@@ -353,5 +354,18 @@ class JS extends Minify
         preg_match('/(\[[^\]]+\])[^\]]*$/', static::REGEX_VARIABLE, $previousChar);
         $previousChar = $previousChar[1];
         return preg_replace_callback('/(?<=' . $previousChar . '|\])\[(([\'"])[0-9]+\\2)\]/u', $callback, $content);
+    }
+
+    /**
+     * Replaces true & false by !0 and !1.
+     *
+     * @param string $content
+     * @return string
+     */
+    protected function shortenBools($content)
+    {
+        $content = preg_replace('/\btrue\b/', '!0', $content);
+        $content = preg_replace('/\bfalse\b/', '!1', $content);
+        return $content;
     }
 }
