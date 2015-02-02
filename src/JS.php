@@ -245,12 +245,6 @@ class JS extends Minify
         $content = preg_replace('/(?<![\+\-])\s*([\+\-])/', '\\1', $content);
         $content = preg_replace('/([\+\-])\s*(?!\\1)/', '\\1', $content);
 
-        // collapse whitespace around reserved words into single space
-        $before = $this->getKeywordsForRegex($this->keywordsBefore, '/');
-        $after = $this->getKeywordsForRegex($this->keywordsAfter, '/');
-        $content = preg_replace('/(' . implode('|', $before) . ')\s+/', '\\1 ', $content);
-        $content = preg_replace('/\s+(' . implode('|', $after) . ')/', ' \\1', $content);
-
         /*
          * We didn't strip whitespace after a couple of operators because they
          * could be used in different contexts and we can't be sure it's ok to
@@ -259,6 +253,12 @@ class JS extends Minify
          */
         $operators = $this->getOperatorsForRegex($this->operatorsBefore + $this->operatorsAfter, '/');
         $content = preg_replace('/([\}\)\]])[^\S\n]+(?!' . implode('|', $operators) . ')/', '\\1', $content);
+
+        // collapse whitespace around reserved words into single space
+        $before = $this->getKeywordsForRegex($this->keywordsBefore, '/');
+        $after = $this->getKeywordsForRegex($this->keywordsAfter, '/');
+        $content = preg_replace('/(^|[;\}\s])\K(' . implode('|', $before) . ')\s+/', '\\2 ', $content);
+        $content = preg_replace('/\s+(' . implode('|', $after) . ')(?=([;\{\s]|$))/', ' \\1', $content);
 
         /*
          * We also don't really want to terminate statements followed by closing
