@@ -432,6 +432,14 @@ throw new Error('.editManager.js: jQuery is required and must be loaded first')"
             "$(_this).attr('src',this.src).trigger('adapt',['loader'])",
         );
 
+        // https://github.com/matthiasmullie/minify/issues/33
+        $tests[] = array(
+            '$.fn.alert             = Plugin
+$.fn.alert.Constructor = Alert',
+            '$.fn.alert=Plugin
+$.fn.alert.Constructor=Alert',
+        );
+
         return $tests;
     }
 }
