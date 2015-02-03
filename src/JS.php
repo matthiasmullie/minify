@@ -265,6 +265,9 @@ class JS extends Minify
          */
         $content = preg_replace('/;\}/s', '}', $content);
 
+        // get rid of double semicolons
+        $content = preg_replace('/;+/', ';', $content);
+
         // get rid of remaining whitespace af beginning/end, as well as
         // semicolon, which doesn't make sense there: ASI will kick in here too
         return trim($content, "\n ;");
