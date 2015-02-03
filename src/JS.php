@@ -240,8 +240,8 @@ class JS extends Minify
         $content = preg_replace('/\s+(' . implode('|', $after) . ')/', '\\1', $content);
 
         // make sure + and - can't be mistaken for, or joined into ++ and --
-        $content = preg_replace('/(?<![\+\-])\s*([\+\-])/', '\\1', $content);
-        $content = preg_replace('/([\+\-])\s*(?!\\1)/', '\\1', $content);
+        $content = preg_replace('/(?<![\+\-])\s*([\+\-])(?![\+\-])/', '\\1', $content);
+        $content = preg_replace('/(?<![\+\-])([\+\-])\s*(?![\+\-])/', '\\1', $content);
 
         /*
          * We didn't strip whitespace after a couple of operators because they

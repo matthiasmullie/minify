@@ -355,6 +355,12 @@ if (activeIndex == pos) return this.pause().cycle()',
             'if(this.sliding)return this.$element.one(\'slid.bs.carousel\',function(){that.to(pos)})
 if(activeIndex==pos)return this.pause().cycle()',
         );
+        $tests[] = array(
+            'if (e.which == 38 && index > 0)                 index--                        // up
+if (e.which == 40 && index < $items.length - 1) index++                        // down',
+            'if(e.which==38&&index>0)index--
+if(e.which==40&&index<$items.length-1)index++',
+        );
 
         // replace associative array key references by property notation
         $tests[] = array(
