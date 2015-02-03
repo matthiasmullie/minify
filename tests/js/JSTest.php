@@ -349,6 +349,12 @@ utils.array={}',
             'var rsingleTag = (/^<(\w+)\s*\/?>(?:<\/\1>|)$/)',
             'var rsingleTag=(/^<(\w+)\s*\/?>(?:<\/\1>|)$/)',
         );
+        $tests[] = array(
+            'if (this.sliding)       return this.$element.one(\'slid.bs.carousel\', function () { that.to(pos) }) // yes, "slid"
+if (activeIndex == pos) return this.pause().cycle()',
+            'if(this.sliding)return this.$element.one(\'slid.bs.carousel\',function(){that.to(pos)})
+if(activeIndex==pos)return this.pause().cycle()',
+        );
 
         // replace associative array key references by property notation
         $tests[] = array(

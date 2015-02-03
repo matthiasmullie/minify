@@ -161,7 +161,7 @@ class JS extends Minify
     protected function stripComments()
     {
         // single-line comments
-        $this->registerPattern('/\/\/.*$[\r\n]*/m', '');
+        $this->registerPattern('/\/\/.*$/m', '');
 
         // multi-line comments
         $this->registerPattern('/\/\*.*?\*\//s', '');
