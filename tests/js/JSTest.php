@@ -452,6 +452,12 @@ $.fn.alert.Constructor = Alert',
 $.fn.alert.Constructor=Alert',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/34
+        $tests[] = array(
+            'a.replace("\\\\","");hi="This   is   a   string"',
+            'a.replace("\\\\","");hi="This   is   a   string"',
+        );
+
         return $tests;
     }
 }

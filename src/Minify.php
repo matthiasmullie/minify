@@ -269,7 +269,19 @@ abstract class Minify
             return $placeholder;
         };
 
-        $this->registerPattern('/([' . $chars . '])(.*?)(?<!\\\\)\\1/s', $callback);
+        /*
+         * The \\ messiness explained:
+         * * Don't count ' or " as end-of-string if it's escaped (has backslash
+         * in front of it)
+         * * Unless... that backslash itself is escaped (another leading slash),
+         * in which case it's no longer escaping the ' or "
+         * * So there can be either no backslash, or an even number
+         * * multiply all of that times 4, to account for the escaping that has
+         * to be done to pass the backslash into the PHP string without it being
+         * considered as escape-char (times 2) and to get it in the regex,
+         * escaped (times 2)
+         */
+        $this->registerPattern('/([' . $chars . '])(.*?((?<!\\\\)|\\\\\\\\+))\\1/s', $callback);
     }
 
     /**
