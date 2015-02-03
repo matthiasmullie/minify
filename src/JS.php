@@ -26,8 +26,8 @@ class JS extends Minify
 
     /**
      * List of JavaScript operators that accept a <variable, value, ...> after
-     * them. We'll insert semicolons if they're missing at EOL, but some
-     * end of lines are not the end of a statement, like with these operators.
+     * them. Some end of lines are not the end of a statement, like with these
+     * operators.
      *
      * Note: Most operators are fine, we've only removed !, ++ and --.
      * There can't be a newline separating ! and whatever it is negating.
@@ -42,9 +42,8 @@ class JS extends Minify
 
     /**
      * List of JavaScript operators that accept a <variable, value, ...> before
-     * them. We'll insert semicolons if they're missing at EOL, but some end of
-     * lines are not the end of a statement, like when continued by one of these
-     * operators on the newline.
+     * them. Some end of lines are not the end of a statement, like when
+     * continued by one of these operators on the newline.
      *
      * Note: Most operators are fine, we've only removed ), ], ++ and --.
      * ++ & -- have to be joined with the value they're in-/decrementing.
@@ -60,8 +59,8 @@ class JS extends Minify
 
     /**
      * List of JavaScript reserved words that accept a <variable, value, ...>
-     * after them. We'll insert semicolons if they're missing at EOL, but some
-     * end of lines are not the end of a statement, like with these keywords.
+     * after them. Some end of lines are not the end of a statement, like with
+     * these keywords.
      *
      * E.g.: we shouldn't insert a ; after this else
      * else
@@ -76,9 +75,8 @@ class JS extends Minify
 
     /**
      * List of JavaScript reserved words that accept a <variable, value, ...>
-     * before them. We'll insert semicolons if they're missing at EOL, but some
-     * end of lines are not the end of a statement, like when continued by one
-     * of these keywords on the newline.
+     * before them. Some end of lines are not the end of a statement, like when
+     * continued by one of these keywords on the newline.
      *
      * E.g.: we shouldn't insert a ; before this instanceof
      * variable
