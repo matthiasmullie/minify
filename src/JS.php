@@ -117,8 +117,15 @@ class JS extends Minify
 
         // loop files
         foreach ($this->data as $source => $js) {
-            // combine js (separate sources with semicolon)
-            $content .= $js . ';';
+            /*
+             * Combine js: separating the scripts by a ;
+             * I'm also adding a newline: it will be eaten when whitespace is
+             * stripped, but we need to make sure we're not just appending
+             * a new script right after a previous script that ended with a
+             * singe-line comment on the last line (in which case it would also
+             * be seen as part of that comment)
+             */
+            $content .= $js . "\n;";
         }
 
         /*

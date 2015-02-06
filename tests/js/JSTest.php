@@ -38,7 +38,10 @@ class JSTest extends PHPUnit_Framework_TestCase
      */
     public function minify($input, $expected)
     {
-        $this->minifier->add($input);
+        $input = (array) $input;
+        foreach ($input as $js) {
+            $this->minifier->add($js);
+        }
         $result = $this->minifier->minify();
 
         $this->assertEquals($expected, $result);
@@ -456,6 +459,15 @@ $.fn.alert.Constructor=Alert',
         $tests[] = array(
             'a.replace("\\\\","");hi="This   is   a   string"',
             'a.replace("\\\\","");hi="This   is   a   string"',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/35
+        $tests[] = array(
+            array(
+                '// script that ends with comment',
+                'var test=1',
+            ),
+            'var test=1',
         );
 
         return $tests;
