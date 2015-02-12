@@ -25,5 +25,8 @@
             "MatthiasMullie\\Minify\\": "src/"
         }
     },
-    "bin": ["src/bin/minifycss", "src/bin/minifyjs"]
+    "bin": [
+        "bin/minifycss",
+        "bin/minifyjs"
+    ]
 }
