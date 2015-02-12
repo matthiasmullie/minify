@@ -333,7 +333,7 @@ class JS extends Minify
     /**
      * Replaces all occurrences of array['key'] by array.key
      *
-     * @param string $content
+     * @param  string $content
      * @return string
      */
     protected function propertyNotation($content)
@@ -348,6 +348,7 @@ class JS extends Minify
              * array['key-here'] can't be replaced by array.key-here since '-'
              * is not a valid character there.
              */
+
             return preg_match('/^' . $minifier::REGEX_VARIABLE  . '$/u', $property) ? '.' . $property : $match[0];
         };
 
@@ -361,19 +362,21 @@ class JS extends Minify
          */
         preg_match('/(\[[^\]]+\])[^\]]*$/', static::REGEX_VARIABLE, $previousChar);
         $previousChar = $previousChar[1];
+
         return preg_replace_callback('/(?<=' . $previousChar . '|\])\[(([\'"])[0-9]+\\2)\]/u', $callback, $content);
     }
 
     /**
      * Replaces true & false by !0 and !1.
      *
-     * @param string $content
+     * @param  string $content
      * @return string
      */
     protected function shortenBools($content)
     {
         $content = preg_replace('/\btrue\b/', '!0', $content);
         $content = preg_replace('/\bfalse\b/', '!1', $content);
+
         return $content;
     }
 }

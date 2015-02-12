@@ -88,7 +88,8 @@ class CommonTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function save() {
+    public function save()
+    {
         $path1 = __DIR__ . '/sample/source/script1.js';
         $content1 = file_get_contents($path1);
         $savePath = __DIR__ . '/sample/target/script1.js';

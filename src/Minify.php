@@ -289,13 +289,14 @@ abstract class Minify
      * replaced with placeholder text in extract*(). The original content was
      * saved in $this->extracted.
      *
-     * @param string $content
+     * @param  string $content
      * @return string
      */
     protected function restoreExtractedData($content)
     {
         $content = str_replace(array_keys($this->extracted), $this->extracted, $content);
         $this->extracted = array();
+
         return $content;
     }
 }

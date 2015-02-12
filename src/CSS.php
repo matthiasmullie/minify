@@ -41,7 +41,8 @@ class CSS extends Minify
      *
      * @param int $size Size in kB
      */
-    public function setMaxImportSize($size) {
+    public function setMaxImportSize($size)
+    {
         $this->maxImportSize = $size;
     }
 
@@ -53,7 +54,8 @@ class CSS extends Minify
      *
      * @param string[] $extensions Array of file extensions
      */
-    public function setImportExtensions(array $extensions) {
+    public function setImportExtensions(array $extensions)
+    {
         $this->importExtensions = $extensions;
     }
 

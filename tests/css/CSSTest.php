@@ -63,7 +63,8 @@ class CSSTest extends PHPUnit_Framework_TestCase
      *
      * @test
      */
-    public function setConfig() {
+    public function setConfig()
+    {
         $this->minifier->setMaxImportSize(10);
         $this->minifier->setImportExtensions(array('gif' => 'data:image/gif'));
 
