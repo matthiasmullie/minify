@@ -24,5 +24,9 @@
         "psr-4": {
             "MatthiasMullie\\Minify\\": "src/"
         }
-    }
+    },
+    "bin": [
+        "bin/minifycss",
+        "bin/minifyjs"
+    ]
 }
