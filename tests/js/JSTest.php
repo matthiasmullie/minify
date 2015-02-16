@@ -470,6 +470,12 @@ $.fn.alert.Constructor=Alert',
             'var test=1',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/37
+        $tests[] = array(
+            'function () { ;;;;;;;; }',
+            'function(){}',
+        );
+
         return $tests;
     }
 }

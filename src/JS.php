@@ -265,15 +265,15 @@ class JS extends Minify
         $content = preg_replace('/(^|[;\}\s])\K(' . implode('|', $before) . ')\s+/', '\\2 ', $content);
         $content = preg_replace('/\s+(' . implode('|', $after) . ')(?=([;\{\s]|$))/', ' \\1', $content);
 
+        // get rid of double semicolons
+        $content = preg_replace('/;+/', ';', $content);
+
         /*
          * We also don't really want to terminate statements followed by closing
          * curly braces (which we've ignored completely up until now): ASI will
          * kick in here & we're all about minifying.
          */
         $content = preg_replace('/;\}/s', '}', $content);
-
-        // get rid of double semicolons
-        $content = preg_replace('/;+/', ';', $content);
 
         // get rid of remaining whitespace af beginning/end, as well as
         // semicolon, which doesn't make sense there: ASI will kick in here too
