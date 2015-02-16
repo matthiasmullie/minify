@@ -2,6 +2,7 @@
     "name": "matthiasmullie/minify",
     "type": "library",
     "description": "CSS & JS minifier",
+    "keywords": ["minify", "minifier", "css", "js", "javascript"],
     "homepage": "http://www.minifier.org",
     "license": "MIT",
     "authors": [
