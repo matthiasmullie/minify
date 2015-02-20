@@ -339,6 +339,26 @@ margin-left: -0.3125rem;
             file_get_contents($source . '/relative.css'),
         );
 
+        // https://github.com/matthiasmullie/minify/issues/39
+        $tests[] = array(
+            $source . '/issue39.css',
+            null, // no output file
+            // relative paths should remain untouched
+            "@font-face{font-family:'blackcat';src:url(../webfont/blackcat.eot);src:url(../webfont/blackcat.eot?#iefix) format('embedded-opentype'),url(../webfont/blackcat.svg#blackcat) format('svg'),url(../webfont/blackcat.woff) format('woff'),url(../webfont/blackcat.ttf) format('truetype');font-weight:normal;font-style:normal}",
+        );
+        $tests[] = array(
+            $source . '/issue39.css',
+            $target . '/issue39.css',
+            // relative paths should remain untouched
+            "@font-face{font-family:'blackcat';src:url(../webfont/blackcat.eot);src:url(../webfont/blackcat.eot?#iefix) format('embedded-opentype'),url(../webfont/blackcat.svg#blackcat) format('svg'),url(../webfont/blackcat.woff) format('woff'),url(../webfont/blackcat.ttf) format('truetype');font-weight:normal;font-style:normal}",
+        );
+        $tests[] = array(
+            $source . '/issue39.css',
+            $target . '/target/issue39.css',
+            // relative paths should have changed
+            "@font-face{font-family:'blackcat';src:url(../../webfont/blackcat.eot);src:url(../../webfont/blackcat.eot?#iefix) format('embedded-opentype'),url(../../webfont/blackcat.svg#blackcat) format('svg'),url(../../webfont/blackcat.woff) format('woff'),url(../../webfont/blackcat.ttf) format('truetype');font-weight:normal;font-style:normal}",
+        );
+
         $sourceRelative = 'tests/css/sample/convert_relative_path/source';
         $targetRelative = 'tests/css/sample/convert_relative_path/target';
 
