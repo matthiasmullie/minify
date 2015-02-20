@@ -1,6 +1,8 @@
 <?php
 namespace MatthiasMullie\Minify;
 
+use MatthiasMullie\PathConverter\Converter;
+
 /**
  * CSS minifier.
  *
@@ -201,94 +203,6 @@ class CSS extends Minify
     }
 
     /**
-     * Convert relative paths based upon 1 path to another.
-     *
-     * E.g.
-     * ../images/img.gif (relative to /home/forkcms/frontend/core/layout/css)
-     * should become:
-     * ../../core/layout/images/img.gif (relative to
-     * /home/forkcms/frontend/cache/minified_css)
-     *
-     * @param  string $path The relative path that needs to be converted.
-     * @param  string $from The original base path.
-     * @param  string $to   The new base path.
-     * @return string The new relative path.
-     */
-    protected function convertRelativePath($path, $from, $to)
-    {
-        $from = $from ? realpath($from) : '';
-        $to = $to ? realpath($to) : '';
-
-        // make sure we're dealing with directories
-        $from = @is_file($from) ? dirname($from) : $from;
-        $to = @is_file($to) ? dirname($to) : $to;
-
-        // deal with different operating systems' directory structure
-        $path = rtrim(str_replace(DIRECTORY_SEPARATOR, '/', $path), '/');
-        $from = rtrim(str_replace(DIRECTORY_SEPARATOR, '/', $from), '/');
-        $to = rtrim(str_replace(DIRECTORY_SEPARATOR, '/', $to), '/');
-
-        // if we're not dealing with a relative path, just return absolute
-        if (strpos($path, '/') === 0) {
-            return $path;
-        }
-
-        // get full path to file referenced from $from
-        $path = $from . '/' . $path;
-
-        /*
-         * Example:
-         * $path = /home/forkcms/frontend/cache/compiled_templates/../../core/layout/css/../images/img.gif
-         * $to = /home/forkcms/frontend/cache/minified_css
-         */
-
-        // normalize paths
-        do {
-            list($path, $to) = preg_replace('/[^\/]+(?<!\.\.)\/\.\.\//', '', array($path, $to), -1, $count);
-        } while ($count);
-
-        /*
-         * Example:
-         * $path = /home/forkcms/frontend/core/layout/images/img.gif
-         * $to = /home/forkcms/frontend/cache/minified_css
-         */
-
-        $path = explode('/', $path);
-        // $to can be empty (e.g. no path is given), in which case it shouldn't
-        // expand to array(''), which would later strip $path's root /
-        $to = $to ? explode('/', $to) : array();
-
-        // compare paths & strip identical ancestors
-        foreach ($path as $i => $chunk) {
-            if (isset($to[$i]) && $path[$i] == $to[$i]) {
-                unset($path[$i], $to[$i]);
-            } else {
-                break;
-            }
-        }
-
-        /*
-         * At this point:
-         * $path = array('core', 'layout', 'images', 'img.gif')
-         * $to = array('cache', 'minified_css')
-         */
-
-        $path = implode('/', $path);
-
-        // add .. for every directory that needs to be traversed for new path
-        $to = str_repeat('../', count($to));
-
-        /*
-         * At this point:
-         * $path = core/layout/images/img.gif
-         * $to = ../../
-         */
-
-        // Tada!
-        return $to . $path;
-    }
-
-    /**
      * Import files into the CSS, base64-ized.
      * @url(image.jpg) images will be loaded and their content merged into the
      * original file, to save HTTP requests.
@@ -350,6 +264,15 @@ class CSS extends Minify
 
         // loop files
         foreach ($this->data as $source => $css) {
+            // make sure we're dealing with directories
+            $from = $source ? realpath($source) : '';
+            $from = @is_file($from) ? dirname($from) : $from;
+            // if we don't write to a file, fall back to same path so no
+            // conversion happens (because we still want it to go through most
+            // of the move code...)
+            $to = $path ? realpath($path) : $from;
+            $to = @is_file($to) ? dirname($to) : $to;
+
             /*
              * Let's first take out strings & comments, since we can't just remove
              * whitespace anywhere. If whitespace occurs inside a string, we should
@@ -369,8 +292,8 @@ class CSS extends Minify
 
             // if we'll save to a new path, we'll have to fix the relative paths
             // to be relative no longer to the source file, but to the new path
-            $source = $source ?: '';
-            $css = $this->move($source, $path ?: $source, $css);
+            $converter = new Converter($from, $to);
+            $css = $this->move($converter, $css);
 
             // if no target path is given, relative paths were not converted, so
             // they'll still be relative to the source file then
@@ -395,12 +318,11 @@ class CSS extends Minify
      * will have to be updated when a file is being saved at another location
      * (e.g. ../../images/image.gif, if the new CSS file is 1 folder deeper)
      *
-     * @param  string $source      The file to update relative urls for.
-     * @param  string $destination The path the data will be written to.
-     * @param  string $content     The CSS content to update relative urls for.
+     * @param  Converter $converter Relative path converter
+     * @param  string $content      The CSS content to update relative urls for.
      * @return string
      */
-    protected function move($source, $destination, $content)
+    protected function move(Converter $converter, $content)
     {
         /*
          * Relative path references will usually be enclosed by url(). @import
@@ -496,7 +418,7 @@ class CSS extends Minify
             $type = (strpos($match[0], '@import') === 0 ? 'import' : 'url');
 
             // fix relative url
-            $url = $this->convertRelativePath($match['path'], dirname($source), dirname($destination));
+            $url = $converter->convert($match['path']);
 
             // build replacement
             $search[] = $match[0];
