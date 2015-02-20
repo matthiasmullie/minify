@@ -181,7 +181,7 @@ class CSS extends Minify
                 // grab referenced file & minify it (which may include importing
                 // yet other @import statements recursively)
                 $minifier = new static($importPath);
-                $importContent = $minifier->minify($source);
+                $importContent = $minifier->minify();
 
                 // check if this is only valid for certain media
                 if ($match['media']) {
@@ -254,7 +254,9 @@ class CSS extends Minify
          */
 
         $path = explode('/', $path);
-        $to = explode('/', $to);
+        // $to can be empty (e.g. no path is given), in which case it shouldn't
+        // expand to array(''), which would later strip $path's root /
+        $to = $to ? explode('/', $to) : array();
 
         // compare paths & strip identical ancestors
         foreach ($path as $i => $chunk) {
@@ -349,33 +351,36 @@ class CSS extends Minify
         // loop files
         foreach ($this->data as $source => $css) {
             // if we'll save to a new path, we'll have to fix the relative paths
-            if ($source !== 0) {
+            // to be relative no longer to the source file, but to the new path
+            if ($source !== 0 && $path) {
                 $css = $this->move($source, $path, $css);
             }
+
+            /*
+             * Let's first take out strings & comments, since we can't just remove
+             * whitespace anywhere. If whitespace occurs inside a string, we should
+             * leave it alone. E.g.:
+             * p { content: "a   test" }
+             */
+            $this->extractStrings();
+            $this->stripComments();
+            $css = $this->replace($css);
+
+            $css = $this->stripWhitespace($css);
+            $css = $this->shortenHex($css);
+            $css = $this->shortenZeroes($css);
+
+            // restore the string we've extracted earlier
+            $css = $this->restoreExtractedData($css);
+
+            // if no target path is given, relative paths were not converted, so
+            // they'll still be relative to the source file then
+            $css = $this->importFiles($path ?: $source, $css);
+            $css = $this->combineImports($path ?: $source, $css);
 
             // combine css
             $content .= $css;
         }
-
-        /*
-         * Let's first take out strings & comments, since we can't just remove
-         * whitespace anywhere. If whitespace occurs inside a string, we should
-         * leave it alone. E.g.:
-         * p { content: "a   test" }
-         */
-        $this->extractStrings();
-        $this->stripComments();
-        $content = $this->replace($content);
-
-        $content = $this->stripWhitespace($content);
-        $content = $this->shortenHex($content);
-        $content = $this->shortenZeroes($content);
-
-        // restore the string we've extracted earlier
-        $content = $this->restoreExtractedData($content);
-
-        $content = $this->importFiles($path, $content);
-        $content = $this->combineImports($path, $content);
 
         // save to path
         if ($path !== null) {

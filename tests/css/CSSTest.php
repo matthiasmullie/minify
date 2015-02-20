@@ -38,7 +38,10 @@ class CSSTest extends PHPUnit_Framework_TestCase
      */
     public function minify($input, $expected)
     {
-        $this->minifier->add($input);
+        $input = (array) $input;
+        foreach ($input as $css) {
+            $this->minifier->add($css);
+        }
         $result = $this->minifier->minify();
 
         $this->assertEquals($expected, $result);
@@ -52,7 +55,10 @@ class CSSTest extends PHPUnit_Framework_TestCase
      */
     public function convertRelativePath($source, $target, $expected)
     {
-        $this->minifier->add($source);
+        $source = (array) $source;
+        foreach ($source as $css) {
+            $this->minifier->add($css);
+        }
         $result = $this->minifier->minify($target);
 
         $this->assertEquals($expected, $result);
@@ -318,6 +324,20 @@ margin-left: -0.3125rem;
             '@import url(../image.jpg);',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/29
+        $tests[] = array(
+            $source . '/issue29.css',
+            $target . '/issue29.css',
+            "@import url('http://myurl.de');",
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/38
+        $tests[] = array(
+            $source . '/relative.css',
+            null, // no output file
+            file_get_contents($source . '/relative.css'),
+        );
+
         $sourceRelative = 'tests/css/sample/convert_relative_path/source';
         $targetRelative = 'tests/css/sample/convert_relative_path/target';
 
@@ -336,13 +356,6 @@ margin-left: -0.3125rem;
             $sourceRelative . '/relative.css',
             $targetRelative . '/relative.css',
             '@import url(image.jpg);',
-        );
-
-        // https://github.com/matthiasmullie/minify/issues/29
-        $tests[] = array(
-            $sourceRelative . '/issue29.css',
-            $targetRelative . '/issue29.css',
-            "@import url('http://myurl.de');",
         );
 
         return $tests;
