@@ -157,7 +157,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
         );
 
         $tests[] = array(
-            '
+<<<'JS'
 p * i ,  html
 /* remove spaces */
 
@@ -167,16 +167,17 @@ p  [ remove ~= " spaces  " ]  :nth-child( 3 + 2n )  >  b span   i  ,   div::afte
 
 {
   /* comment */
-    background :  url(  "  /* string */  " )   blue  !important ;
     content  :  " escapes \" allowed \\" ;
+    content:  "  /* string */  "  !important ;
       width: calc( 100% - 3em + 5px ) ;
   margin-top : 0;
   margin-bottom : 0;
   margin-left : 10px;
   margin-right : 10px;
 }
-',
-            'p * i,html body p,p [remove~=" spaces  "] :nth-child(3+2n)>b span i,div::after{background:url("  /* string */  ") blue!important;content:" escapes \" allowed \\";width:calc(100% - 3em + 5px);margin-top:0;margin-bottom:0;margin-left:10px;margin-right:10px}'
+JS
+        ,
+            'p * i,html body p,p [remove~=" spaces  "] :nth-child(3+2n)>b span i,div::after{content:" escapes \\" allowed \\\\";content:"  /* string */  "!important;width:calc(100% - 3em + 5px);margin-top:0;margin-bottom:0;margin-left:10px;margin-right:10px}'
         );
 
         /*
