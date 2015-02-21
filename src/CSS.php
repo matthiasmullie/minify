@@ -264,15 +264,6 @@ class CSS extends Minify
 
         // loop files
         foreach ($this->data as $source => $css) {
-            // make sure we're dealing with directories
-            $from = $source ? realpath($source) : '';
-            $from = @is_file($from) ? dirname($from) : $from;
-            // if we don't write to a file, fall back to same path so no
-            // conversion happens (because we still want it to go through most
-            // of the move code...)
-            $to = $path ? realpath($path) : $from;
-            $to = @is_file($to) ? dirname($to) : $to;
-
             /*
              * Let's first take out strings & comments, since we can't just remove
              * whitespace anywhere. If whitespace occurs inside a string, we should
@@ -292,7 +283,11 @@ class CSS extends Minify
 
             // if we'll save to a new path, we'll have to fix the relative paths
             // to be relative no longer to the source file, but to the new path
-            $converter = new Converter($from, $to);
+            // if we don't write to a file, fall back to same path so no
+            // conversion happens (because we still want it to go through most
+            // of the move code...)
+            $source = $source ?: '';
+            $converter = new Converter($source, $path ?: $source);
             $css = $this->move($converter, $css);
 
             // if no target path is given, relative paths were not converted, so
