@@ -266,7 +266,7 @@ class JS extends Minify
         $content = preg_replace('/\s+(' . implode('|', $after) . ')(?=([;\{\s]|$))/', ' \\1', $content);
 
         // get rid of double semicolons
-        $content = preg_replace('/;+/', ';', $content);
+        //$content = preg_replace('/;+/', ';', $content);
 
         /*
          * We also don't really want to terminate statements followed by closing
