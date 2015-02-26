@@ -476,6 +476,12 @@ $.fn.alert.Constructor=Alert',
             'function(){}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/41
+        $tests[] = array(
+            "conf.zoomHoverIcons['default']",
+            "conf.zoomHoverIcons['default']",
+        );
+
         return $tests;
     }
 }
