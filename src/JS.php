@@ -356,7 +356,7 @@ class JS extends Minify
              * property of an object literal/array) it shouldn't matter, but IE8
              * freaks out with "Expected identifier".
              */
-            if (in_array($property, $this->keywordsReserved)) {
+            if (in_array($property, $minifier->keywordsReserved)) {
                 return $match[0];
             }
 
