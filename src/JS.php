@@ -273,8 +273,9 @@ class JS extends Minify
         $content = preg_replace('/(^|[;\}\s])\K(' . implode('|', $before) . ')\s+/', '\\2 ', $content);
         $content = preg_replace('/\s+(' . implode('|', $after) . ')(?=([;\{\s]|$))/', ' \\1', $content);
 
-        // get rid of double semicolons
-        $content = preg_replace('/;+/', ';', $content);
+        // get rid of double semicolons, except when followed by closing-),
+        // where semicolons can be used like: "for(v=1,_=b;;)"
+        $content = preg_replace('/;+(?!\))/', ';', $content);
 
         /*
          * We also don't really want to terminate statements followed by closing

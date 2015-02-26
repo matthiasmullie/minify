@@ -476,6 +476,12 @@ $.fn.alert.Constructor=Alert',
             'function(){}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/40
+        $tests[] = array(
+            "for(v=1,_=b;;){}",
+            "for(v=1,_=b;;){}",
+        );
+
         // https://github.com/matthiasmullie/minify/issues/41
         $tests[] = array(
             "conf.zoomHoverIcons['default']",
