@@ -348,7 +348,8 @@ class JS extends Minify
     {
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
-        $callback = function ($match) use ($minifier) {
+        $keywords = $this->keywordsReserved;
+        $callback = function ($match) use ($minifier, $keywords) {
             $property = trim($minifier->extracted[$match[1]], '\'"');
 
             /*
@@ -356,7 +357,7 @@ class JS extends Minify
              * property of an object literal/array) it shouldn't matter, but IE8
              * freaks out with "Expected identifier".
              */
-            if (in_array($property, $minifier->keywordsReserved)) {
+            if (in_array($property, $keywords)) {
                 return $match[0];
             }
 
