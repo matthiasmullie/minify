@@ -70,4 +70,6 @@ $(function() {
 	$('#intro form').on('submit', checkType);
 	$('#intro input[name=type]').on('change', discardErrorSuccess);
 	$('#intro #source').on('keyup', discardErrorSuccess);
+
+	$('#source').autoExpand();
 });
