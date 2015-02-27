@@ -42,7 +42,7 @@ This method allows the max size of files to import into the minified CSS to be s
 $minifier->setMaxImportSize(10);
 ```
 
-### setImportExtensions(extensions) *(CSS only)*
+### setImportExtensions($extensions) *(CSS only)*
 
 The CSS minifier will automatically embed referenced files (like images, fonts, ...) into minified CSS, so they don't have to be fetched over multiple connections.
 
@@ -58,3 +58,4 @@ $extensions = array(
 
 $minifier->setImportExtensions($extensions);
 ```
+
