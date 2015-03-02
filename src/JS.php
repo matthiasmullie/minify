@@ -214,8 +214,8 @@ class JS extends Minify
         // it's a regex if we can find an opening (not preceded by variable,
         // value or similar) & (non-escaped) closing /,
         $before = $this->getOperatorsForRegex($this->operatorsBefore, '/');
-        $this->registerPattern('/^\s*\K\/(.*?(?<!\\\\)(\\\\\\\\)*)\//', $callback);
-        $this->registerPattern('/(?:' . implode('|', $before) . ')\s*\K\/(.*?(?<!\\\\)(\\\\\\\\)*)\//', $callback);
+        $this->registerPattern('/^\s*+\K\/(.*?(?<!\\\\)(\\\\\\\\)*+)\//', $callback);
+        $this->registerPattern('/(?:' . implode('|', $before) . ')\s*+\K\/(.*?(?<!\\\\)(\\\\\\\\)*+)\//', $callback);
     }
 
     /**
@@ -308,8 +308,8 @@ class JS extends Minify
         // ignore + & - for now, they'll get special treatment
         unset($operators['+'], $operators['-']);
 
-        // dot can not just immediately follow a number; it can be confused
-        // between decimal point, or calling a method on it, e.g. 42 .toString()
+        // dot can not just immediately follow a number; it can be confused for
+        // decimal point, or calling a method on it, e.g. 42 .toString()
         $operators['.'] = '(?<![0-9]\s)\.';
 
         return $operators;
