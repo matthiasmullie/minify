@@ -359,6 +359,13 @@ margin-left: -0.3125rem;
             "@font-face{font-family:'blackcat';src:url(../../webfont/blackcat.eot);src:url(../../webfont/blackcat.eot?#iefix) format('embedded-opentype'),url(../../webfont/blackcat.svg#blackcat) format('svg'),url(../../webfont/blackcat.woff) format('woff'),url(../../webfont/blackcat.ttf) format('truetype');font-weight:normal;font-style:normal}",
         );
 
+        // https://github.com/forkcms/forkcms/issues/1121
+        $tests[] = array(
+            $source . '/nested/nested.css',
+            $target . '/nested.css',
+            '@import url(image.jpg);',
+        );
+
         $sourceRelative = 'tests/css/sample/convert_relative_path/source';
         $targetRelative = 'tests/css/sample/convert_relative_path/target';
 

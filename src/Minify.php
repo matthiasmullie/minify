@@ -119,12 +119,30 @@ abstract class Minify
     }
 
     /**
+     * Minify the data & (optionally) saves it to a file.
+     *
+     * @param  string[optional] $path Path to write the data to.
+     * @return string           The minified data.
+     */
+    public function minify($path = null)
+    {
+        $content = $this->execute($path);
+
+        // save to path
+        if ($path !== null) {
+            $this->save($content, $path);
+        }
+
+        return $content;
+    }
+
+    /**
      * Minify the data.
      *
      * @param  string[optional] $path Path to write the data to.
      * @return string           The minified data.
      */
-    abstract public function minify($path = null);
+    abstract protected function execute($path = null);
 
     /**
      * Register a pattern to execute against the source content.

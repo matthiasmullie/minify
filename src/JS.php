@@ -119,7 +119,7 @@ class JS extends Minify
      * @param  string[optional] $path Path to write the data to.
      * @return string           The minified data.
      */
-    public function minify($path = null)
+    public function execute($path = null)
     {
         $content = '';
 
@@ -161,11 +161,6 @@ class JS extends Minify
          * with placeholder text. This will restore them.
          */
         $content = $this->restoreExtractedData($content);
-
-        // save to path
-        if ($path !== null) {
-            $this->save($content, $path);
-        }
 
         return $content;
     }

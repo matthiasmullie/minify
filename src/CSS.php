@@ -183,7 +183,7 @@ class CSS extends Minify
                 // grab referenced file & minify it (which may include importing
                 // yet other @import statements recursively)
                 $minifier = new static($importPath);
-                $importContent = $minifier->minify();
+                $importContent = $minifier->execute($source);
 
                 // check if this is only valid for certain media
                 if ($match['media']) {
@@ -258,8 +258,7 @@ class CSS extends Minify
      * @param  string[optional] $path Path to write the data to.
      * @return string           The minified data.
      */
-    public function minify($path = null)
-    {
+    protected function execute($path = null) {
         $content = '';
 
         // loop files
@@ -281,11 +280,13 @@ class CSS extends Minify
             // restore the string we've extracted earlier
             $css = $this->restoreExtractedData($css);
 
-            // if we'll save to a new path, we'll have to fix the relative paths
-            // to be relative no longer to the source file, but to the new path
-            // if we don't write to a file, fall back to same path so no
-            // conversion happens (because we still want it to go through most
-            // of the move code...)
+            /*
+             * If we'll save to a new path, we'll have to fix the relative paths
+             * to be relative no longer to the source file, but to the new path.
+             * If we don't write to a file, fall back to same path so no
+             * conversion happens (because we still want it to go through most
+             * of the move code...)
+             */
             $source = $source ?: '';
             $converter = new Converter($source, $path ?: $source);
             $css = $this->move($converter, $css);
@@ -297,11 +298,6 @@ class CSS extends Minify
 
             // combine css
             $content .= $css;
-        }
-
-        // save to path
-        if ($path !== null) {
-            $this->save($content, $path);
         }
 
         return $content;
