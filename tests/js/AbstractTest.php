@@ -12,8 +12,8 @@ class CommonTest extends PHPUnit_Framework_TestCase
      */
     public function construct()
     {
-        $path1 = __DIR__ . '/sample/source/script1.js';
-        $path2 = __DIR__ . '/sample/source/script2.js';
+        $path1 = __DIR__.'/sample/source/script1.js';
+        $path2 = __DIR__.'/sample/source/script2.js';
         $content1 = file_get_contents($path1);
         $content2 = file_get_contents($path2);
 
@@ -27,8 +27,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
         $minifier = new Minify\JS($content1, $content2);
         $result = $minifier->minify();
 
-        $this->assertEquals($content1 . ';' . $content2, $result);
-
+        $this->assertEquals($content1.';'.$content2, $result);
 
         // file in constructor
         $minifier = new Minify\JS($path1);
@@ -40,7 +39,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
         $minifier = new Minify\JS($path1, $path2);
         $result = $minifier->minify();
 
-        $this->assertEquals($content1 . ';' . $content2, $result);
+        $this->assertEquals($content1.';'.$content2, $result);
     }
 
     /**
@@ -48,8 +47,8 @@ class CommonTest extends PHPUnit_Framework_TestCase
      */
     public function add()
     {
-        $path1 = __DIR__ . '/sample/source/script1.js';
-        $path2 = __DIR__ . '/sample/source/script2.js';
+        $path1 = __DIR__.'/sample/source/script1.js';
+        $path2 = __DIR__.'/sample/source/script2.js';
         $content1 = file_get_contents($path1);
         $content2 = file_get_contents($path2);
 
@@ -66,8 +65,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
         $minifier->add($content2);
         $result = $minifier->minify();
 
-        $this->assertEquals($content1 . ';' . $content2, $result);
-
+        $this->assertEquals($content1.';'.$content2, $result);
 
         // file in add
         $minifier = new Minify\JS();
@@ -82,7 +80,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
         $minifier->add($path2);
         $result = $minifier->minify();
 
-        $this->assertEquals($content1 . ';' . $content2, $result);
+        $this->assertEquals($content1.';'.$content2, $result);
     }
 
     /**
@@ -90,9 +88,9 @@ class CommonTest extends PHPUnit_Framework_TestCase
      */
     public function save()
     {
-        $path1 = __DIR__ . '/sample/source/script1.js';
+        $path1 = __DIR__.'/sample/source/script1.js';
         $content1 = file_get_contents($path1);
-        $savePath = __DIR__ . '/sample/target/script1.js';
+        $savePath = __DIR__.'/sample/target/script1.js';
 
         $minifier = new Minify\JS($path1);
         $minifier->minify($savePath);

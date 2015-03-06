@@ -246,7 +246,7 @@ else statement',
         );
         $tests[] = array(
             '53  instanceof  String',
-            '53 instanceof String'
+            '53 instanceof String',
         );
 
         // remove whitespace around operators

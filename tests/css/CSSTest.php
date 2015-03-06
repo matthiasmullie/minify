@@ -94,27 +94,27 @@ class CSSTest extends PHPUnit_Framework_TestCase
 
         // try importing, with both @import syntax types & media queries
         $tests[] = array(
-            __DIR__ . '/sample/combine_imports/index.css',
+            __DIR__.'/sample/combine_imports/index.css',
             'body{color:red}',
         );
         $tests[] = array(
-            __DIR__ . '/sample/combine_imports/index2.css',
+            __DIR__.'/sample/combine_imports/index2.css',
             'body{color:red}',
         );
         $tests[] = array(
-            __DIR__ . '/sample/combine_imports/index3.css',
+            __DIR__.'/sample/combine_imports/index3.css',
             'body{color:red}body{color:red}',
         );
         $tests[] = array(
-            __DIR__ . '/sample/combine_imports/index4.css',
+            __DIR__.'/sample/combine_imports/index4.css',
             '@media only screen{body{color:red}}@media only screen{body{color:red}}',
         );
         $tests[] = array(
-            __DIR__ . '/sample/combine_imports/index5.css',
+            __DIR__.'/sample/combine_imports/index5.css',
             'body{color:red}body{color:red}',
         );
         $tests[] = array(
-            __DIR__ . '/sample/combine_imports/index6a.css',
+            __DIR__.'/sample/combine_imports/index6a.css',
             'body{color:red}',
         );
 
@@ -126,8 +126,8 @@ class CSSTest extends PHPUnit_Framework_TestCase
 
         // import files
         $tests[] = array(
-            __DIR__ . '/sample/import_files/index.css',
-            'body{background:url(data:image/png;base64,' . base64_encode(file_get_contents(__DIR__ . '/sample/import_files/file.png')) . ')}',
+            __DIR__.'/sample/import_files/index.css',
+            'body{background:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/file.png')).')}',
         );
 
         // strip comments
@@ -153,7 +153,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
             body {
                 color: red;
             }',
-            'html body{color:red}'
+            'html body{color:red}',
         );
 
         $tests[] = array(
@@ -177,7 +177,7 @@ p  [ remove ~= " spaces  " ]  :nth-child( 3 + 2n )  >  b span   i  ,   div::afte
 }
 JS
         ,
-            'p * i,html body p,p [remove~=" spaces  "] :nth-child(3+2n)>b span i,div::after{content:" escapes \\" allowed \\\\";content:"  /* string */  "!important;width:calc(100% - 3em + 5px);margin-top:0;margin-bottom:0;margin-left:10px;margin-right:10px}'
+            'p * i,html body p,p [remove~=" spaces  "] :nth-child(3+2n)>b span i,div::after{content:" escapes \\" allowed \\\\";content:"  /* string */  "!important;width:calc(100% - 3em + 5px);margin-top:0;margin-bottom:0;margin-left:10px;margin-right:10px}',
         );
 
         /*
@@ -194,7 +194,7 @@ JS
 
         // strip BOM
         $tests[] = array(
-            __DIR__ . '/sample/bom/bom.css',
+            __DIR__.'/sample/bom/bom.css',
             'body{color:red}',
         );
 
@@ -296,73 +296,73 @@ margin-left: -0.3125rem;
     {
         $tests = array();
 
-        $source = __DIR__ . '/sample/convert_relative_path/source';
-        $target = __DIR__ . '/sample/convert_relative_path/target';
+        $source = __DIR__.'/sample/convert_relative_path/source';
+        $target = __DIR__.'/sample/convert_relative_path/target';
 
         // external link
         $tests[] = array(
-            $source . '/external.css',
-            $target . '/external.css',
-            file_get_contents($source . '/external.css'),
+            $source.'/external.css',
+            $target.'/external.css',
+            file_get_contents($source.'/external.css'),
         );
 
         // absolute path
         $tests[] = array(
-            $source . '/absolute.css',
-            $target . '/absolute.css',
-            file_get_contents($source . '/absolute.css'),
+            $source.'/absolute.css',
+            $target.'/absolute.css',
+            file_get_contents($source.'/absolute.css'),
         );
 
         // relative paths
         $tests[] = array(
-            $source . '/relative.css',
-            $target . '/relative.css',
+            $source.'/relative.css',
+            $target.'/relative.css',
             '@import url(image.jpg);',
         );
         $tests[] = array(
-            $source . '/../source/relative.css',
-            $target . '/target/relative.css',
+            $source.'/../source/relative.css',
+            $target.'/target/relative.css',
             '@import url(../image.jpg);',
         );
 
         // https://github.com/matthiasmullie/minify/issues/29
         $tests[] = array(
-            $source . '/issue29.css',
-            $target . '/issue29.css',
+            $source.'/issue29.css',
+            $target.'/issue29.css',
             "@import url('http://myurl.de');",
         );
 
         // https://github.com/matthiasmullie/minify/issues/38
         $tests[] = array(
-            $source . '/relative.css',
+            $source.'/relative.css',
             null, // no output file
-            file_get_contents($source . '/relative.css'),
+            file_get_contents($source.'/relative.css'),
         );
 
         // https://github.com/matthiasmullie/minify/issues/39
         $tests[] = array(
-            $source . '/issue39.css',
+            $source.'/issue39.css',
             null, // no output file
             // relative paths should remain untouched
             "@font-face{font-family:'blackcat';src:url(../webfont/blackcat.eot);src:url(../webfont/blackcat.eot?#iefix) format('embedded-opentype'),url(../webfont/blackcat.svg#blackcat) format('svg'),url(../webfont/blackcat.woff) format('woff'),url(../webfont/blackcat.ttf) format('truetype');font-weight:normal;font-style:normal}",
         );
         $tests[] = array(
-            $source . '/issue39.css',
-            $target . '/issue39.css',
+            $source.'/issue39.css',
+            $target.'/issue39.css',
             // relative paths should remain untouched
             "@font-face{font-family:'blackcat';src:url(../webfont/blackcat.eot);src:url(../webfont/blackcat.eot?#iefix) format('embedded-opentype'),url(../webfont/blackcat.svg#blackcat) format('svg'),url(../webfont/blackcat.woff) format('woff'),url(../webfont/blackcat.ttf) format('truetype');font-weight:normal;font-style:normal}",
         );
         $tests[] = array(
-            $source . '/issue39.css',
-            $target . '/target/issue39.css',
+            $source.'/issue39.css',
+            $target.'/target/issue39.css',
             // relative paths should have changed
             "@font-face{font-family:'blackcat';src:url(../../webfont/blackcat.eot);src:url(../../webfont/blackcat.eot?#iefix) format('embedded-opentype'),url(../../webfont/blackcat.svg#blackcat) format('svg'),url(../../webfont/blackcat.woff) format('woff'),url(../../webfont/blackcat.ttf) format('truetype');font-weight:normal;font-style:normal}",
         );
 
         // https://github.com/forkcms/forkcms/issues/1121
         $tests[] = array(
-            $source . '/nested/nested.css',
-            $target . '/nested.css',
+            $source.'/nested/nested.css',
+            $target.'/nested.css',
             '@import url(image.jpg);',
         );
 
@@ -371,18 +371,18 @@ margin-left: -0.3125rem;
 
         // from and/or to are relative links
         $tests[] = array(
-            $sourceRelative . '/relative.css',
-            $target . '/relative.css',
+            $sourceRelative.'/relative.css',
+            $target.'/relative.css',
             '@import url(image.jpg);',
         );
         $tests[] = array(
-            $source . '/relative.css',
-            $targetRelative . '/relative.css',
+            $source.'/relative.css',
+            $targetRelative.'/relative.css',
             '@import url(image.jpg);',
         );
         $tests[] = array(
-            $sourceRelative . '/relative.css',
-            $targetRelative . '/relative.css',
+            $sourceRelative.'/relative.css',
+            $targetRelative.'/relative.css',
             '@import url(image.jpg);',
         );
 

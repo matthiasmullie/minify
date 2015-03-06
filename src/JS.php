@@ -103,13 +103,13 @@ class JS extends Minify
     {
         call_user_func_array(array('parent', '__construct'), func_get_args());
 
-        $dataDir = __DIR__ . '/../data/js/';
+        $dataDir = __DIR__.'/../data/js/';
         $options = FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES;
-        $this->keywordsReserved = file($dataDir . 'keywords_reserved.txt', $options);
-        $this->keywordsBefore = file($dataDir . 'keywords_before.txt', $options);
-        $this->keywordsAfter = file($dataDir . 'keywords_after.txt', $options);
-        $this->operatorsBefore = file($dataDir . 'operators_before.txt', $options);
-        $this->operatorsAfter = file($dataDir . 'operators_after.txt', $options);
+        $this->keywordsReserved = file($dataDir.'keywords_reserved.txt', $options);
+        $this->keywordsBefore = file($dataDir.'keywords_before.txt', $options);
+        $this->keywordsAfter = file($dataDir.'keywords_after.txt', $options);
+        $this->operatorsBefore = file($dataDir.'operators_before.txt', $options);
+        $this->operatorsAfter = file($dataDir.'operators_after.txt', $options);
     }
 
     /**
@@ -133,7 +133,7 @@ class JS extends Minify
              * singe-line comment on the last line (in which case it would also
              * be seen as part of that comment)
              */
-            $content .= $js . "\n;";
+            $content .= $js."\n;";
         }
 
         /*
@@ -200,8 +200,8 @@ class JS extends Minify
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
             $count = count($minifier->extracted);
-            $placeholder = '/' . $count . '/';
-            $minifier->extracted[$placeholder] = '/' . $match[1] . '/';
+            $placeholder = '/'.$count.'/';
+            $minifier->extracted[$placeholder] = '/'.$match[1].'/';
 
             return $placeholder;
         };
@@ -210,7 +210,7 @@ class JS extends Minify
         // value or similar) & (non-escaped) closing /,
         $before = $this->getOperatorsForRegex($this->operatorsBefore, '/');
         $this->registerPattern('/^\s*+\K\/(.*?(?<!\\\\)(\\\\\\\\)*+)\//', $callback);
-        $this->registerPattern('/(?:' . implode('|', $before) . ')\s*+\K\/(.*?(?<!\\\\)(\\\\\\\\)*+)\//', $callback);
+        $this->registerPattern('/(?:'.implode('|', $before).')\s*+\K\/(.*?(?<!\\\\)(\\\\\\\\)*+)\//', $callback);
     }
 
     /**
@@ -246,8 +246,8 @@ class JS extends Minify
         // that allows statements to be broken up over multiple lines
         $before = $this->getOperatorsForRegex($this->operatorsBefore, '/');
         $after = $this->getOperatorsForRegex($this->operatorsAfter, '/');
-        $content = preg_replace('/(' . implode('|', $before) . ')\s+/', '\\1', $content);
-        $content = preg_replace('/\s+(' . implode('|', $after) . ')/', '\\1', $content);
+        $content = preg_replace('/('.implode('|', $before).')\s+/', '\\1', $content);
+        $content = preg_replace('/\s+('.implode('|', $after).')/', '\\1', $content);
 
         // make sure + and - can't be mistaken for, or joined into ++ and --
         $content = preg_replace('/(?<![\+\-])\s*([\+\-])(?![\+\-])/', '\\1', $content);
@@ -260,13 +260,13 @@ class JS extends Minify
          * whitespace that follows them.
          */
         $operators = $this->getOperatorsForRegex($this->operatorsBefore + $this->operatorsAfter, '/');
-        $content = preg_replace('/([\}\)\]])[^\S\n]+(?!' . implode('|', $operators) . ')/', '\\1', $content);
+        $content = preg_replace('/([\}\)\]])[^\S\n]+(?!'.implode('|', $operators).')/', '\\1', $content);
 
         // collapse whitespace around reserved words into single space
         $before = $this->getKeywordsForRegex($this->keywordsBefore, '/');
         $after = $this->getKeywordsForRegex($this->keywordsAfter, '/');
-        $content = preg_replace('/(^|[;\}\s])\K(' . implode('|', $before) . ')\s+/', '\\2 ', $content);
-        $content = preg_replace('/\s+(' . implode('|', $after) . ')(?=([;\{\s]|$))/', ' \\1', $content);
+        $content = preg_replace('/(^|[;\}\s])\K('.implode('|', $before).')\s+/', '\\2 ', $content);
+        $content = preg_replace('/\s+('.implode('|', $after).')(?=([;\{\s]|$))/', ' \\1', $content);
 
         // get rid of double semicolons, except when followed by closing-),
         // where semicolons can be used like: "for(v=1,_=b;;)"
@@ -326,7 +326,7 @@ class JS extends Minify
 
         // add word boundaries
         array_walk($keywords, function ($value) {
-            return '\b' . $value . '\b';
+            return '\b'.$value.'\b';
         });
 
         $keywords = array_combine($keywords, $escaped);
@@ -362,11 +362,11 @@ class JS extends Minify
              * array['key-here'] can't be replaced by array.key-here since '-'
              * is not a valid character there.
              */
-            if (!preg_match('/^' . $minifier::REGEX_VARIABLE  . '$/u', $property)) {
+            if (!preg_match('/^'.$minifier::REGEX_VARIABLE.'$/u', $property)) {
                 return $match[0];
             }
 
-            return '.' . $property;
+            return '.'.$property;
         };
 
         /*
@@ -380,7 +380,7 @@ class JS extends Minify
         preg_match('/(\[[^\]]+\])[^\]]*$/', static::REGEX_VARIABLE, $previousChar);
         $previousChar = $previousChar[1];
 
-        return preg_replace_callback('/(?<=' . $previousChar . '|\])\[(([\'"])[0-9]+\\2)\]/u', $callback, $content);
+        return preg_replace_callback('/(?<='.$previousChar.'|\])\[(([\'"])[0-9]+\\2)\]/u', $callback, $content);
     }
 
     /**
