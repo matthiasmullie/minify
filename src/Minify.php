@@ -280,6 +280,16 @@ abstract class Minify
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
+            if (!$match[1]) {
+                /*
+                 * Empty strings need no placeholder; they can't be confused for
+                 * anything else anyway.
+                 * But we still needed to match them, for the extraction routine
+                 * to skip over this particular string.
+                 */
+                return $match[0];
+            }
+
             $count = count($minifier->extracted);
             $placeholder = $match[1].$count.$match[1];
             $minifier->extracted[$placeholder] = $match[1].$match[2].$match[1];
@@ -299,7 +309,7 @@ abstract class Minify
          * considered as escape-char (times 2) and to get it in the regex,
          * escaped (times 2)
          */
-        $this->registerPattern('/(['.$chars.'])(.+?((?<!\\\\)|\\\\\\\\+))\\1/s', $callback);
+        $this->registerPattern('/(['.$chars.'])(.*?((?<!\\\\)|\\\\\\\\+))\\1/s', $callback);
     }
 
     /**
