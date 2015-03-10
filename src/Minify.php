@@ -312,7 +312,32 @@ abstract class Minify
      */
     protected function restoreExtractedData($content)
     {
-        $content = str_replace(array_keys($this->extracted), $this->extracted, $content);
+        if (!$this->extracted) {
+            // nothing was extracted, nothing to restore
+            return $content;
+        }
+
+        // PHP only supports $this inside anonymous functions since 5.4
+        $minifier = $this;
+        $callback = function ($match) use ($minifier) {
+            return $minifier->extracted[$match[0]];
+        };
+
+        /*
+         * I basically want a str_replace to put back all of the extracted data.
+         * However, str_replace iteratively goes over the full content for every
+         * value, which means that if I've replaced the first extracted thingy,
+         * it will again search the full content for the second extracted thing.
+         * Which means that, if the original value for the first extract looks
+         * similar to a placeholder that has yet to be restored, that value
+         * would get replaced.
+         * Instead, I'll go a preg_replace, which just processes the content
+         * until it finds a match, replaces that, and continues from that point.
+         */
+        $delimiter = array_fill(0, count($this->extracted), '/');
+        $keys = array_map('preg_quote', array_keys($this->extracted), $delimiter);
+        $content = preg_replace_callback('/(' . implode('|', $keys) . ')/', $callback, $content);
+
         $this->extracted = array();
 
         return $content;

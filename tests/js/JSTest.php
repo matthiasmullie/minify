@@ -488,6 +488,12 @@ $.fn.alert.Constructor=Alert',
             "conf.zoomHoverIcons['default']",
         );
 
+        // https://github.com/matthiasmullie/minify/issues/43
+        $tests[] = array(
+            '{"key":"3","key2":"value","key3":"3"}',
+            '{"key":"3","key2":"value","key3":"3"}',
+        );
+
         return $tests;
     }
 }
