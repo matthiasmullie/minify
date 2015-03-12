@@ -494,6 +494,12 @@ $.fn.alert.Constructor=Alert',
             '{"key":"3","key2":"value","key3":"3"}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/44
+        $tests[] = array(
+            'return ["x"]',
+            'return["x"]',
+        );
+
         return $tests;
     }
 }

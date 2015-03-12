@@ -380,7 +380,15 @@ class JS extends Minify
         preg_match('/(\[[^\]]+\])[^\]]*$/', static::REGEX_VARIABLE, $previousChar);
         $previousChar = $previousChar[1];
 
-        return preg_replace_callback('/(?<='.$previousChar.'|\])\[(([\'"])[0-9]+\\2)\]/u', $callback, $content);
+        /*
+         * Make sure word preceding the ['value'] is not a keyword, e.g.
+         * return['x']. Because -again- PHP's regex implementation doesn't allow
+         * un-fixed-length lookbehind assertions, I'm just going to do a lot of
+         * separate lookbehind assertions, one for each keyword.
+         */
+        $keywords = $this->getKeywordsForRegex($keywords);
+        $keywords = '(?<!'.implode(')(?<!', $keywords).')';
+        return preg_replace_callback('/(?<='.$previousChar.'|\])'.$keywords.'\[(([\'"])[0-9]+\\2)\]/u', $callback, $content);
     }
 
     /**
