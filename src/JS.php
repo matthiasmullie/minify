@@ -273,15 +273,28 @@ class JS extends Minify
         $content = preg_replace('/;+(?!\))/', ';', $content);
 
         /*
-         * We also don't really want to terminate statements followed by closing
-         * curly braces (which we've ignored completely up until now): ASI will
-         * kick in here & we're all about minifying.
+         * Next, we'll be removing all semicolons where ASI kicks in.
+         * for-loops however, can have an empty body (ending in only a
+         * semicolon), like: `for(i=1;i<3;i++);`
+         * Here, nothing happens during the loop; it's just used to keep
+         * increasing `i`. With that ; omitted, the next line would be expected
+         * to be the for-loop's body...
+         * I'm going to double that semicolon (if any) so after the next line,
+         * which strips semicolons here & there, we're still left with this one.
          */
-        $content = preg_replace('/;\}/s', '}', $content);
+        $content = preg_replace('/(for\([^;]*;[^;]*;[^;\{]*\));(\}|$)/s', '\\1;;\\2', $content);
 
-        // get rid of remaining whitespace af beginning/end, as well as
-        // semicolon, which doesn't make sense there: ASI will kick in here too
-        return trim($content, "\n ;");
+        /*
+         * We also don't really want to terminate statements followed by closing
+         * curly braces (which we've ignored completely up until now) or end-of-
+         * script: ASI will kick in here & we're all about minifying.
+         * Semicolons at beginning of the file don't make any sense either.
+         */
+        $content = preg_replace('/;(\}|$)/s', '\\1', $content);
+        $content = ltrim($content, ';');
+
+        // get rid of remaining whitespace af beginning/end
+        return trim($content);
     }
 
     /**
