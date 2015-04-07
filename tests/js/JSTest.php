@@ -388,6 +388,12 @@ if(e.which==40&&index<$items.length-1)index++',
             'array["dont-replace"].key2',
         );
 
+        // shorten bools
+        $tests[] = array(
+            'while(true){break}',
+            'for(;;){break}',
+        );
+
         // https://github.com/matthiasmullie/minify/issues/10
         $tests[] = array(
             '// first mutation patch
