@@ -137,6 +137,26 @@ abstract class Minify
     }
 
     /**
+     * Minify & gzip the data & (optionally) saves it to a file.
+     *
+     * @param  string[optional] $path Path to write the data to.
+     * @param  int[optional]    $level Compression level, from 0 to 9.
+     * @return string           The minified & gzipped data.
+     */
+    public function gzip($path = null, $level = 9)
+    {
+        $content = $this->execute($path);
+        $content = gzencode($content, $level, FORCE_GZIP);
+
+        // save to path
+        if ($path !== null) {
+            $this->save($content, $path);
+        }
+
+        return $content;
+    }
+
+    /**
      * Minify the data.
      *
      * @param  string[optional] $path Path to write the data to.

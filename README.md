@@ -76,6 +76,14 @@ If the $path parameter is omitted, the result will not be written anywhere.
 $minifier->minify('/target/path.js');
 ```
 
+### gzip($path, $level)
+
+Minifies and optionally saves to a file, just like `minify()`, but it also `gzencode()`s the minified content.
+
+```php
+$minifier->gzip('/target/path.js');
+```
+
 ### setMaxImportSize($size) *(CSS only)*
 
 The CSS minifier will automatically embed referenced files (like images, fonts, ...) into the minified CSS, so they don't have to be fetched over multiple connections.

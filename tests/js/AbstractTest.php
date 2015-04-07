@@ -88,13 +88,28 @@ class CommonTest extends PHPUnit_Framework_TestCase
      */
     public function save()
     {
-        $path1 = __DIR__.'/sample/source/script1.js';
-        $content1 = file_get_contents($path1);
+        $path = __DIR__.'/sample/source/script1.js';
+        $content = file_get_contents($path);
         $savePath = __DIR__.'/sample/target/script1.js';
 
-        $minifier = new Minify\JS($path1);
+        $minifier = new Minify\JS($path);
         $minifier->minify($savePath);
 
-        $this->assertEquals(file_get_contents($savePath), $content1);
+        $this->assertEquals(file_get_contents($savePath), $content);
+    }
+
+    /**
+     * @test
+     */
+    public function gzip()
+    {
+        $path = __DIR__.'/sample/source/script1.js';
+        $content = file_get_contents($path);
+        $savePath = __DIR__.'/sample/target/script1.js.gz';
+
+        $minifier = new Minify\JS($path);
+        $minifier->gzip($savePath, 9);
+
+        $this->assertEquals(file_get_contents($savePath), gzencode($content, 9, FORCE_GZIP));
     }
 }
