@@ -393,6 +393,36 @@ if(e.which==40&&index<$items.length-1)index++',
             'while(true){break}',
             'for(;;){break}',
         );
+        // make sure we don't get "missing while after do-loop body"
+        $tests[] = array(
+            'do{break}while(true)',
+            'do{break}while(!0)',
+        );
+        $tests[] = array(
+            "do break\nwhile(true)",
+            "do break\nwhile(!0)",
+        );
+        $tests[] = array(
+            "do{break}while(true){alert('test')}",
+            "do{break}while(!0){alert('test')}",
+        );
+        $tests[] = array(
+            "do break\nwhile(true){alert('test')}",
+            "do break\nwhile(!0){alert('test')}",
+        );
+        // nested do-while & while
+        $tests[] = array(
+            "do{while(true){break}break}while(true){alert('test')}",
+            "do{for(;;){break}break}while(!0){alert('test')}",
+        );
+        $tests[] = array(
+            "do{while(true){break}break}while(true){alert('test')}while(true){break}",
+            "do{for(;;){break}break}while(!0){alert('test')}for(;;){break}",
+        );
+        $tests[] = array(
+            "do{while(true){break}break}while(true){alert('test')}while(true){break}do{while(true){break}break}while(true){alert('test')}while(true){break}",
+            "do{for(;;){break}break}while(!0){alert('test')}for(;;){break}do{for(;;){break}break}while(!0){alert('test')}for(;;){break}",
+        );
 
         // https://github.com/matthiasmullie/minify/issues/10
         $tests[] = array(
@@ -514,6 +544,12 @@ $.fn.alert.Constructor=Alert',
         $tests[] = array(
             'return ["x"]',
             'return["x"]',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/50
+        $tests[] = array(
+            'do{var dim=this._getDaysInMonth(year,month-1);if(day<=dim){break}month++;day-=dim}while(true)}',
+            'do{var dim=this._getDaysInMonth(year,month-1);if(day<=dim){break}month++;day-=dim}while(!0)}',
         );
 
         return $tests;
