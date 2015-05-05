@@ -19,6 +19,7 @@
         "matthiasmullie/path-converter": "~1.0"
     },
     "require-dev": {
+        "scrapbook/psr-cache": "~0.2",
         "phpunit/phpunit": "4.3.*",
         "satooshi/php-coveralls": "dev-master"
     },

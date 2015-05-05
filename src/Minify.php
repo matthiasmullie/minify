@@ -1,6 +1,8 @@
 <?php
 namespace MatthiasMullie\Minify;
 
+use Psr\Cache\CacheItemInterface;
+
 /**
  * Abstract minifier class.
  *
@@ -154,6 +156,20 @@ abstract class Minify
         }
 
         return $content;
+    }
+
+    /**
+     * Minify the data & write it to a CacheItemInterface object.
+     *
+     * @param  CacheItemInterface $item Cache item to write the data to.
+     * @return CacheItemInterface       Cache item with the minifier data.
+     */
+    public function cache(CacheItemInterface $item)
+    {
+        $content = $this->execute();
+        $item->set($content);
+
+        return $item;
     }
 
     /**
