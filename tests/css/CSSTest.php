@@ -286,6 +286,14 @@ margin-left: -0.3125rem;
             "dfn,em,img{}",
         );
 
+        // https://github.com/matthiasmullie/minify/issues/49
+        $tests[] = array(
+            __DIR__.'/sample/import_files/issue49.css',
+            '.social-btn a[href*="facebook"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/facebook.png')).')}' .
+            '.social-btn a[href*="vimeo"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/vimeo.png')).')}' .
+            '.social-btn a[href*="instagram"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/instagram.png')).')}'
+        );
+
         return $tests;
     }
 
