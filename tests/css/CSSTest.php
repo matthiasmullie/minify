@@ -411,6 +411,8 @@ margin-left: -0.3125rem;
             $target.'/relative.css',
             '@import url(image.jpg);',
         );
+        // note: relative target only works if the file already exists: it has
+        // to be able to realpath()
         $tests[] = array(
             $source.'/relative.css',
             $targetRelative.'/relative.css',
