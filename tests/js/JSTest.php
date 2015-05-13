@@ -18,7 +18,11 @@ class JSTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->minifier = new Minify\JS();
+
+        // override save method, there's no point in writing the result out here
+        $this->minifier = $this->getMockBuilder('\MatthiasMullie\Minify\JS')
+            ->setMethods(array('save'))
+            ->getMock();
     }
 
     /**

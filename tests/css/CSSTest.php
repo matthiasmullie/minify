@@ -18,7 +18,11 @@ class CSSTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->minifier = new Minify\CSS();
+
+        // override save method, there's no point in writing the result out here
+        $this->minifier = $this->getMockBuilder('\MatthiasMullie\Minify\CSS')
+            ->setMethods(array('save'))
+            ->getMock();
     }
 
     /**
@@ -56,9 +60,23 @@ class CSSTest extends PHPUnit_Framework_TestCase
     public function convertRelativePath($source, $target, $expected)
     {
         $source = (array) $source;
-        foreach ($source as $css) {
+        foreach ($source as $path => $css) {
             $this->minifier->add($css);
+
+            // $source also accepts an array where the key is a bogus path
+            if (is_string($path)) {
+                $object = new ReflectionObject($this->minifier);
+                $property = $object->getProperty('data');
+                $property->setAccessible(true);
+                $data = $property->getValue($this->minifier);
+
+                // keep content, but make it appear from the given path
+                $data[$path] = array_pop($data);
+                $property->setValue($this->minifier, $data);
+                $property->setAccessible(false);
+            }
         }
+
         $result = $this->minifier->minify($target);
 
         $this->assertEquals($expected, $result);
@@ -372,6 +390,16 @@ margin-left: -0.3125rem;
             $source.'/nested/nested.css',
             $target.'/nested.css',
             '@import url(image.jpg);',
+        );
+
+        // https://github.com/forkcms/forkcms/issues/1186
+        $tests[] = array(
+            array(
+                // key is a bogus path
+                '/Users/mathias/Documents/— Projecten/PROJECT_NAAM/Web/src/Backend/Core/Layout/Css/screen.css' => '@import url("imports/typography.css");',
+            ),
+            '/Users/mathias/Documents/— Projecten/PROJECT_NAAM/Web/src/Backend/Cache/MinifiedCss/some-hash.css',
+            '@import url(../../Core/Layout/Css/imports/typography.css);',
         );
 
         $sourceRelative = 'tests/css/sample/convert_relative_path/source';
