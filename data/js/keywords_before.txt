@@ -15,7 +15,6 @@ delete
 export
 import
 public
-return
 static
 typeof
 extends

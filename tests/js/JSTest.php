@@ -575,6 +575,20 @@ if(f=c.files[e],!f.type.match(new RegExp(".?("+g+")$","i")))
 return !1;return !0}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/54
+        $tests[] = array(
+            'function a() {
+  if (true)
+    return
+  if (false)
+    return
+}',
+            'function a(){if(!0)
+return
+if(!1)
+return}',
+        );
+
         return $tests;
     }
 }
