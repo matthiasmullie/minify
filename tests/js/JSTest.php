@@ -556,6 +556,25 @@ $.fn.alert.Constructor=Alert',
             'do{var dim=this._getDaysInMonth(year,month-1);if(day<=dim){break}month++;day-=dim}while(!0)}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/53
+        $tests[] = array(
+            'a.validator.addMethod("accept", function (b, c, d) {
+    var e, f, g = "string" == typeof d ?
+        d.replace(/\s/g, "").replace(/,/g, "|") :
+        "image/*", h = this.optional(c);
+    if (h)return h;
+    if ("file" === a(c).attr("type") && (g = g.replace(/\*/g, ".*"), c.files && c.files.length))
+        for (e = 0; e < c.files.length; e++)
+            if (f = c.files[e], !f.type.match(new RegExp(".?(" + g + ")$", "i")))
+                return !1;
+    return !0
+}',
+            'a.validator.addMethod("accept",function(b,c,d){var e,f,g="string"==typeof d?d.replace(/\s/g,"").replace(/,/g,"|"):"image/*",h=this.optional(c);if(h)return h;if("file"===a(c).attr("type")&&(g=g.replace(/\*/g,".*"),c.files&&c.files.length))
+for(e=0;e<c.files.length;e++)
+if(f=c.files[e],!f.type.match(new RegExp(".?("+g+")$","i")))
+return !1;return !0}',
+        );
+
         return $tests;
     }
 }
