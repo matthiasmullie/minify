@@ -119,7 +119,7 @@ class JS extends Minify
      * @param  string[optional] $path Path to write the data to.
      * @return string           The minified data.
      */
-    public function execute($path = null)
+    public function execute($path = null, $minify = true)
     {
         $content = '';
 
@@ -135,7 +135,10 @@ class JS extends Minify
              */
             $content .= $js."\n;";
         }
-
+		
+		if (!$minify)
+			return $content;
+		
         /*
          * Let's first take out strings, comments and regular expressions.
          * All of these can contain JS code-like characters, and we should make
