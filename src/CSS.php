@@ -258,7 +258,7 @@ class CSS extends Minify
      * @param  string[optional] $path Path to write the data to.
      * @return string           The minified data.
      */
-    protected function execute($path = null)
+    protected function execute($path = null, $minify = true)
     {
         $content = '';
 
@@ -270,16 +270,18 @@ class CSS extends Minify
              * leave it alone. E.g.:
              * p { content: "a   test" }
              */
-            $this->extractStrings();
-            $this->stripComments();
-            $css = $this->replace($css);
-
-            $css = $this->stripWhitespace($css);
-            $css = $this->shortenHex($css);
-            $css = $this->shortenZeroes($css);
-
-            // restore the string we've extracted earlier
-            $css = $this->restoreExtractedData($css);
+            if ($minify) {
+	            $this->extractStrings();
+	            $this->stripComments();
+	            $css = $this->replace($css);
+	
+	            $css = $this->stripWhitespace($css);
+	            $css = $this->shortenHex($css);
+	            $css = $this->shortenZeroes($css);
+	
+	            // restore the string we've extracted earlier
+	            $css = $this->restoreExtractedData($css);
+			}
 
             /*
              * If we'll save to a new path, we'll have to fix the relative paths
