@@ -125,20 +125,26 @@ class JS extends Minify
 
         // loop files
         foreach ($this->data as $source => $js) {
-            /*
-             * Combine js: separating the scripts by a ;
-             * I'm also adding a newline: it will be eaten when whitespace is
-             * stripped, but we need to make sure we're not just appending
-             * a new script right after a previous script that ended with a
-             * singe-line comment on the last line (in which case it would also
-             * be seen as part of that comment)
-             */
-            $content .= $js."\n;";
+			/*
+			 * Combine js: separating the scripts by a ;
+			 * I'm also adding a newline: it will be eaten when whitespace is
+			 * stripped, but we need to make sure we're not just appending
+			 * a new script right after a previous script that ended with a
+			 * singe-line comment on the last line (in which case it would also
+			 * be seen as part of that comment)
+			 */
+			
+			$content .= $js."\n";
+			
+			// Add semi colon if we're minifying
+			if ($minify)
+            	$content .= ';';
         }
 		
 		if (!$minify) {
+			// trim trailing whitespace
 			if (strlen($content) > 2)
-				$content = substr($content, 0, -2);
+				$content = substr($content, 0, -1);
 			return $content;
 		}
 		
