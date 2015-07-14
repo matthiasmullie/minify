@@ -136,8 +136,11 @@ class JS extends Minify
             $content .= $js."\n;";
         }
 		
-		if (!$minify)
+		if (!$minify) {
+			if (strlen($content) > 2)
+				$content = substr($content, 0, -2);
 			return $content;
+		}
 		
         /*
          * Let's first take out strings, comments and regular expressions.
