@@ -137,14 +137,16 @@ class JS extends Minify
 			$content .= $js."\n";
 			
 			// Add semi colon if we're minifying
-			if ($minify)
-            	$content .= ';';
+			if ($minify) {
+            	            $content .= ';';
+			}
         }
 		
 		if (!$minify) {
 			// trim trailing whitespace
-			if (strlen($content) > 2)
+			if (strlen($content) > 2) {
 				$content = substr($content, 0, -1);
+			}
 			return $content;
 		}
 		
