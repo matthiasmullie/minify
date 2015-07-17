@@ -64,6 +64,16 @@ This is roughly equivalent to the constructor.
 $minifier->add($path3);
 $minifier->add($js);
 ```
+### compile($path)
+
+This will compile the files' content, save the result to $path and return the resulting content.
+If the $path parameter is omitted, the result will not be written anywhere.
+
+*CAUTION: If you have CSS with relative paths (to imports, images, ...), you should always specify a target path! Then those relative paths will be adjusted in accordance with the new path.*
+
+```php
+$minifier->compile('/target/path.js');
+```
 
 ### minify($path)
 
