@@ -145,7 +145,7 @@ class JS extends Minify
 		if (!$minify) {
 			// trim trailing whitespace
 			if (strlen($content) > 2) {
-				$content = substr($content, 0, -1);
+			    $content = substr($content, 0, -1);
 			}
 			return $content;
 		}
