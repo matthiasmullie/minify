@@ -119,7 +119,25 @@ abstract class Minify
         // close the file
         @fclose($handler);
     }
+    
+    /**
+     * Compile the data & (optionally) saves it to a file.
+     *
+     * @param  string[optional] $path Path to write the data to.
+     * @return string           The compiled, not minified data.
+     */
+    public function compile($path = null)
+    {
+        $content = $this->execute($path, false);
 
+        // save to path
+        if ($path !== null) {
+            $this->save($content, $path);
+        }
+
+        return $content;
+    }
+    
     /**
      * Minify the data & (optionally) saves it to a file.
      *

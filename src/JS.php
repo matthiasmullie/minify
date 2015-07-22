@@ -119,23 +119,37 @@ class JS extends Minify
      * @param  string[optional] $path Path to write the data to.
      * @return string           The minified data.
      */
-    public function execute($path = null)
+    public function execute($path = null, $minify = true)
     {
         $content = '';
 
         // loop files
         foreach ($this->data as $source => $js) {
-            /*
-             * Combine js: separating the scripts by a ;
-             * I'm also adding a newline: it will be eaten when whitespace is
-             * stripped, but we need to make sure we're not just appending
-             * a new script right after a previous script that ended with a
-             * singe-line comment on the last line (in which case it would also
-             * be seen as part of that comment)
-             */
-            $content .= $js."\n;";
+			/*
+			 * Combine js: separating the scripts by a ;
+			 * I'm also adding a newline: it will be eaten when whitespace is
+			 * stripped, but we need to make sure we're not just appending
+			 * a new script right after a previous script that ended with a
+			 * singe-line comment on the last line (in which case it would also
+			 * be seen as part of that comment)
+			 */
+			
+			$content .= $js."\n";
+			
+			// Add semi colon if we're minifying
+			if ($minify) {
+            	            $content .= ';';
+			}
         }
-
+		
+		if (!$minify) {
+			// trim trailing whitespace
+			if (strlen($content) > 2) {
+			    $content = substr($content, 0, -1);
+			}
+			return $content;
+		}
+		
         /*
          * Let's first take out strings, comments and regular expressions.
          * All of these can contain JS code-like characters, and we should make
