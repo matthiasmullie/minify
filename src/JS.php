@@ -113,6 +113,94 @@ class JS extends Minify
     }
 
     /**
+     * Combine JS from require statements.
+     * requires's will be loaded and their content merged into the original file,
+     * to save HTTP requests.
+     *
+     * @param  string $source  The file to combine requires for.
+     * @param  string $content The JS content to combine requires for.
+     * @return string
+     */
+    protected function combineRequires($source, $content)
+    {
+        $requireRegexes = array(
+            // require 'xxx'
+            '/
+
+            # require statement
+            require
+
+            # (optional) whitespace
+            \s*
+
+                # open bracket
+                \(
+
+                    # (optional) whitespace
+                    \s*
+
+
+                        # open path enclosure
+                        (?P<quotes>["\'])
+
+                            # fetch path
+                            (?P<path>.+?)
+
+                        # close path enclosure
+                        (?P=quotes)
+
+                    # (optional) whitespace
+                    \s*
+
+                # close bracket
+                \)
+
+            # (optional) trailing whitespace
+            \s*
+
+            # (optional) closing semi-colon
+            ;?
+
+            /ix',
+        );
+
+        // find all relative requires in js
+        $matches = array();
+        foreach ($requireRegexes as $requireRegex) {
+            if (preg_match_all($requireRegex, $content, $regexMatches, PREG_SET_ORDER)) {
+                $matches = array_merge($matches, $regexMatches);
+            }
+        }
+
+        $search = array();
+        $replace = array();
+
+        // loop the matches
+        foreach ($matches as $match) {
+            // get the path for the file that will be required
+            $requirePath = dirname($source).'/'.$match['path'];
+
+            // only replace the require with the content if we can grab the
+            // content of the file
+            if (@file_exists($requirePath) && is_file($requirePath)) {
+                // grab referenced file & minify it (which may include requiring
+                // yet other require statements recursively)
+                $minifier = new static($requirePath);
+                $requireContent = $minifier->execute($source);
+
+                // add to replacement array
+                $search[] = $match[0];
+                $replace[] = $requireContent;
+            }
+        }
+
+        // replace the require statements
+        $content = str_replace($search, $replace, $content);
+
+        return $content;
+    }
+
+    /**
      * Minify the data.
      * Perform JS optimizations.
      *
@@ -125,6 +213,8 @@ class JS extends Minify
 
         // loop files
         foreach ($this->data as $source => $js) {
+            $js = $this->combineRequires($path ?: $source, $js);
+
             /*
              * Combine js: separating the scripts by a ;
              * I'm also adding a newline: it will be eaten when whitespace is
