@@ -124,14 +124,15 @@ abstract class Minify
      * Minify the data & (optionally) saves it to a file.
      *
      * @param  string[optional] $path Path to write the data to.
+     * @param  bool[optional]   $save Really save to $path (otherwise it is just used for URL-rewriting)
      * @return string           The minified data.
      */
-    public function minify($path = null)
+    public function minify($path = null, $save = true)
     {
         $content = $this->execute($path);
 
         // save to path
-        if ($path !== null) {
+        if ($save && $path !== null) {
             $this->save($content, $path);
         }
 
