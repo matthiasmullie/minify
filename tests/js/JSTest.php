@@ -641,6 +641,14 @@ for(var name in headers)
 this.transport.setRequestHeader(name,headers[name])},",
         );
 
+        // https://github.com/matthiasmullie/minify/issues/59
+        $tests[] = array(
+            'isPath:function(e) {
+    return /\//.test(e);
+}',
+            'isPath:function(e){return/\//.test(e)}',
+        );
+
         return $tests;
     }
 }

@@ -208,8 +208,8 @@ class JS extends Minify
 
         // it's a regex if we can find an opening (not preceded by variable,
         // value or similar) & (non-escaped) closing /,
-        $before = $this->getOperatorsForRegex($this->operatorsBefore, '/');
         $this->registerPattern('/^\s*+\K(\/.*?(?<!\\\\)(\\\\\\\\)*+\/\n?)/', $callback);
+        $before = $this->getOperatorsForRegex($this->operatorsBefore, '/') + $this->getKeywordsForRegex($this->keywordsReserved, '/');
         $this->registerPattern('/(?:'.implode('|', $before).')\s*+\K(\/.*?(?<!\\\\)(\\\\\\\\)*+\/\n?)/', $callback);
     }
 
