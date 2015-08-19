@@ -201,7 +201,7 @@ class JS extends Minify
         $callback = function ($match) use ($minifier) {
             $count = count($minifier->extracted);
             $placeholder = '/'.$count.'/';
-            $minifier->extracted[$placeholder] = '/'.$match[1].'/';
+            $minifier->extracted[$placeholder] = $match[1];
 
             return $placeholder;
         };
@@ -209,8 +209,8 @@ class JS extends Minify
         // it's a regex if we can find an opening (not preceded by variable,
         // value or similar) & (non-escaped) closing /,
         $before = $this->getOperatorsForRegex($this->operatorsBefore, '/');
-        $this->registerPattern('/^\s*+\K\/(.*?(?<!\\\\)(\\\\\\\\)*+)\//', $callback);
-        $this->registerPattern('/(?:'.implode('|', $before).')\s*+\K\/(.*?(?<!\\\\)(\\\\\\\\)*+)\//', $callback);
+        $this->registerPattern('/^\s*+\K(\/.*?(?<!\\\\)(\\\\\\\\)*+\/\n?)/', $callback);
+        $this->registerPattern('/(?:'.implode('|', $before).')\s*+\K(\/.*?(?<!\\\\)(\\\\\\\\)*+\/\n?)/', $callback);
     }
 
     /**

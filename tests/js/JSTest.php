@@ -589,6 +589,14 @@ if(!1)
 return}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/56
+        $tests[] = array(
+            'var timeRegex = /^([2][0-3]|[01]?[0-9])(:[0-5][0-9])?$/
+if (start_time.match(timeRegex) == null) {}',
+            'var timeRegex=/^([2][0-3]|[01]?[0-9])(:[0-5][0-9])?$/
+if(start_time.match(timeRegex)==null){}',
+        );
+
         return $tests;
     }
 }
