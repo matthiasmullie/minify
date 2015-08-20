@@ -178,7 +178,7 @@ abstract class Minify
      * @param  string[optional] $path Path to write the data to.
      * @return string           The minified data.
      */
-    abstract protected function execute($path = null);
+    abstract public function execute($path = null);
 
     /**
      * Register a pattern to execute against the source content.

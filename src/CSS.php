@@ -258,7 +258,7 @@ class CSS extends Minify
      * @param  string[optional] $path Path to write the data to.
      * @return string           The minified data.
      */
-    protected function execute($path = null)
+    public function execute($path = null)
     {
         $content = '';
 
