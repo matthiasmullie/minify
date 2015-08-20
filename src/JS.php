@@ -206,13 +206,23 @@ class JS extends Minify
             return $placeholder;
         };
 
-        // it's a regex if we can find an opening (not preceded by variable,
-        // value or similar) & (non-escaped) closing /,
+        // it's a regex if we can find an opening and (not escaped) closing /,
         // include \n because it may be there for a reason
         // (https://github.com/matthiasmullie/minify/issues/56)
-        $this->registerPattern('/^\s*+\K(\/.*?(?<!\\\\)(\\\\\\\\)*+\/\n?)/', $callback);
-        $before = $this->getOperatorsForRegex($this->operatorsBefore, '/') + $this->getKeywordsForRegex($this->keywordsReserved, '/');
-        $this->registerPattern('/(?:'.implode('|', $before).')\s*+\K(\/.*?(?<!\\\\)(\\\\\\\\)*+\/\n?)/', $callback);
+        $pattern = '(\/.*?(?<!\\\\)(\\\\\\\\)*+\/\n?)';
+
+        // / can't be preceded by variable, value, or similar because then
+        // it's going to be division
+        // checking for that is complex, so we'll do inverse:
+        // * at the beginning of the file, it's not division, but regex
+        $this->registerPattern('/^\s*+\K'.$pattern.'/', $callback);
+        // * following another operator, it's not division, but regex
+        $before = $this->getOperatorsForRegex($this->operatorsBefore, '/');
+        $this->registerPattern('/(?:'.implode('|', $before).')\s*+\K'.$pattern.'/', $callback);
+        // * following a reserved word, it's not division, but regex
+        // (this one could be combined with operators, but that turns out to be slower
+        $keywords = $this->getKeywordsForRegex($this->keywordsReserved);
+        $this->registerPattern('/(?:'.implode('|', $keywords).')\s*+\K'.$pattern.'/', $callback);
     }
 
     /**
