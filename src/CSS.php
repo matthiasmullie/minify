@@ -27,10 +27,14 @@ class CSS extends Minify
     protected $importExtensions = array(
         'gif' => 'data:image/gif',
         'png' => 'data:image/png',
-        'jpg' => 'data:image/jpg',
+        'jpe' => 'data:image/jpeg',
+        'jpg' => 'data:image/jpeg',
         'jpeg' => 'data:image/jpeg',
         'svg' => 'data:image/svg+xml',
         'woff' => 'data:application/x-font-woff',
+        'tif' => 'image/tiff',
+        'tiff' => 'image/tiff',
+        'xbm' => 'image/x-xbitmap',
     );
 
     /**
@@ -508,7 +512,7 @@ class CSS extends Minify
         $content = preg_replace('/\s*([+-])\s*(?=[^}]*{)/', '$1', $content);
 
         // remove semicolon/whitespace followed by closing bracket
-        $content = preg_replace('/;}/', '}', $content);
+        $content = str_replace(';}', '}', $content);
 
         return trim($content);
     }
