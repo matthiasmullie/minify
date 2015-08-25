@@ -215,14 +215,11 @@ class JS extends Minify
         // it's going to be division
         // checking for that is complex, so we'll do inverse:
         // * at the beginning of the file, it's not division, but regex
-        $this->registerPattern('/^\s*+\K'.$pattern.'/', $callback);
+        $this->registerPattern('/^\s*\K'.$pattern.'/', $callback);
         // * following another operator, it's not division, but regex
-        $before = $this->getOperatorsForRegex($this->operatorsBefore, '/');
-        $this->registerPattern('/(?:'.implode('|', $before).')\s*+\K'.$pattern.'/', $callback);
-        // * following a reserved word, it's not division, but regex
-        // (this one could be combined with operators, but that turns out to be slower
-        $keywords = $this->getKeywordsForRegex($this->keywordsReserved);
-        $this->registerPattern('/(?:'.implode('|', $keywords).')\s*+\K'.$pattern.'/', $callback);
+        $operators = $this->getOperatorsForRegex($this->operatorsBefore, '/');
+        $operators += $this->getKeywordsForRegex($this->keywordsReserved, '/');
+        $this->registerPattern('/(?:'.implode('|', $operators).')\s*\K'.$pattern.'/', $callback);
     }
 
     /**
@@ -254,10 +251,13 @@ class JS extends Minify
         // collapse consecutive line feeds into just 1
         $content = preg_replace('/\n+/', "\n", $content);
 
-        // strip whitespace that ends in (or next line begin with) an operator
-        // that allows statements to be broken up over multiple lines
         $before = $this->getOperatorsForRegex($this->operatorsBefore, '/');
         $after = $this->getOperatorsForRegex($this->operatorsAfter, '/');
+        $operators = $before + $after;
+
+        // strip whitespace that ends in (or next line begin with) an operator
+        // that allows statements to be broken up over multiple lines
+        unset($before['+'], $before['-'], $after['+'], $after['-']);
         $content = preg_replace('/('.implode('|', $before).')\s+/', '\\1', $content);
         $content = preg_replace('/\s+('.implode('|', $after).')/', '\\1', $content);
 
@@ -271,7 +271,6 @@ class JS extends Minify
          * strip the newlines. However, we can safely strip any non-line feed
          * whitespace that follows them.
          */
-        $operators = $this->getOperatorsForRegex($this->operatorsBefore + $this->operatorsAfter, '/');
         $content = preg_replace('/([\}\)\]])[^\S\n]+(?!'.implode('|', $operators).')/', '\\1', $content);
 
         // collapse whitespace around reserved words into single space
@@ -331,6 +330,10 @@ class JS extends Minify
         // dot can not just immediately follow a number; it can be confused for
         // decimal point, or calling a method on it, e.g. 42 .toString()
         $operators['.'] = '(?<![0-9]\s)\.';
+
+        // don't confuse = with other assignment shortcuts (e.g. +=)
+        $chars = preg_quote('+-*\=<>%&|');
+        $operators['='] = '(?<!['.$chars.'])\=';
 
         return $operators;
     }
