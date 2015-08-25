@@ -471,8 +471,12 @@ class CSS extends Minify
 
         // strip 0-digits (.0 -> 0)
         $content = preg_replace('/'.$before.'\.0+'.$units.'?'.$after.'/', '0\\1', $content);
-        // 50.00 -> 50, 50.00px -> 50px
+        // strip trailing 0: 50.10 -> 50.1, 50.10px -> 50.1px
+        $content = preg_replace('/'.$before.'(-?[0-9]+\.[0-9]+)0+'.$units.'?'.$after.'/', '\\1\\2', $content);
+        // strip trailing 0: 50.00 -> 50, 50.00px -> 50px
         $content = preg_replace('/'.$before.'(-?[0-9]+)\.0+'.$units.'?'.$after.'/', '\\1\\2', $content);
+        // strip leading 0: 0.1 -> .1, 01.1 -> 1.1
+        $content = preg_replace('/'.$before.'(-?)0+([0-9]*\.[0-9]+)'.$units.'?'.$after.'/', '\\1\\2\\3', $content);
 
         // strip negative zeroes (-0 -> 0) & truncate zeroes (00 -> 0)
         $content = preg_replace('/'.$before.'-?0+'.$units.'?'.$after.'/', '0\\1', $content);

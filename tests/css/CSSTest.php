@@ -229,7 +229,7 @@ display: block;
 min-height: 1.5rem;
 margin-left: -0.3125rem;
 }',
-            'ul.pagination{display:block;min-height:1.5rem;margin-left:-0.3125rem}',
+            'ul.pagination{display:block;min-height:1.5rem;margin-left:-.3125rem}',
         );
 
         // edge cases for stripping zeroes
@@ -239,7 +239,7 @@ margin-left: -0.3125rem;
         );
         $tests[] = array(
             'p { margin: -0.01rem; }',
-            'p{margin:-0.01rem}',
+            'p{margin:-.01rem}',
         );
         $tests[] = array(
             'p { margin: .0; }',
@@ -270,6 +270,18 @@ margin-left: -0.3125rem;
             'p{margin:0}',
         );
         $tests[] = array(
+            'p { margin: 0.1px; }',
+            'p{margin:.1px}',
+        );
+        $tests[] = array(
+            'p { margin: 01.1px; }',
+            'p{margin:1.1px}',
+        );
+        $tests[] = array(
+            'p { margin: 0.060px; }',
+            'p{margin:.06px}',
+        );
+        $tests[] = array(
             'p.class00 { background-color: #000000; color: #000; }',
             'p.class00{background-color:#000;color:#000}',
         );
@@ -289,7 +301,7 @@ margin-left: -0.3125rem;
         // https://github.com/matthiasmullie/minify/issues/26
         $tests[] = array(
             '.hr > :first-child { width: 0.0001%; }',
-            '.hr>:first-child{width:0.0001%}',
+            '.hr>:first-child{width:.0001%}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/28
