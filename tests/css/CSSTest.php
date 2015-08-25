@@ -235,7 +235,7 @@ margin-left: -0.3125rem;
         // edge cases for stripping zeroes
         $tests[] = array(
             'p { margin: -0.0rem; }',
-            'p{margin:0}',
+            'p{margin:0rem}',
         );
         $tests[] = array(
             'p { margin: -0.01rem; }',
@@ -247,7 +247,7 @@ margin-left: -0.3125rem;
         );
         $tests[] = array(
             'p { margin: .0%; }',
-            'p{margin:0}',
+            'p{margin:0%}',
         );
         $tests[] = array(
             'p { margin: 1.0; }',

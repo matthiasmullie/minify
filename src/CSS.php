@@ -463,15 +463,19 @@ class CSS extends Minify
         $units = '(em|ex|%|px|cm|mm|in|pt|pc|ch|rem|vh|vw|vmin|vmax|vm)';
 
         // strip units after zeroes (0px -> 0)
-        $content = preg_replace('/'.$before.'(-?0*(\.0+)?)(?<=0)'.$units.$after.'/', '\\1', $content);
+        // NOTE: it should be safe to remove all units for a 0 value, but in
+        // practice, Webkit (especially Safari) seems to stumble over at least
+        // 0%, potentially other units as well. Only stripping 'px' for now.
+        // @see https://github.com/matthiasmullie/minify/issues/60
+        $content = preg_replace('/'.$before.'(-?0*(\.0+)?)(?<=0)px'.$after.'/', '\\1', $content);
 
         // strip 0-digits (.0 -> 0)
-        $content = preg_replace('/'.$before.'\.0+'.$after.'/', '0', $content);
-        // 50.00 -> 50, 50.00px -> 50px (non-0 can still be followed by units)
+        $content = preg_replace('/'.$before.'\.0+'.$units.'?'.$after.'/', '0\\1', $content);
+        // 50.00 -> 50, 50.00px -> 50px
         $content = preg_replace('/'.$before.'(-?[0-9]+)\.0+'.$units.'?'.$after.'/', '\\1\\2', $content);
 
         // strip negative zeroes (-0 -> 0) & truncate zeroes (00 -> 0)
-        $content = preg_replace('/'.$before.'-?0+'.$after.'/', '0', $content);
+        $content = preg_replace('/'.$before.'-?0+'.$units.'?'.$after.'/', '0\\1', $content);
 
         return $content;
     }
