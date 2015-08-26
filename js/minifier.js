@@ -1,17 +1,24 @@
 $(function() {
 	var selectType = function() {
 		var content = $(this).val(),
-			extension = content.split('.').pop(),
-			// check if we have a valid extension (.css of .js), in which case the
-			// content of the textarea is likely a link to a file, instead of code
-			knownType = ['js', 'css'].indexOf(extension) > -1;
+			extension = content.split('.').pop();
+
+		// check if we have a valid extension (.css of .js), in which case the
+		// content of the textarea is likely a link to a file, instead of code
+		if (['js', 'css'].indexOf(extension) === -1) {
+			// unknown - try to guess from content
+			content = content.replace(/\/\*.*?\*\//, '');
+			if (content.match(/(^|\s|;)(function|var|for|do|while|if|else|new|switch|return)(\s|;|\{|\})/)) {
+				extension = 'js';
+			} else {
+				extension = 'css';
+			}
+		}
 
 		$('#intro input[name=type]').prop('checked', false);
-		if (knownType) {
-			$('#type_' + extension)
-				.prop('checked', true)
-				.trigger('change');
-		}
+		$('#type_' + extension)
+			.prop('checked', true)
+			.trigger('change');
 	},
 	checkType = function(e) {
 		e.preventDefault();
@@ -22,7 +29,7 @@ $(function() {
 			minify();
 		} else {
 			// Show error message when type is not selected
-			$('#types').addClass('error')
+			$('#types').addClass('error');
 			showError('Please select the type (CSS or JavaScript) of your script!');
 		}
 	},
@@ -36,7 +43,7 @@ $(function() {
 		$.ajax({
 			url: $form.attr('action'),
 			type: $form.attr('method'),
-			data: $form.serialize(),
+			data: $form.serialize()
 		}).done(function(data, textStatus, jqXHR) {
 			// replace textarea content with minified script
 			$('#source').val(data.minified);
