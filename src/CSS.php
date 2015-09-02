@@ -66,6 +66,29 @@ class CSS extends Minify
     }
 
     /**
+     * Move any import statements to the top
+     *
+     * @param $content string Nearly finished CSS content
+     *
+     * @return string
+     */
+    protected function moveImportsToTop($content) {
+
+        if (preg_match_all('#@import[^;]+;#', $content, $matches)) {
+
+            // remove from content
+            foreach($matches[0] as $import) {
+                $content = str_replace($import, '', $content);
+            }
+
+            // add to top
+            $content = join('', $matches[0]).$content;
+        };
+
+        return $content;
+    }
+
+    /**
      * Combine CSS from import statements.
      * @import's will be loaded and their content merged into the original file,
      * to save HTTP requests.
@@ -304,6 +327,8 @@ class CSS extends Minify
             // combine css
             $content .= $css;
         }
+
+        $content = $this->moveImportsToTop($content);
 
         return $content;
     }
