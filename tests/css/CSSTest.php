@@ -324,6 +324,11 @@ margin-left: -0.3125rem;
             '.social-btn a[href*="instagram"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/instagram.png')).')}'
         );
 
+        // https://github.com/matthiasmullie/minify/issues/68
+        $tests[] = Array(
+            __DIR__.'/sample/external_imports/issue68.css',
+            '@import url(http://localhost/file.css);body{background:green}'
+        );
         return $tests;
     }
 
