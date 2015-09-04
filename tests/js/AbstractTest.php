@@ -1,8 +1,8 @@
 <?php
 
 use MatthiasMullie\Minify;
-use Scrapbook\Adapters\MemoryStore;
-use Scrapbook\Psr6\Pool;
+use MatthiasMullie\Scrapbook\Adapters\MemoryStore;
+use MatthiasMullie\Scrapbook\Psr6\Pool;
 
 /**
  * Tests common functions of abstract Minify class by using JS implementation.
