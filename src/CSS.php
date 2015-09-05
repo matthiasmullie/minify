@@ -69,15 +69,14 @@ class CSS extends Minify
      * Move any import statements to the top
      *
      * @param $content string Nearly finished CSS content
-     *
      * @return string
      */
     protected function moveImportsToTop($content) {
 
-        if (preg_match_all('#@import[^;]+;#', $content, $matches)) {
+        if (preg_match_all('/@import[^;]+;/', $content, $matches)) {
 
             // remove from content
-            foreach($matches[0] as $import) {
+            foreach ($matches[0] as $import) {
                 $content = str_replace($import, '', $content);
             }
 
