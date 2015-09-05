@@ -306,29 +306,30 @@ margin-left: -0.3125rem;
 
         // https://github.com/matthiasmullie/minify/issues/28
         $tests[] = array(
-            "@font-face { src: url(//netdna.bootstrapcdn.com/font-awesome/4.2.0/fonts/fontawesome-webfont.eot?v=4.2.0); }",
-            "@font-face{src:url(//netdna.bootstrapcdn.com/font-awesome/4.2.0/fonts/fontawesome-webfont.eot?v=4.2.0)}",
+            '@font-face { src: url(//netdna.bootstrapcdn.com/font-awesome/4.2.0/fonts/fontawesome-webfont.eot?v=4.2.0); }',
+            '@font-face{src:url(//netdna.bootstrapcdn.com/font-awesome/4.2.0/fonts/fontawesome-webfont.eot?v=4.2.0)}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/31
         $tests[] = array(
-            "dfn,em,img{}",
-            "dfn,em,img{}",
+            'dfn,em,img{}',
+            'dfn,em,img{}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/49
         $tests[] = array(
             __DIR__.'/sample/import_files/issue49.css',
-            '.social-btn a[href*="facebook"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/facebook.png')).')}' .
-            '.social-btn a[href*="vimeo"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/vimeo.png')).')}' .
-            '.social-btn a[href*="instagram"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/instagram.png')).')}'
+            '.social-btn a[href*="facebook"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/facebook.png')).')}'.
+            '.social-btn a[href*="vimeo"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/vimeo.png')).')}'.
+            '.social-btn a[href*="instagram"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/instagram.png')).')}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/68
-        $tests[] = Array(
+        $tests[] = array(
             __DIR__.'/sample/external_imports/issue68.css',
-            '@import url(http://localhost/file.css);body{background:green}'
+            '@import url(http://localhost/file.css);body{background:green}',
         );
+
         return $tests;
     }
 

@@ -35,7 +35,7 @@ class JSTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test JS minifier rules, provided by dataProvider
+     * Test JS minifier rules, provided by dataProvider.
      *
      * @test
      * @dataProvider dataProvider
@@ -518,8 +518,8 @@ $.fn.alert.Constructor=Alert',
 
         // https://github.com/matthiasmullie/minify/issues/40
         $tests[] = array(
-            "for(v=1,_=b;;){}",
-            "for(v=1,_=b;;){}",
+            'for(v=1,_=b;;){}',
+            'for(v=1,_=b;;){}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/41

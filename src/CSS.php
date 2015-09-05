@@ -1,4 +1,5 @@
 <?php
+
 namespace MatthiasMullie\Minify;
 
 use MatthiasMullie\PathConverter\Converter;
@@ -10,7 +11,6 @@ use MatthiasMullie\PathConverter\Converter;
  *
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
- *
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved.
  * @license MIT License
  */
@@ -66,13 +66,14 @@ class CSS extends Minify
     }
 
     /**
-     * Move any import statements to the top
+     * Move any import statements to the top.
      *
      * @param $content string Nearly finished CSS content
+     *
      * @return string
      */
-    protected function moveImportsToTop($content) {
-
+    protected function moveImportsToTop($content)
+    {
         if (preg_match_all('/@import[^;]+;/', $content, $matches)) {
 
             // remove from content
@@ -81,7 +82,7 @@ class CSS extends Minify
             }
 
             // add to top
-            $content = join('', $matches[0]).$content;
+            $content = implode('', $matches[0]).$content;
         };
 
         return $content;
@@ -89,11 +90,13 @@ class CSS extends Minify
 
     /**
      * Combine CSS from import statements.
+     *
      * @import's will be loaded and their content merged into the original file,
      * to save HTTP requests.
      *
-     * @param  string $source  The file to combine imports for.
-     * @param  string $content The CSS content to combine imports for.
+     * @param string $source  The file to combine imports for.
+     * @param string $content The CSS content to combine imports for.
+     *
      * @return string
      */
     protected function combineImports($source, $content)
@@ -230,11 +233,13 @@ class CSS extends Minify
 
     /**
      * Import files into the CSS, base64-ized.
+     *
      * @url(image.jpg) images will be loaded and their content merged into the
      * original file, to save HTTP requests.
      *
-     * @param  string $source  The file to import files for.
-     * @param  string $content The CSS content to import files for.
+     * @param string $source  The file to import files for.
+     * @param string $content The CSS content to import files for.
+     *
      * @return string
      */
     protected function importFiles($source, $content)
@@ -281,8 +286,9 @@ class CSS extends Minify
      * Minify the data.
      * Perform CSS optimizations.
      *
-     * @param  string[optional] $path Path to write the data to.
-     * @return string           The minified data.
+     * @param string[optional] $path Path to write the data to.
+     *
+     * @return string The minified data.
      */
     public function execute($path = null)
     {
@@ -336,10 +342,11 @@ class CSS extends Minify
      * Moving a css file should update all relative urls.
      * Relative references (e.g. ../images/image.gif) in a certain css file,
      * will have to be updated when a file is being saved at another location
-     * (e.g. ../../images/image.gif, if the new CSS file is 1 folder deeper)
+     * (e.g. ../../images/image.gif, if the new CSS file is 1 folder deeper).
      *
-     * @param  Converter $converter Relative path converter
-     * @param  string    $content   The CSS content to update relative urls for.
+     * @param Converter $converter Relative path converter
+     * @param string    $content   The CSS content to update relative urls for.
+     *
      * @return string
      */
     protected function move(Converter $converter, $content)
@@ -457,9 +464,10 @@ class CSS extends Minify
 
     /**
      * Shorthand hex color codes.
-     * #FF0000 -> #F00
+     * #FF0000 -> #F00.
      *
-     * @param  string $content The CSS content to shorten the hex color codes for.
+     * @param string $content The CSS content to shorten the hex color codes for.
+     *
      * @return string
      */
     protected function shortenHex($content)
@@ -472,7 +480,8 @@ class CSS extends Minify
     /**
      * Shorthand 0 values to plain 0, instead of e.g. -0em.
      *
-     * @param  string $content The CSS content to shorten the zero values for.
+     * @param string $content The CSS content to shorten the zero values for.
+     *
      * @return string
      */
     protected function shortenZeroes($content)
@@ -519,7 +528,8 @@ class CSS extends Minify
     /**
      * Strip whitespace.
      *
-     * @param  string $content The CSS content to strip the whitespace for.
+     * @param string $content The CSS content to strip the whitespace for.
+     *
      * @return string
      */
     protected function stripWhitespace($content)

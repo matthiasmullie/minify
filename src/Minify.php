@@ -1,4 +1,5 @@
 <?php
+
 namespace MatthiasMullie\Minify;
 
 use Psr\Cache\CacheItemInterface;
@@ -9,14 +10,13 @@ use Psr\Cache\CacheItemInterface;
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
  * @author Matthias Mullie <minify@mullie.eu>
- *
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved.
  * @license MIT License
  */
 abstract class Minify
 {
     /**
-     * The data to be minified
+     * The data to be minified.
      *
      * @var string[]
      */
@@ -79,7 +79,8 @@ abstract class Minify
     /**
      * Load data.
      *
-     * @param  string $data Either a path to a file or the content itself.
+     * @param string $data Either a path to a file or the content itself.
+     *
      * @return string
      */
     protected function load($data)
@@ -98,10 +99,11 @@ abstract class Minify
     }
 
     /**
-     * Save to file
+     * Save to file.
      *
-     * @param  string    $content The minified data.
-     * @param  string    $path    The path to save the minified data to.
+     * @param string $content The minified data.
+     * @param string $path    The path to save the minified data to.
+     *
      * @throws Exception
      */
     protected function save($content, $path)
@@ -123,8 +125,9 @@ abstract class Minify
     /**
      * Minify the data & (optionally) saves it to a file.
      *
-     * @param  string[optional] $path Path to write the data to.
-     * @return string           The minified data.
+     * @param string[optional] $path Path to write the data to.
+     *
+     * @return string The minified data.
      */
     public function minify($path = null)
     {
@@ -141,9 +144,10 @@ abstract class Minify
     /**
      * Minify & gzip the data & (optionally) saves it to a file.
      *
-     * @param  string[optional] $path Path to write the data to.
-     * @param  int[optional]    $level Compression level, from 0 to 9.
-     * @return string           The minified & gzipped data.
+     * @param string[optional] $path  Path to write the data to.
+     * @param int[optional]    $level Compression level, from 0 to 9.
+     *
+     * @return string The minified & gzipped data.
      */
     public function gzip($path = null, $level = 9)
     {
@@ -161,8 +165,9 @@ abstract class Minify
     /**
      * Minify the data & write it to a CacheItemInterface object.
      *
-     * @param  CacheItemInterface $item Cache item to write the data to.
-     * @return CacheItemInterface       Cache item with the minifier data.
+     * @param CacheItemInterface $item Cache item to write the data to.
+     *
+     * @return CacheItemInterface Cache item with the minifier data.
      */
     public function cache(CacheItemInterface $item)
     {
@@ -175,16 +180,18 @@ abstract class Minify
     /**
      * Minify the data.
      *
-     * @param  string[optional] $path Path to write the data to.
-     * @return string           The minified data.
+     * @param string[optional] $path Path to write the data to.
+     *
+     * @return string The minified data.
      */
     abstract public function execute($path = null);
 
     /**
      * Register a pattern to execute against the source content.
      *
-     * @param  string          $pattern     PCRE pattern.
-     * @param  string|callable $replacement Replacement value for matched pattern.
+     * @param string          $pattern     PCRE pattern.
+     * @param string|callable $replacement Replacement value for matched pattern.
+     *
      * @throws Exception
      */
     protected function registerPattern($pattern, $replacement = '')
@@ -203,7 +210,8 @@ abstract class Minify
      * The only way to accurately replace these pieces is to traverse the JS one
      * character at a time and try to find whatever starts first.
      *
-     * @param  string $content The content to replace patterns in.
+     * @param string $content The content to replace patterns in.
+     *
      * @return string The (manipulated) content.
      */
     protected function replace($content)
@@ -284,9 +292,10 @@ abstract class Minify
      * This function will be called plenty of times, where $content will always
      * move up 1 character.
      *
-     * @param  string          $pattern     Pattern to match.
-     * @param  string|callable $replacement Replacement value.
-     * @param  string          $content     Content to match pattern against.
+     * @param string          $pattern     Pattern to match.
+     * @param string|callable $replacement Replacement value.
+     * @param string          $content     Content to match pattern against.
+     *
      * @return string
      */
     protected function replacePattern($pattern, $replacement, $content)
@@ -353,7 +362,8 @@ abstract class Minify
      * replaced with placeholder text in extract*(). The original content was
      * saved in $this->extracted.
      *
-     * @param  string $content
+     * @param string $content
+     *
      * @return string
      */
     protected function restoreExtractedData($content)

@@ -1,4 +1,5 @@
 <?php
+
 namespace MatthiasMullie\Minify;
 
 /**
@@ -8,14 +9,13 @@ namespace MatthiasMullie\Minify;
  *
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
- *
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved.
  * @license MIT License
  */
 class JS extends Minify
 {
     /**
-     * Var-matching regex based on http://stackoverflow.com/a/9337047/802993
+     * Var-matching regex based on http://stackoverflow.com/a/9337047/802993.
      *
      * Note that regular expressions using that bit must have the PCRE_UTF8
      * pattern modifier (/u) set.
@@ -26,9 +26,10 @@ class JS extends Minify
 
     /**
      * Full list of JavaScript reserved words.
-     * Will be loaded from /data/js/keywords_reserved.txt
+     * Will be loaded from /data/js/keywords_reserved.txt.
      *
      * @see https://mathiasbynens.be/notes/reserved-keywords
+     *
      * @var string[]
      */
     protected $keywordsReserved = array();
@@ -75,6 +76,7 @@ class JS extends Minify
      * Will be loaded from /data/js/operators_before.txt
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
+     *
      * @var string[]
      */
     protected $operatorsBefore = array();
@@ -92,12 +94,13 @@ class JS extends Minify
      * Will be loaded from /data/js/operators_after.txt
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
+     *
      * @var string[]
      */
     protected $operatorsAfter = array();
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function __construct()
     {
@@ -116,8 +119,9 @@ class JS extends Minify
      * Minify the data.
      * Perform JS optimizations.
      *
-     * @param  string[optional] $path Path to write the data to.
-     * @return string           The minified data.
+     * @param string[optional] $path Path to write the data to.
+     *
+     * @return string The minified data.
      */
     public function execute($path = null)
     {
@@ -178,7 +182,7 @@ class JS extends Minify
     }
 
     /**
-     * JS can have /-delimited regular expressions, like: /ab+c/.match(string)
+     * JS can have /-delimited regular expressions, like: /ab+c/.match(string).
      *
      * The content inside the regex can contain characters that may be confused
      * for JS code: e.g. it could contain whitespace it needs to match & we
@@ -234,7 +238,8 @@ class JS extends Minify
      * Because it's sometimes hard to tell if a newline is part of a statement
      * that should be terminated or not, we'll just leave some of them alone.
      *
-     * @param  string $content The content to strip the whitespace for.
+     * @param string $content The content to strip the whitespace for.
+     *
      * @return string
      */
     protected function stripWhitespace($content)
@@ -312,8 +317,9 @@ class JS extends Minify
      * We'll strip whitespace around certain operators with regular expressions.
      * This will prepare the given array by escaping all characters.
      *
-     * @param  string[] $operators
-     * @param  string   $delimiter
+     * @param string[] $operators
+     * @param string   $delimiter
+     *
      * @return string[]
      */
     protected function getOperatorsForRegex(array $operators, $delimiter = '/')
@@ -342,8 +348,9 @@ class JS extends Minify
      * We'll strip whitespace around certain keywords with regular expressions.
      * This will prepare the given array by escaping all characters.
      *
-     * @param  string[] $keywords
-     * @param  string   $delimiter
+     * @param string[] $keywords
+     * @param string   $delimiter
+     *
      * @return string[]
      */
     protected function getKeywordsForRegex(array $keywords, $delimiter = '/')
@@ -363,9 +370,10 @@ class JS extends Minify
     }
 
     /**
-     * Replaces all occurrences of array['key'] by array.key
+     * Replaces all occurrences of array['key'] by array.key.
      *
-     * @param  string $content
+     * @param string $content
+     *
      * @return string
      */
     protected function propertyNotation($content)
@@ -416,13 +424,15 @@ class JS extends Minify
          */
         $keywords = $this->getKeywordsForRegex($keywords);
         $keywords = '(?<!'.implode(')(?<!', $keywords).')';
+
         return preg_replace_callback('/(?<='.$previousChar.'|\])'.$keywords.'\[(([\'"])[0-9]+\\2)\]/u', $callback, $content);
     }
 
     /**
      * Replaces true & false by !0 and !1.
      *
-     * @param  string $content
+     * @param string $content
+     *
      * @return string
      */
     protected function shortenBools($content)

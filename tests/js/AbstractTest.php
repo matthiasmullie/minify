@@ -123,7 +123,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
         $path = __DIR__.'/sample/source/script1.js';
         $content = file_get_contents($path);
 
-        $cache = new MemoryStore;
+        $cache = new MemoryStore();
         $pool = new Pool($cache);
         $item = $pool->getItem('cache-script1');
 
