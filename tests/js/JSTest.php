@@ -120,6 +120,10 @@ class JSTest extends PHPUnit_Framework_TestCase
         );
 
         $tests[] = array(
+          'for ( i = 0; ; i++ ) statement',
+          'for(i=0;;i++)statement',
+        );
+        $tests[] = array(
             'for (i = 0; (i < 10); i++) statement',
             'for(i=0;(i<10);i++)statement',
         );
