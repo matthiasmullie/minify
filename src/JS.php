@@ -1,4 +1,5 @@
 <?php
+
 namespace MatthiasMullie\Minify;
 
 /**
@@ -8,14 +9,13 @@ namespace MatthiasMullie\Minify;
  *
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
- *
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved.
  * @license MIT License
  */
 class JS extends Minify
 {
     /**
-     * Var-matching regex based on http://stackoverflow.com/a/9337047/802993
+     * Var-matching regex based on http://stackoverflow.com/a/9337047/802993.
      *
      * Note that regular expressions using that bit must have the PCRE_UTF8
      * pattern modifier (/u) set.
@@ -26,9 +26,10 @@ class JS extends Minify
 
     /**
      * Full list of JavaScript reserved words.
-     * Will be loaded from /data/js/keywords_reserved.txt
+     * Will be loaded from /data/js/keywords_reserved.txt.
      *
      * @see https://mathiasbynens.be/notes/reserved-keywords
+     *
      * @var string[]
      */
     protected $keywordsReserved = array();
@@ -75,6 +76,7 @@ class JS extends Minify
      * Will be loaded from /data/js/operators_before.txt
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
+     *
      * @var string[]
      */
     protected $operatorsBefore = array();
@@ -92,12 +94,13 @@ class JS extends Minify
      * Will be loaded from /data/js/operators_after.txt
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
+     *
      * @var string[]
      */
     protected $operatorsAfter = array();
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function __construct()
     {
@@ -204,8 +207,9 @@ class JS extends Minify
      * Minify the data.
      * Perform JS optimizations.
      *
-     * @param  string[optional] $path Path to write the data to.
-     * @return string           The minified data.
+     * @param string[optional] $path Path to write the data to.
+     *
+     * @return string The minified data.
      */
     public function execute($path = null)
     {
@@ -268,7 +272,7 @@ class JS extends Minify
     }
 
     /**
-     * JS can have /-delimited regular expressions, like: /ab+c/.match(string)
+     * JS can have /-delimited regular expressions, like: /ab+c/.match(string).
      *
      * The content inside the regex can contain characters that may be confused
      * for JS code: e.g. it could contain whitespace it needs to match & we
@@ -291,16 +295,25 @@ class JS extends Minify
         $callback = function ($match) use ($minifier) {
             $count = count($minifier->extracted);
             $placeholder = '/'.$count.'/';
-            $minifier->extracted[$placeholder] = '/'.$match[1].'/';
+            $minifier->extracted[$placeholder] = $match[1];
 
             return $placeholder;
         };
 
-        // it's a regex if we can find an opening (not preceded by variable,
-        // value or similar) & (non-escaped) closing /,
-        $before = $this->getOperatorsForRegex($this->operatorsBefore, '/');
-        $this->registerPattern('/^\s*+\K\/(.*?(?<!\\\\)(\\\\\\\\)*+)\//', $callback);
-        $this->registerPattern('/(?:'.implode('|', $before).')\s*+\K\/(.*?(?<!\\\\)(\\\\\\\\)*+)\//', $callback);
+        // it's a regex if we can find an opening and (not escaped) closing /,
+        // include \n because it may be there for a reason
+        // (https://github.com/matthiasmullie/minify/issues/56)
+        $pattern = '(\/.*?(?<!\\\\)(\\\\\\\\)*+\/\n?)';
+
+        // / can't be preceded by variable, value, or similar because then
+        // it's going to be division
+        // checking for that is complex, so we'll do inverse:
+        // * at the beginning of the file, it's not division, but regex
+        $this->registerPattern('/^\s*\K'.$pattern.'/', $callback);
+        // * following another operator, it's not division, but regex
+        $operators = $this->getOperatorsForRegex($this->operatorsBefore, '/');
+        $operators += $this->getKeywordsForRegex($this->keywordsReserved, '/');
+        $this->registerPattern('/(?:'.implode('|', $operators).')\s*\K'.$pattern.'/', $callback);
     }
 
     /**
@@ -315,7 +328,8 @@ class JS extends Minify
      * Because it's sometimes hard to tell if a newline is part of a statement
      * that should be terminated or not, we'll just leave some of them alone.
      *
-     * @param  string $content The content to strip the whitespace for.
+     * @param string $content The content to strip the whitespace for.
+     *
      * @return string
      */
     protected function stripWhitespace($content)
@@ -332,10 +346,13 @@ class JS extends Minify
         // collapse consecutive line feeds into just 1
         $content = preg_replace('/\n+/', "\n", $content);
 
-        // strip whitespace that ends in (or next line begin with) an operator
-        // that allows statements to be broken up over multiple lines
         $before = $this->getOperatorsForRegex($this->operatorsBefore, '/');
         $after = $this->getOperatorsForRegex($this->operatorsAfter, '/');
+        $operators = $before + $after;
+
+        // strip whitespace that ends in (or next line begin with) an operator
+        // that allows statements to be broken up over multiple lines
+        unset($before['+'], $before['-'], $after['+'], $after['-']);
         $content = preg_replace('/('.implode('|', $before).')\s+/', '\\1', $content);
         $content = preg_replace('/\s+('.implode('|', $after).')/', '\\1', $content);
 
@@ -349,7 +366,6 @@ class JS extends Minify
          * strip the newlines. However, we can safely strip any non-line feed
          * whitespace that follows them.
          */
-        $operators = $this->getOperatorsForRegex($this->operatorsBefore + $this->operatorsAfter, '/');
         $content = preg_replace('/([\}\)\]])[^\S\n]+(?!'.implode('|', $operators).')/', '\\1', $content);
 
         // collapse whitespace around reserved words into single space
@@ -391,8 +407,9 @@ class JS extends Minify
      * We'll strip whitespace around certain operators with regular expressions.
      * This will prepare the given array by escaping all characters.
      *
-     * @param  string[] $operators
-     * @param  string   $delimiter
+     * @param string[] $operators
+     * @param string   $delimiter
+     *
      * @return string[]
      */
     protected function getOperatorsForRegex(array $operators, $delimiter = '/')
@@ -410,6 +427,10 @@ class JS extends Minify
         // decimal point, or calling a method on it, e.g. 42 .toString()
         $operators['.'] = '(?<![0-9]\s)\.';
 
+        // don't confuse = with other assignment shortcuts (e.g. +=)
+        $chars = preg_quote('+-*\=<>%&|');
+        $operators['='] = '(?<!['.$chars.'])\=';
+
         return $operators;
     }
 
@@ -417,8 +438,9 @@ class JS extends Minify
      * We'll strip whitespace around certain keywords with regular expressions.
      * This will prepare the given array by escaping all characters.
      *
-     * @param  string[] $keywords
-     * @param  string   $delimiter
+     * @param string[] $keywords
+     * @param string   $delimiter
+     *
      * @return string[]
      */
     protected function getKeywordsForRegex(array $keywords, $delimiter = '/')
@@ -438,9 +460,10 @@ class JS extends Minify
     }
 
     /**
-     * Replaces all occurrences of array['key'] by array.key
+     * Replaces all occurrences of array['key'] by array.key.
      *
-     * @param  string $content
+     * @param string $content
+     *
      * @return string
      */
     protected function propertyNotation($content)
@@ -491,13 +514,15 @@ class JS extends Minify
          */
         $keywords = $this->getKeywordsForRegex($keywords);
         $keywords = '(?<!'.implode(')(?<!', $keywords).')';
+
         return preg_replace_callback('/(?<='.$previousChar.'|\])'.$keywords.'\[(([\'"])[0-9]+\\2)\]/u', $callback, $content);
     }
 
     /**
      * Replaces true & false by !0 and !1.
      *
-     * @param  string $content
+     * @param string $content
+     *
      * @return string
      */
     protected function shortenBools($content)

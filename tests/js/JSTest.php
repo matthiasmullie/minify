@@ -35,7 +35,7 @@ class JSTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test JS minifier rules, provided by dataProvider
+     * Test JS minifier rules, provided by dataProvider.
      *
      * @test
      * @dataProvider dataProvider
@@ -518,8 +518,8 @@ $.fn.alert.Constructor=Alert',
 
         // https://github.com/matthiasmullie/minify/issues/40
         $tests[] = array(
-            "for(v=1,_=b;;){}",
-            "for(v=1,_=b;;){}",
+            'for(v=1,_=b;;){}',
+            'for(v=1,_=b;;){}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/41
@@ -587,6 +587,52 @@ return !1;return !0}',
 return
 if(!1)
 return}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/56
+        $tests[] = array(
+            'var timeRegex = /^([2][0-3]|[01]?[0-9])(:[0-5][0-9])?$/
+if (start_time.match(timeRegex) == null) {}',
+            'var timeRegex=/^([2][0-3]|[01]?[0-9])(:[0-5][0-9])?$/
+if(start_time.match(timeRegex)==null){}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/58
+        // stripped of redundant code to expose problem case
+        $tests[] = array(
+            <<<'BUG'
+function inspect() {
+    escapedString.replace(/abc/g, '\\\'');
+}
+function isJSON() {
+    str.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']');
+}
+BUG
+,
+            <<<'BUG'
+function inspect(){escapedString.replace(/abc/g,'\\\'')}
+function isJSON(){str.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']')}
+BUG
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/59
+        $tests[] = array(
+            'isPath:function(e) {
+    return /\//.test(e);
+}',
+            'isPath:function(e){return/\//.test(e)}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/64
+        $tests[] = array(
+            '    var d3_nsPrefix = {
+        svg: "http://www.w3.org/2000/svg",
+        xhtml: "http://www.w3.org/1999/xhtml",
+        xlink: "http://www.w3.org/1999/xlink",
+        xml: "http://www.w3.org/XML/1998/namespace",
+        xmlns: "http://www.w3.org/2000/xmlns/"
+    };',
+            'var d3_nsPrefix={svg:"http://www.w3.org/2000/svg",xhtml:"http://www.w3.org/1999/xhtml",xlink:"http://www.w3.org/1999/xlink",xml:"http://www.w3.org/XML/1998/namespace",xmlns:"http://www.w3.org/2000/xmlns/"}',
         );
 
         return $tests;

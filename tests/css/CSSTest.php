@@ -229,17 +229,17 @@ display: block;
 min-height: 1.5rem;
 margin-left: -0.3125rem;
 }',
-            'ul.pagination{display:block;min-height:1.5rem;margin-left:-0.3125rem}',
+            'ul.pagination{display:block;min-height:1.5rem;margin-left:-.3125rem}',
         );
 
         // edge cases for stripping zeroes
         $tests[] = array(
             'p { margin: -0.0rem; }',
-            'p{margin:0}',
+            'p{margin:0rem}',
         );
         $tests[] = array(
             'p { margin: -0.01rem; }',
-            'p{margin:-0.01rem}',
+            'p{margin:-.01rem}',
         );
         $tests[] = array(
             'p { margin: .0; }',
@@ -247,7 +247,7 @@ margin-left: -0.3125rem;
         );
         $tests[] = array(
             'p { margin: .0%; }',
-            'p{margin:0}',
+            'p{margin:0%}',
         );
         $tests[] = array(
             'p { margin: 1.0; }',
@@ -270,6 +270,18 @@ margin-left: -0.3125rem;
             'p{margin:0}',
         );
         $tests[] = array(
+            'p { margin: 0.1px; }',
+            'p{margin:.1px}',
+        );
+        $tests[] = array(
+            'p { margin: 01.1px; }',
+            'p{margin:1.1px}',
+        );
+        $tests[] = array(
+            'p { margin: 0.060px; }',
+            'p{margin:.06px}',
+        );
+        $tests[] = array(
             'p.class00 { background-color: #000000; color: #000; }',
             'p.class00{background-color:#000;color:#000}',
         );
@@ -289,27 +301,33 @@ margin-left: -0.3125rem;
         // https://github.com/matthiasmullie/minify/issues/26
         $tests[] = array(
             '.hr > :first-child { width: 0.0001%; }',
-            '.hr>:first-child{width:0.0001%}',
+            '.hr>:first-child{width:.0001%}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/28
         $tests[] = array(
-            "@font-face { src: url(//netdna.bootstrapcdn.com/font-awesome/4.2.0/fonts/fontawesome-webfont.eot?v=4.2.0); }",
-            "@font-face{src:url(//netdna.bootstrapcdn.com/font-awesome/4.2.0/fonts/fontawesome-webfont.eot?v=4.2.0)}",
+            '@font-face { src: url(//netdna.bootstrapcdn.com/font-awesome/4.2.0/fonts/fontawesome-webfont.eot?v=4.2.0); }',
+            '@font-face{src:url(//netdna.bootstrapcdn.com/font-awesome/4.2.0/fonts/fontawesome-webfont.eot?v=4.2.0)}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/31
         $tests[] = array(
-            "dfn,em,img{}",
-            "dfn,em,img{}",
+            'dfn,em,img{}',
+            'dfn,em,img{}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/49
         $tests[] = array(
             __DIR__.'/sample/import_files/issue49.css',
-            '.social-btn a[href*="facebook"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/facebook.png')).')}' .
-            '.social-btn a[href*="vimeo"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/vimeo.png')).')}' .
-            '.social-btn a[href*="instagram"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/instagram.png')).')}'
+            '.social-btn a[href*="facebook"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/facebook.png')).')}'.
+            '.social-btn a[href*="vimeo"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/vimeo.png')).')}'.
+            '.social-btn a[href*="instagram"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/instagram.png')).')}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/68
+        $tests[] = array(
+            __DIR__.'/sample/external_imports/issue68.css',
+            '@import url(http://localhost/file.css);body{background:green}',
         );
 
         return $tests;

@@ -1,8 +1,8 @@
 <?php
 
 use MatthiasMullie\Minify;
-use Scrapbook\Adapters\MemoryStore;
-use Scrapbook\Psr6\Pool;
+use MatthiasMullie\Scrapbook\Adapters\MemoryStore;
+use MatthiasMullie\Scrapbook\Psr6\Pool;
 
 /**
  * Tests common functions of abstract Minify class by using JS implementation.
@@ -123,7 +123,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
         $path = __DIR__.'/sample/source/script1.js';
         $content = file_get_contents($path);
 
-        $cache = new MemoryStore;
+        $cache = new MemoryStore();
         $pool = new Pool($cache);
         $item = $pool->getItem('cache-script1');
 

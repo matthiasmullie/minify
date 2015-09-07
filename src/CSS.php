@@ -1,4 +1,5 @@
 <?php
+
 namespace MatthiasMullie\Minify;
 
 use MatthiasMullie\PathConverter\Converter;
@@ -10,7 +11,6 @@ use MatthiasMullie\PathConverter\Converter;
  *
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
- *
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved.
  * @license MIT License
  */
@@ -27,10 +27,14 @@ class CSS extends Minify
     protected $importExtensions = array(
         'gif' => 'data:image/gif',
         'png' => 'data:image/png',
-        'jpg' => 'data:image/jpg',
+        'jpe' => 'data:image/jpeg',
+        'jpg' => 'data:image/jpeg',
         'jpeg' => 'data:image/jpeg',
         'svg' => 'data:image/svg+xml',
         'woff' => 'data:application/x-font-woff',
+        'tif' => 'image/tiff',
+        'tiff' => 'image/tiff',
+        'xbm' => 'image/x-xbitmap',
     );
 
     /**
@@ -62,12 +66,37 @@ class CSS extends Minify
     }
 
     /**
+     * Move any import statements to the top.
+     *
+     * @param $content string Nearly finished CSS content
+     *
+     * @return string
+     */
+    protected function moveImportsToTop($content)
+    {
+        if (preg_match_all('/@import[^;]+;/', $content, $matches)) {
+
+            // remove from content
+            foreach ($matches[0] as $import) {
+                $content = str_replace($import, '', $content);
+            }
+
+            // add to top
+            $content = implode('', $matches[0]).$content;
+        };
+
+        return $content;
+    }
+
+    /**
      * Combine CSS from import statements.
+     *
      * @import's will be loaded and their content merged into the original file,
      * to save HTTP requests.
      *
-     * @param  string $source  The file to combine imports for.
-     * @param  string $content The CSS content to combine imports for.
+     * @param string $source  The file to combine imports for.
+     * @param string $content The CSS content to combine imports for.
+     *
      * @return string
      */
     protected function combineImports($source, $content)
@@ -204,11 +233,13 @@ class CSS extends Minify
 
     /**
      * Import files into the CSS, base64-ized.
+     *
      * @url(image.jpg) images will be loaded and their content merged into the
      * original file, to save HTTP requests.
      *
-     * @param  string $source  The file to import files for.
-     * @param  string $content The CSS content to import files for.
+     * @param string $source  The file to import files for.
+     * @param string $content The CSS content to import files for.
+     *
      * @return string
      */
     protected function importFiles($source, $content)
@@ -255,10 +286,11 @@ class CSS extends Minify
      * Minify the data.
      * Perform CSS optimizations.
      *
-     * @param  string[optional] $path Path to write the data to.
-     * @return string           The minified data.
+     * @param string[optional] $path Path to write the data to.
+     *
+     * @return string The minified data.
      */
-    protected function execute($path = null)
+    public function execute($path = null)
     {
         $content = '';
 
@@ -301,6 +333,8 @@ class CSS extends Minify
             $content .= $css;
         }
 
+        $content = $this->moveImportsToTop($content);
+
         return $content;
     }
 
@@ -308,10 +342,11 @@ class CSS extends Minify
      * Moving a css file should update all relative urls.
      * Relative references (e.g. ../images/image.gif) in a certain css file,
      * will have to be updated when a file is being saved at another location
-     * (e.g. ../../images/image.gif, if the new CSS file is 1 folder deeper)
+     * (e.g. ../../images/image.gif, if the new CSS file is 1 folder deeper).
      *
-     * @param  Converter $converter Relative path converter
-     * @param  string    $content   The CSS content to update relative urls for.
+     * @param Converter $converter Relative path converter
+     * @param string    $content   The CSS content to update relative urls for.
+     *
      * @return string
      */
     protected function move(Converter $converter, $content)
@@ -429,9 +464,10 @@ class CSS extends Minify
 
     /**
      * Shorthand hex color codes.
-     * #FF0000 -> #F00
+     * #FF0000 -> #F00.
      *
-     * @param  string $content The CSS content to shorten the hex color codes for.
+     * @param string $content The CSS content to shorten the hex color codes for.
+     *
      * @return string
      */
     protected function shortenHex($content)
@@ -444,7 +480,8 @@ class CSS extends Minify
     /**
      * Shorthand 0 values to plain 0, instead of e.g. -0em.
      *
-     * @param  string $content The CSS content to shorten the zero values for.
+     * @param string $content The CSS content to shorten the zero values for.
+     *
      * @return string
      */
     protected function shortenZeroes($content)
@@ -459,15 +496,23 @@ class CSS extends Minify
         $units = '(em|ex|%|px|cm|mm|in|pt|pc|ch|rem|vh|vw|vmin|vmax|vm)';
 
         // strip units after zeroes (0px -> 0)
-        $content = preg_replace('/'.$before.'(-?0*(\.0+)?)(?<=0)'.$units.$after.'/', '\\1', $content);
+        // NOTE: it should be safe to remove all units for a 0 value, but in
+        // practice, Webkit (especially Safari) seems to stumble over at least
+        // 0%, potentially other units as well. Only stripping 'px' for now.
+        // @see https://github.com/matthiasmullie/minify/issues/60
+        $content = preg_replace('/'.$before.'(-?0*(\.0+)?)(?<=0)px'.$after.'/', '\\1', $content);
 
         // strip 0-digits (.0 -> 0)
-        $content = preg_replace('/'.$before.'\.0+'.$after.'/', '0', $content);
-        // 50.00 -> 50, 50.00px -> 50px (non-0 can still be followed by units)
+        $content = preg_replace('/'.$before.'\.0+'.$units.'?'.$after.'/', '0\\1', $content);
+        // strip trailing 0: 50.10 -> 50.1, 50.10px -> 50.1px
+        $content = preg_replace('/'.$before.'(-?[0-9]+\.[0-9]+)0+'.$units.'?'.$after.'/', '\\1\\2', $content);
+        // strip trailing 0: 50.00 -> 50, 50.00px -> 50px
         $content = preg_replace('/'.$before.'(-?[0-9]+)\.0+'.$units.'?'.$after.'/', '\\1\\2', $content);
+        // strip leading 0: 0.1 -> .1, 01.1 -> 1.1
+        $content = preg_replace('/'.$before.'(-?)0+([0-9]*\.[0-9]+)'.$units.'?'.$after.'/', '\\1\\2\\3', $content);
 
         // strip negative zeroes (-0 -> 0) & truncate zeroes (00 -> 0)
-        $content = preg_replace('/'.$before.'-?0+'.$after.'/', '0', $content);
+        $content = preg_replace('/'.$before.'-?0+'.$units.'?'.$after.'/', '0\\1', $content);
 
         return $content;
     }
@@ -483,7 +528,8 @@ class CSS extends Minify
     /**
      * Strip whitespace.
      *
-     * @param  string $content The CSS content to strip the whitespace for.
+     * @param string $content The CSS content to strip the whitespace for.
+     *
      * @return string
      */
     protected function stripWhitespace($content)
@@ -508,7 +554,7 @@ class CSS extends Minify
         $content = preg_replace('/\s*([+-])\s*(?=[^}]*{)/', '$1', $content);
 
         // remove semicolon/whitespace followed by closing bracket
-        $content = preg_replace('/;}/', '}', $content);
+        $content = str_replace(';}', '}', $content);
 
         return trim($content);
     }
