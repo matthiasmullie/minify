@@ -128,6 +128,10 @@ class JSTest extends PHPUnit_Framework_TestCase
             'for(i=0;(i<10);i++)statement',
         );
         $tests[] = array(
+          'alert("test");;alert("test2")',
+          'alert("test");alert("test2")',
+        );
+        $tests[] = array(
             '-1
              +2',
             '-1+2',

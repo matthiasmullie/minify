@@ -284,9 +284,10 @@ class JS extends Minify
         $content = preg_replace('/(^|[;\}\s])\K('.implode('|', $before).')\s+/', '\\2 ', $content);
         $content = preg_replace('/\s+('.implode('|', $after).')(?=([;\{\s]|$))/', ' \\1', $content);
 
-        // get rid of double semicolons, except when followed by closing-),
-        // where semicolons can be used like: "for(v=1,_=b;;)" or "for(v=1;;v++)"
-        $content = preg_replace('/;+(?![^;]*\))/', ';', $content);
+        // get rid of double semicolons, except where they can be used like:
+        // "for(v=1,_=b;;)" or "for(v=1;;v++)"
+        $content = preg_replace('/;+(?!\))/', ';', $content);
+        $content = preg_replace('/\bfor\(([^;]*);([^;\(]*)\)/', 'for(\\1;;\\2)', $content);
 
         /*
          * Next, we'll be removing all semicolons where ASI kicks in.
