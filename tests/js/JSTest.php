@@ -643,6 +643,16 @@ BUG
             'var d3_nsPrefix={svg:"http://www.w3.org/2000/svg",xhtml:"http://www.w3.org/1999/xhtml",xlink:"http://www.w3.org/1999/xlink",xml:"http://www.w3.org/XML/1998/namespace",xmlns:"http://www.w3.org/2000/xmlns/"}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/66
+        $tests[] = array(
+            "$(coming.wrap).bind('onReset', function () {
+    try {
+        $(this).find('iframe').hide().attr('src', '//about:blank').end().empty();
+    } catch (e) {}
+});",
+            "$(coming.wrap).bind('onReset',function(){try{\$(this).find('iframe').hide().attr('src','//about:blank').end().empty()}catch(e){}})",
+        );
+
         return $tests;
     }
 }
