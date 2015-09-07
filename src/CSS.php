@@ -309,6 +309,7 @@ class CSS extends Minify
             $css = $this->stripWhitespace($css);
             $css = $this->shortenHex($css);
             $css = $this->shortenZeroes($css);
+            $css = $this->stripEmptyTags($css);
 
             // restore the string we've extracted earlier
             $css = $this->restoreExtractedData($css);
@@ -515,6 +516,17 @@ class CSS extends Minify
         $content = preg_replace('/'.$before.'-?0+'.$units.'?'.$after.'/', '0\\1', $content);
 
         return $content;
+    }
+
+    /**
+     * Strip comments from source code.
+     *
+     * @param string $content
+     * @return string
+     */
+    protected function stripEmptyTags($content)
+    {
+        return preg_replace('/(^|\}).+\{\s*\}/', '', $content);
     }
 
     /**

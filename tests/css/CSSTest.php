@@ -312,8 +312,8 @@ margin-left: -0.3125rem;
 
         // https://github.com/matthiasmullie/minify/issues/31
         $tests[] = array(
-            'dfn,em,img{}',
-            'dfn,em,img{}',
+            'dfn,em,img{color:red}',
+            'dfn,em,img{color:red}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/49
@@ -328,6 +328,13 @@ margin-left: -0.3125rem;
         $tests[] = array(
             __DIR__.'/sample/external_imports/issue68.css',
             '@import url(http://localhost/file.css);body{background:green}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/67
+        $tests[] = array(
+            'body { }
+p { color: #fff; }',
+            'p{color:#fff}',
         );
 
         return $tests;
