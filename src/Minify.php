@@ -86,8 +86,8 @@ abstract class Minify
     protected function load($data)
     {
         // check if the data is a file
-        if (@file_exists($data) && is_file($data)) {
-            $data = @file_get_contents($data);
+        if (file_exists($data) && is_file($data)) {
+            $data = file_get_contents($data);
 
             // strip BOM, if any
             if (substr($data, 0, 3) == "\xef\xbb\xbf") {

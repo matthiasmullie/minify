@@ -208,7 +208,7 @@ class CSS extends Minify
 
             // only replace the import with the content if we can grab the
             // content of the file
-            if (@file_exists($importPath) && is_file($importPath)) {
+            if (file_exists($importPath) && is_file($importPath)) {
                 // grab referenced file & minify it (which may include importing
                 // yet other @import statements recursively)
                 $minifier = new static($importPath);
@@ -259,7 +259,7 @@ class CSS extends Minify
 
                 // only replace the import with the content if we're able to get
                 // the content of the file, and it's relatively small
-                $import = @file_exists($path);
+                $import = file_exists($path);
                 $import = $import && is_file($path);
                 $import = $import && filesize($path) <= $this->maxImportSize * 1024;
                 if (!$import) {
