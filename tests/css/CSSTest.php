@@ -336,6 +336,13 @@ margin-left: -0.3125rem;
 p { color: #fff; }',
             'p{color:#fff}',
         );
+        $tests[] = array(
+            'body {}
+p { color: #fff; }
+h1 { }
+strong { color: red; }',
+            'p{color:#fff}strong{color:red}',
+        );
 
         return $tests;
     }
