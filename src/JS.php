@@ -131,7 +131,7 @@ class JS extends Minify
             '/
 
             # require statement
-            require
+            require(js)?
 
             # (optional) whitespace
             \s*
@@ -142,15 +142,27 @@ class JS extends Minify
                     # (optional) whitespace
                     \s*
 
+                        # open bracket
+                        \[?
 
-                        # open path enclosure
-                        (?P<quotes>["\'])
+                            # (optional) whitespace
+                            \s*
 
-                            # fetch path
-                            (?P<path>.+?)
 
-                        # close path enclosure
-                        (?P=quotes)
+                                # open path enclosure
+                                (?P<quotes>["\'])
+
+                                    # fetch path
+                                    (?P<path>.+?)
+
+                                # close path enclosure
+                                (?P=quotes)
+
+                            # (optional) whitespace
+                            \s*
+
+                        # close bracket
+                        \]?
 
                     # (optional) whitespace
                     \s*
