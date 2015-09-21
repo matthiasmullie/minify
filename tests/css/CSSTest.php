@@ -344,6 +344,25 @@ strong { color: red; }',
             'p{color:#fff}strong{color:red}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/74
+        $tests[] = array(
+            "@media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+only screen and (min--moz-device-pixel-ratio: 1.5),
+only screen and (min-device-pixel-ratio: 1.5) {
+
+    #fancybox-loading,.fancybox-close,.fancybox-prev span,.fancybox-next span {
+        background-image: url('/path/to/image.png');
+        background-size: 44px 152px;
+    }
+
+    #fancybox-loading div {
+        background-image: url('/path/to/image.gif');
+        background-size: 24px 24px;
+    }
+}",
+            "@media only screen and (-webkit-min-device-pixel-ratio:1.5),only screen and (min--moz-device-pixel-ratio:1.5),only screen and (min-device-pixel-ratio:1.5){#fancybox-loading,.fancybox-close,.fancybox-prev span,.fancybox-next span{background-image:url(/path/to/image.png);background-size:44px 152px}#fancybox-loading div{background-image:url(/path/to/image.gif);background-size:24px 24px}}",
+        );
+
         return $tests;
     }
 
