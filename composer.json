@@ -20,7 +20,7 @@
     },
     "require-dev": {
         "matthiasmullie/scrapbook": "~1.0",
-        "phpunit/phpunit": "4.3.*",
+        "phpunit/phpunit": "~4.8",
         "satooshi/php-coveralls": "dev-master"
     },
     "autoload": {
