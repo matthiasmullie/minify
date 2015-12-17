@@ -653,6 +653,12 @@ BUG
             "$(coming.wrap).bind('onReset',function(){try{\$(this).find('iframe').hide().attr('src','//about:blank').end().empty()}catch(e){}})",
         );
 
+        // https://github.com/matthiasmullie/minify/issues/89
+        $tests[] = array(
+            "for(;;ja||(ja=true)){}",
+            "for(;;ja||(ja=!0)){}",
+        );
+
         return $tests;
     }
 }

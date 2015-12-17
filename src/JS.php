@@ -284,10 +284,16 @@ class JS extends Minify
         $content = preg_replace('/(^|[;\}\s])\K('.implode('|', $before).')\s+/', '\\2 ', $content);
         $content = preg_replace('/\s+('.implode('|', $after).')(?=([;\{\s]|$))/', ' \\1', $content);
 
-        // get rid of double semicolons, except where they can be used like:
-        // "for(v=1,_=b;;)" or "for(v=1;;v++)"
-        $content = preg_replace('/;+(?!\))/', ';', $content);
-        $content = preg_replace('/\bfor\(([^;]*);([^;\(]*)\)/', 'for(\\1;;\\2)', $content);
+        /*
+         * Get rid of double semicolons, except where they can be used like:
+         * "for(v=1,_=b;;)", "for(v=1;;v++)" or "for(;;ja||(ja=true))".
+         * I'll safeguard these double semicolons inside for-loops by
+         * temporarily replacing them with an invalid condition: they won't have
+         * a double semicolon and will be easy to spot to restore afterwards.
+         */
+        $content = preg_replace('/\bfor\(([^;]*);;([^;]*)\)/', 'for(\\1;-;\\2)', $content);
+        $content = preg_replace('/;+/', ';', $content);
+        $content = preg_replace('/\bfor\(([^;]*);-;([^;]*)\)/', 'for(\\1;;\\2)', $content);
 
         /*
          * Next, we'll be removing all semicolons where ASI kicks in.
