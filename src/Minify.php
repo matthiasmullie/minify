@@ -86,7 +86,7 @@ abstract class Minify
     protected function load($data)
     {
         // check if the data is a file
-        if (strpos($file, "\n") === false && file_exists($data) && is_file($data)) {
+        if (strpos($data, "\n") === false && file_exists($data) && is_file($data)) {
             $data = file_get_contents($data);
 
             // strip BOM, if any
