@@ -88,6 +88,20 @@ class CommonTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function load()
+    {
+        // content greater than PHP_MAXPATHLEN
+        // https://github.com/matthiasmullie/minify/issues/90
+        $content = rtrim(str_repeat('var a="b";', 500), ';');
+
+        $minifier = new Minify\JS($content);
+
+        $this->assertEquals($minifier->minify(), $content);
+    }
+
+    /**
+     * @test
+     */
     public function save()
     {
         $path = __DIR__.'/sample/source/script1.js';
