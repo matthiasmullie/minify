@@ -659,6 +659,12 @@ BUG
             "for(;;ja||(ja=!0)){}",
         );
 
+        // https://github.com/matthiasmullie/minify/issues/91
+        $tests[] = array(
+            'if(true){if(true)console.log("test")else;}',
+            'if(!0){if(!0)console.log("test")}',
+        );
+
         return $tests;
     }
 }

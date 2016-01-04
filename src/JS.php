@@ -308,6 +308,16 @@ class JS extends Minify
         $content = preg_replace('/(for\([^;]*;[^;]*;[^;\{]*\));(\}|$)/s', '\\1;;\\2', $content);
 
         /*
+         * We also can't strip empty else-statements. Even though they're
+         * useless and probably shouldn't be in the code in the first place, we
+         * shouldn't be stripping the `;` that follows it as it breaks the code.
+         * We can just remove those useless else-statements completely.
+         *
+         * @see https://github.com/matthiasmullie/minify/issues/91
+         */
+        $content = preg_replace('/else;/s', '', $content);
+
+        /*
          * We also don't really want to terminate statements followed by closing
          * curly braces (which we've ignored completely up until now) or end-of-
          * script: ASI will kick in here & we're all about minifying.
