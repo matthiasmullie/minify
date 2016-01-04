@@ -394,12 +394,12 @@ only screen and (min-device-pixel-ratio: 1.5) {
         $tests[] = array(
             $source.'/relative.css',
             $target.'/relative.css',
-            '@import url(image.jpg);',
+            '@import url(stylesheet.css);',
         );
         $tests[] = array(
             $source.'/../source/relative.css',
             $target.'/target/relative.css',
-            '@import url(../image.jpg);',
+            '@import url(../stylesheet.css);',
         );
 
         // https://github.com/matthiasmullie/minify/issues/29
@@ -440,7 +440,7 @@ only screen and (min-device-pixel-ratio: 1.5) {
         $tests[] = array(
             $source.'/nested/nested.css',
             $target.'/nested.css',
-            '@import url(image.jpg);',
+            '@import url(stylesheet.css);',
         );
 
         // https://github.com/forkcms/forkcms/issues/1186
@@ -460,19 +460,19 @@ only screen and (min-device-pixel-ratio: 1.5) {
         $tests[] = array(
             $sourceRelative.'/relative.css',
             $target.'/relative.css',
-            '@import url(image.jpg);',
+            '@import url(stylesheet.css);',
         );
         // note: relative target only works if the file already exists: it has
         // to be able to realpath()
         $tests[] = array(
             $source.'/relative.css',
             $targetRelative.'/relative.css',
-            '@import url(image.jpg);',
+            '@import url(stylesheet.css);',
         );
         $tests[] = array(
             $sourceRelative.'/relative.css',
             $targetRelative.'/relative.css',
-            '@import url(image.jpg);',
+            '@import url(stylesheet.css);',
         );
 
         return $tests;
