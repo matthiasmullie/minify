@@ -363,6 +363,12 @@ only screen and (min-device-pixel-ratio: 1.5) {
             "@media only screen and (-webkit-min-device-pixel-ratio:1.5),only screen and (min--moz-device-pixel-ratio:1.5),only screen and (min-device-pixel-ratio:1.5){#fancybox-loading,.fancybox-close,.fancybox-prev span,.fancybox-next span{background-image:url(/path/to/image.png);background-size:44px 152px}#fancybox-loading div{background-image:url(/path/to/image.gif);background-size:24px 24px}}",
         );
 
+        // import symlinked data
+        $tests[] = array(
+            __DIR__.'/sample/symlink/import_symlinked_file.css',
+            'body{background-url:url(assets/asset.bmp)}',
+        );
+
         return $tests;
     }
 
@@ -473,6 +479,18 @@ only screen and (min-device-pixel-ratio: 1.5) {
             $sourceRelative.'/relative.css',
             $targetRelative.'/relative.css',
             '@import url(stylesheet.css);',
+        );
+
+        // import symlinked data
+        $tests[] = array(
+            __DIR__.'/sample/symlink/import_symlinked_file.css',
+            __DIR__.'/sample/symlink/target/import_symlinked_file.css',
+            'body{background-url:url(../assets/asset.bmp)}',
+        );
+        $tests[] = array(
+            'tests/css/sample/symlink/import_symlinked_file.css',
+            'tests/css/sample/symlink/target/import_symlinked_file.css',
+            'body{background-url:url(../assets/asset.bmp)}',
         );
 
         return $tests;
