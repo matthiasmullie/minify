@@ -366,7 +366,7 @@ only screen and (min-device-pixel-ratio: 1.5) {
         // import symlinked data
         $tests[] = array(
             __DIR__.'/sample/symlink/import_symlinked_file.css',
-            'body{background-url:url(assets/asset.bmp)}',
+            '',
         );
 
         return $tests;
@@ -485,12 +485,12 @@ only screen and (min-device-pixel-ratio: 1.5) {
         $tests[] = array(
             __DIR__.'/sample/symlink/import_symlinked_file.css',
             __DIR__.'/sample/symlink/target/import_symlinked_file.css',
-            'body{background-url:url(../assets/asset.bmp)}',
+            '',
         );
         $tests[] = array(
-            'tests/css/sample/symlink/import_symlinked_file.css',
-            'tests/css/sample/symlink/target/import_symlinked_file.css',
-            'body{background-url:url(../assets/asset.bmp)}',
+            'tests/css/sample/symlink/move_symlinked_file.css',
+            'tests/css/sample/symlink/target/move_symlinked_file.css',
+            'body{background-url:url(../assets/symlink.bmp)}',
         );
 
         return $tests;
