@@ -363,12 +363,6 @@ only screen and (min-device-pixel-ratio: 1.5) {
             "@media only screen and (-webkit-min-device-pixel-ratio:1.5),only screen and (min--moz-device-pixel-ratio:1.5),only screen and (min-device-pixel-ratio:1.5){#fancybox-loading,.fancybox-close,.fancybox-prev span,.fancybox-next span{background-image:url(/path/to/image.png);background-size:44px 152px}#fancybox-loading div{background-image:url(/path/to/image.gif);background-size:24px 24px}}",
         );
 
-        // import symlinked data
-        $tests[] = array(
-            __DIR__.'/sample/symlink/import_symlinked_file.css',
-            '',
-        );
-
         return $tests;
     }
 
@@ -481,16 +475,97 @@ only screen and (min-device-pixel-ratio: 1.5) {
             '@import url(stylesheet.css);',
         );
 
-        // import symlinked data
+        $source = __DIR__.'/sample/symlink';
+        $target = __DIR__.'/sample/symlink/target';
+        $sourceRelative = 'tests/css/sample/symlink';
+        $targetRelative = 'tests/css/sample/symlink/target';
+
+        // import symlinked files: relative, absolute & mix
         $tests[] = array(
-            __DIR__.'/sample/symlink/import_symlinked_file.css',
-            __DIR__.'/sample/symlink/target/import_symlinked_file.css',
+            $source.'/import_symlinked_file.css',
+            $target.'/import_symlinked_file.css',
             '',
         );
         $tests[] = array(
-            'tests/css/sample/symlink/move_symlinked_file.css',
-            'tests/css/sample/symlink/target/move_symlinked_file.css',
+            $sourceRelative.'/import_symlinked_file.css',
+            $targetRelative.'/import_symlinked_file.css',
+            '',
+        );
+        $tests[] = array(
+            $source.'/import_symlinked_file.css',
+            $targetRelative.'/import_symlinked_file.css',
+            '',
+        );
+        $tests[] = array(
+            $sourceRelative.'/import_symlinked_file.css',
+            $target.'/import_symlinked_file.css',
+            '',
+        );
+
+        // move symlinked files: relative, absolute & mix
+        $tests[] = array(
+            $source.'/move_symlinked_file.css',
+            $target.'/move_symlinked_file.css',
             'body{background-url:url(../assets/symlink.bmp)}',
+        );
+        $tests[] = array(
+            $sourceRelative.'/move_symlinked_file.css',
+            $targetRelative.'/move_symlinked_file.css',
+            'body{background-url:url(../assets/symlink.bmp)}',
+        );
+        $tests[] = array(
+            $source.'/move_symlinked_file.css',
+            $targetRelative.'/move_symlinked_file.css',
+            'body{background-url:url(../assets/symlink.bmp)}',
+        );
+        $tests[] = array(
+            $source.'/move_symlinked_file.css',
+            $targetRelative.'/move_symlinked_file.css',
+            'body{background-url:url(../assets/symlink.bmp)}',
+        );
+
+        // import symlinked folders: relative, absolute & mix
+        $tests[] = array(
+            $source.'/import_symlinked_folder.css',
+            $target.'/import_symlinked_folder.css',
+            '',
+        );
+        $tests[] = array(
+            $sourceRelative.'/import_symlinked_folder.css',
+            $targetRelative.'/import_symlinked_folder.css',
+            '',
+        );
+        $tests[] = array(
+            $source.'/import_symlinked_folder.css',
+            $targetRelative.'/import_symlinked_folder.css',
+            '',
+        );
+        $tests[] = array(
+            $sourceRelative.'/import_symlinked_folder.css',
+            $target.'/import_symlinked_folder.css',
+            '',
+        );
+
+        // move symlinked folders: relative, absolute & mix
+        $tests[] = array(
+            $source.'/move_symlinked_folder.css',
+            $target.'/move_symlinked_folder.css',
+            'body{background-url:url(../assets_symlink/asset.bmp)}',
+        );
+        $tests[] = array(
+            $sourceRelative.'/move_symlinked_folder.css',
+            $targetRelative.'/move_symlinked_folder.css',
+            'body{background-url:url(../assets_symlink/asset.bmp)}',
+        );
+        $tests[] = array(
+            $source.'/move_symlinked_folder.css',
+            $targetRelative.'/move_symlinked_folder.css',
+            'body{background-url:url(../assets_symlink/asset.bmp)}',
+        );
+        $tests[] = array(
+            $sourceRelative.'/move_symlinked_folder.css',
+            $target.'/move_symlinked_folder.css',
+            'body{background-url:url(../assets_symlink/asset.bmp)}',
         );
 
         return $tests;
