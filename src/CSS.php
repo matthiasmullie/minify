@@ -314,6 +314,10 @@ class CSS extends Minify
             // restore the string we've extracted earlier
             $css = $this->restoreExtractedData($css);
 
+            $source = $source ?: '';
+            $css = $this->combineImports($source, $css);
+            $css = $this->importFiles($source, $css);
+
             /*
              * If we'll save to a new path, we'll have to fix the relative paths
              * to be relative no longer to the source file, but to the new path.
@@ -321,14 +325,8 @@ class CSS extends Minify
              * conversion happens (because we still want it to go through most
              * of the move code...)
              */
-            $source = $source ?: '';
             $converter = new Converter($source, $path ?: $source);
             $css = $this->move($converter, $css);
-
-            // if no target path is given, relative paths were not converted, so
-            // they'll still be relative to the source file then
-            $css = $this->importFiles($path ?: $source, $css);
-            $css = $this->combineImports($path ?: $source, $css);
 
             // combine css
             $content .= $css;
