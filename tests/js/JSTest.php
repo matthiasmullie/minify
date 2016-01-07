@@ -655,8 +655,8 @@ BUG
 
         // https://github.com/matthiasmullie/minify/issues/89
         $tests[] = array(
-            "for(;;ja||(ja=true)){}",
-            "for(;;ja||(ja=!0)){}",
+            'for(;;ja||(ja=true)){}',
+            'for(;;ja||(ja=!0)){}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/91
