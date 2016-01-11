@@ -363,6 +363,27 @@ only screen and (min-device-pixel-ratio: 1.5) {
             '@media only screen and (-webkit-min-device-pixel-ratio:1.5),only screen and (min--moz-device-pixel-ratio:1.5),only screen and (min-device-pixel-ratio:1.5){#fancybox-loading,.fancybox-close,.fancybox-prev span,.fancybox-next span{background-image:url(/path/to/image.png);background-size:44px 152px}#fancybox-loading div{background-image:url(/path/to/image.gif);background-size:24px 24px}}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/92
+        $tests[] = array(
+            '@media (min-width:320px) {
+    /* smartphones, iPhone, portrait 480x320 phones */
+    p {
+        background-color: red;
+    }
+}
+@media (min-width:1025px) {
+    /* big landscape tablets, laptops, and desktops */
+    /* LEFT EMPTY OF ANY SELECTORS */
+}
+@media (min-width:1281px) {
+    /* hi-res laptops and desktops */
+    p {
+        background-color: blue;
+    }
+}',
+            '@media (min-width:320px){p{background-color:red}}@media (min-width:1281px){p{background-color:blue}}',
+        );
+
         return $tests;
     }
 
