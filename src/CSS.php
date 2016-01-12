@@ -259,7 +259,8 @@ class CSS extends Minify
 
                 // only replace the import with the content if we're able to get
                 // the content of the file, and it's relatively small
-                $import = file_exists($path);
+                $import = strlen($path) < PHP_MAXPATHLEN;
+                $import = $import && file_exists($path);
                 $import = $import && is_file($path);
                 $import = $import && filesize($path) <= $this->maxImportSize * 1024;
                 if (!$import) {
