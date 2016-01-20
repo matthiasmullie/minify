@@ -474,6 +474,13 @@ only screen and (min-device-pixel-ratio: 1.5) {
             '@import url(../../Core/Layout/Css/imports/typography.css);',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/77#issuecomment-172844822
+        $tests[] = array(
+            $source.'/get-params.css',
+            $target.'/get-params.css',
+            '@import url(../source/some-file.css?some=param);',
+        );
+
         $sourceRelative = 'tests/css/sample/convert_relative_path/source';
         $targetRelative = 'tests/css/sample/convert_relative_path/target';
 

@@ -444,8 +444,15 @@ class CSS extends Minify
             // determine if it's a url() or an @import match
             $type = (strpos($match[0], '@import') === 0 ? 'import' : 'url');
 
+            // attempting to interpret GET-params makes no sense, so let's discard them for awhile
+            $params = strrchr($match['path'], '?');
+            $url = $params ? substr($match['path'], 0, -strlen($params)) : $match['path'];
+
             // fix relative url
-            $url = $converter->convert($match['path']);
+            $url = $converter->convert($url);
+
+            // now that the path has been converted, re-apply GET-params
+            $url .= $params;
 
             // build replacement
             $search[] = $match[0];
