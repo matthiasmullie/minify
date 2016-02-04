@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Minify test suite" tests="167" assertions="174" failures="29" errors="0" time="4.346217">
+    <testsuite name="CSSTest" file="I:\SelfWork\OpenSource\minify\minify\tests\css\CSSTest.php" tests="73" assertions="74" failures="8" errors="0" time="2.889501">
+      <testsuite name="CSSTest::minify" tests="41" assertions="41" failures="0" errors="0" time="2.564600">
+        <testcase name="minify with data set #0" assertions="1" time="0.029419"/>
+        <testcase name="minify with data set #1" assertions="1" time="0.011069"/>
+        <testcase name="minify with data set #2" assertions="1" time="0.018979"/>
+        <testcase name="minify with data set #3" assertions="1" time="0.016785"/>
+        <testcase name="minify with data set #4" assertions="1" time="0.016175"/>
+        <testcase name="minify with data set #5" assertions="1" time="0.015091"/>
+        <testcase name="minify with data set #6" assertions="1" time="0.004877"/>
+        <testcase name="minify with data set #7" assertions="1" time="0.008243"/>
+        <testcase name="minify with data set #8" assertions="1" time="0.005363"/>
+        <testcase name="minify with data set #9" assertions="1" time="0.004310"/>
+        <testcase name="minify with data set #10" assertions="1" time="0.004525"/>
+        <testcase name="minify with data set #11" assertions="1" time="0.004213"/>
+        <testcase name="minify with data set #12" assertions="1" time="0.006262"/>
+        <testcase name="minify with data set #13" assertions="1" time="0.006295"/>
+        <testcase name="minify with data set #14" assertions="1" time="0.006364"/>
+        <testcase name="minify with data set #15" assertions="1" time="0.005504"/>
+        <testcase name="minify with data set #16" assertions="1" time="0.006124"/>
+        <testcase name="minify with data set #17" assertions="1" time="0.004414"/>
+        <testcase name="minify with data set #18" assertions="1" time="0.004201"/>
+        <testcase name="minify with data set #19" assertions="1" time="0.006721"/>
+        <testcase name="minify with data set #20" assertions="1" time="0.006086"/>
+        <testcase name="minify with data set #21" assertions="1" time="0.004415"/>
+        <testcase name="minify with data set #22" assertions="1" time="0.004282"/>
+        <testcase name="minify with data set #23" assertions="1" time="0.004956"/>
+        <testcase name="minify with data set #24" assertions="1" time="0.005352"/>
+        <testcase name="minify with data set #25" assertions="1" time="0.004363"/>
+        <testcase name="minify with data set #26" assertions="1" time="0.004171"/>
+        <testcase name="minify with data set #27" assertions="1" time="0.005744"/>
+        <testcase name="minify with data set #28" assertions="1" time="0.005118"/>
+        <testcase name="minify with data set #29" assertions="1" time="0.004216"/>
+        <testcase name="minify with data set #30" assertions="1" time="0.004144"/>
+        <testcase name="minify with data set #31" assertions="1" time="0.005517"/>
+        <testcase name="minify with data set #32" assertions="1" time="0.006016"/>
+        <testcase name="minify with data set #33" assertions="1" time="0.004216"/>
+        <testcase name="minify with data set #34" assertions="1" time="0.004134"/>
+        <testcase name="minify with data set #35" assertions="1" time="0.015943"/>
+        <testcase name="minify with data set #36" assertions="1" time="0.010751"/>
+        <testcase name="minify with data set #37" assertions="1" time="0.005275"/>
+        <testcase name="minify with data set #38" assertions="1" time="0.004975"/>
+        <testcase name="minify with data set #39" assertions="1" time="2.265385"/>
+        <testcase name="minify with data set #40" assertions="1" time="0.004608"/>
+      </testsuite>
+      <testsuite name="CSSTest::convertRelativePath" tests="31" assertions="31" failures="8" errors="0" time="0.322050">
+        <testcase name="convertRelativePath with data set #0" assertions="1" time="0.008968"/>
+        <testcase name="convertRelativePath with data set #1" assertions="1" time="0.008663"/>
+        <testcase name="convertRelativePath with data set #2" assertions="1" time="0.007444"/>
+        <testcase name="convertRelativePath with data set #3" assertions="1" time="0.009308"/>
+        <testcase name="convertRelativePath with data set #4" assertions="1" time="0.008641"/>
+        <testcase name="convertRelativePath with data set #5" assertions="1" time="0.006875"/>
+        <testcase name="convertRelativePath with data set #6" assertions="1" time="0.011187"/>
+        <testcase name="convertRelativePath with data set #7" assertions="1" time="0.010899"/>
+        <testcase name="convertRelativePath with data set #8" assertions="1" time="0.011920"/>
+        <testcase name="convertRelativePath with data set #9" assertions="1" time="0.013715"/>
+        <testcase name="convertRelativePath with data set #10" assertions="1" time="0.005871"/>
+        <testcase name="convertRelativePath with data set #11" assertions="1" time="0.008857"/>
+        <testcase name="convertRelativePath with data set #12" assertions="1" time="0.009366"/>
+        <testcase name="convertRelativePath with data set #13" assertions="1" time="0.009489"/>
+        <testcase name="convertRelativePath with data set #14" assertions="1" time="0.006739"/>
+        <testcase name="convertRelativePath with data set #15" assertions="1" time="0.015821">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">CSSTest::convertRelativePath with data set #15 ('I:\SelfWork\OpenSource\minify...le.css', 'I:\SelfWork\OpenSource\minify...le.css', '')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-''
++'../other_path/imports/import.css'
+
+I:\SelfWork\OpenSource\minify\minify\tests\css\CSSTest.php:82
+</failure>
+        </testcase>
+        <testcase name="convertRelativePath with data set #16" assertions="1" time="0.011132">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">CSSTest::convertRelativePath with data set #16 ('tests/css/sample/symlink/impo...le.css', 'tests/css/sample/symlink/targ...le.css', '')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-''
++'../other_path/imports/import.css'
+
+I:\SelfWork\OpenSource\minify\minify\tests\css\CSSTest.php:82
+</failure>
+        </testcase>
+        <testcase name="convertRelativePath with data set #17" assertions="1" time="0.015819">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">CSSTest::convertRelativePath with data set #17 ('I:\SelfWork\OpenSource\minify...le.css', 'tests/css/sample/symlink/targ...le.css', '')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-''
++'../other_path/imports/import.css'
+
+I:\SelfWork\OpenSource\minify\minify\tests\css\CSSTest.php:82
+</failure>
+        </testcase>
+        <testcase name="convertRelativePath with data set #18" assertions="1" time="0.014394">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">CSSTest::convertRelativePath with data set #18 ('tests/css/sample/symlink/impo...le.css', 'I:\SelfWork\OpenSource\minify...le.css', '')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-''
++'../other_path/imports/import.css'
+
+I:\SelfWork\OpenSource\minify\minify\tests\css\CSSTest.php:82
+</failure>
+        </testcase>
+        <testcase name="convertRelativePath with data set #19" assertions="1" time="0.006749"/>
+        <testcase name="convertRelativePath with data set #20" assertions="1" time="0.008255"/>
+        <testcase name="convertRelativePath with data set #21" assertions="1" time="0.014059"/>
+        <testcase name="convertRelativePath with data set #22" assertions="1" time="0.015107"/>
+        <testcase name="convertRelativePath with data set #23" assertions="1" time="0.015574">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">CSSTest::convertRelativePath with data set #23 ('I:\SelfWork\OpenSource\minify...er.css', 'I:\SelfWork\OpenSource\minify...er.css', '')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-''
++'@import url(../imports_symlink/import.css);'
+
+I:\SelfWork\OpenSource\minify\minify\tests\css\CSSTest.php:82
+</failure>
+        </testcase>
+        <testcase name="convertRelativePath with data set #24" assertions="1" time="0.017723">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">CSSTest::convertRelativePath with data set #24 ('tests/css/sample/symlink/impo...er.css', 'tests/css/sample/symlink/targ...er.css', '')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-''
++'@import url(../imports_symlink/import.css);'
+
+I:\SelfWork\OpenSource\minify\minify\tests\css\CSSTest.php:82
+</failure>
+        </testcase>
+        <testcase name="convertRelativePath with data set #25" assertions="1" time="0.010014">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">CSSTest::convertRelativePath with data set #25 ('I:\SelfWork\OpenSource\minify...er.css', 'tests/css/sample/symlink/targ...er.css', '')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-''
++'@import url(../imports_symlink/import.css);'
+
+I:\SelfWork\OpenSource\minify\minify\tests\css\CSSTest.php:82
+</failure>
+        </testcase>
+        <testcase name="convertRelativePath with data set #26" assertions="1" time="0.009947">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">CSSTest::convertRelativePath with data set #26 ('tests/css/sample/symlink/impo...er.css', 'I:\SelfWork\OpenSource\minify...er.css', '')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-''
++'@import url(../imports_symlink/import.css);'
+
+I:\SelfWork\OpenSource\minify\minify\tests\css\CSSTest.php:82
+</failure>
+        </testcase>
+        <testcase name="convertRelativePath with data set #27" assertions="1" time="0.006739"/>
+        <testcase name="convertRelativePath with data set #28" assertions="1" time="0.007436"/>
+        <testcase name="convertRelativePath with data set #29" assertions="1" time="0.007489"/>
+        <testcase name="convertRelativePath with data set #30" assertions="1" time="0.007849"/>
+      </testsuite>
+      <testcase name="setConfig" class="CSSTest" file="I:\SelfWork\OpenSource\minify\minify\tests\css\CSSTest.php" line="90" assertions="2" time="0.002851"/>
+    </testsuite>
+    <testsuite name="CommonTest" file="I:\SelfWork\OpenSource\minify\minify\tests\js\AbstractTest.php" tests="6" assertions="12" failures="0" errors="0" time="0.326567">
+      <testcase name="construct" class="CommonTest" file="I:\SelfWork\OpenSource\minify\minify\tests\js\AbstractTest.php" line="15" assertions="4" time="0.097655"/>
+      <testcase name="add" class="CommonTest" file="I:\SelfWork\OpenSource\minify\minify\tests\js\AbstractTest.php" line="50" assertions="4" time="0.054488"/>
+      <testcase name="load" class="CommonTest" file="I:\SelfWork\OpenSource\minify\minify\tests\js\AbstractTest.php" line="91" assertions="1" time="0.094523"/>
+      <testcase name="save" class="CommonTest" file="I:\SelfWork\OpenSource\minify\minify\tests\js\AbstractTest.php" line="105" assertions="1" time="0.018322"/>
+      <testcase name="gzip" class="CommonTest" file="I:\SelfWork\OpenSource\minify\minify\tests\js\AbstractTest.php" line="120" assertions="1" time="0.029379"/>
+      <testcase name="cache" class="CommonTest" file="I:\SelfWork\OpenSource\minify\minify\tests\js\AbstractTest.php" line="135" assertions="1" time="0.032200"/>
+    </testsuite>
+    <testsuite name="JSTest" file="I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php" tests="88" assertions="88" failures="21" errors="0" time="1.130148">
+      <testsuite name="JSTest::minify" tests="88" assertions="88" failures="21" errors="0" time="1.130148">
+        <testcase name="minify with data set #0" assertions="1" time="0.017124"/>
+        <testcase name="minify with data set #1" assertions="1" time="0.010843"/>
+        <testcase name="minify with data set #2" assertions="1" time="0.013542"/>
+        <testcase name="minify with data set #3" assertions="1" time="0.015772"/>
+        <testcase name="minify with data set #4" assertions="1" time="0.011429"/>
+        <testcase name="minify with data set #5" assertions="1" time="0.011755"/>
+        <testcase name="minify with data set #6" assertions="1" time="0.013712"/>
+        <testcase name="minify with data set #7" assertions="1" time="0.010818"/>
+        <testcase name="minify with data set #8" assertions="1" time="0.011541"/>
+        <testcase name="minify with data set #9" assertions="1" time="0.011085"/>
+        <testcase name="minify with data set #10" assertions="1" time="0.011257"/>
+        <testcase name="minify with data set #11" assertions="1" time="0.010810"/>
+        <testcase name="minify with data set #12" assertions="1" time="0.013381"/>
+        <testcase name="minify with data set #13" assertions="1" time="0.011621"/>
+        <testcase name="minify with data set #14" assertions="1" time="0.012404"/>
+        <testcase name="minify with data set #15" assertions="1" time="0.011124"/>
+        <testcase name="minify with data set #16" assertions="1" time="0.011851"/>
+        <testcase name="minify with data set #17" assertions="1" time="0.010838"/>
+        <testcase name="minify with data set #18" assertions="1" time="0.015275">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #18 ('alert("this is a test")\nalert...test")', 'alert("this is a test")\nalert...test")')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'alert("this is a test")
+ alert("this is another test")'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #19" assertions="1" time="0.012746">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #19 ('a=b+c\n             d=e+f', 'a=b+c\nd=e+f')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'a=b+c
+ d=e+f'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #20" assertions="1" time="0.013880">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #20 ('a++\n\n             ++b', 'a++\n++b')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'a++
+ ++b'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #21" assertions="1" time="0.012462">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #21 ('!a\n             !b', '!a\n!b')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ '!a
+ !b'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #22" assertions="1" time="0.013713">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #22 ('digestif\n            (true)\n ...tement', 'digestif(!0)\nstatement')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'digestif(!0)
+ statement'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #23" assertions="1" time="0.012059">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #23 ('if\n             (\n           ...tement', 'if((!0)&amp;&amp;(!0))\nstatement')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'if((!0)&amp;&amp;(!0))
+ statement'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #24" assertions="1" time="0.014375">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #24 ('if\n             (\n           ...     }', 'if(!0){}\nelse{}')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'if(!0){}
+ else{}'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #25" assertions="1" time="0.013929">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #25 ('do\n             {\n           ...     )', 'do{i++}\nwhile(i&lt;1)')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'do{i++}
+ while(i&lt;1)'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #26" assertions="1" time="0.013153">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #26 ('if ( true )\n                 ...tement', 'if(!0)\nstatement\nelse statement')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'if(!0)
+ statement
+ else statement'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #27" assertions="1" time="0.012111"/>
+        <testcase name="minify with data set #28" assertions="1" time="0.011304"/>
+        <testcase name="minify with data set #29" assertions="1" time="0.013298"/>
+        <testcase name="minify with data set #30" assertions="1" time="0.010989"/>
+        <testcase name="minify with data set #31" assertions="1" time="0.012380"/>
+        <testcase name="minify with data set #32" assertions="1" time="0.011104"/>
+        <testcase name="minify with data set #33" assertions="1" time="0.012243"/>
+        <testcase name="minify with data set #34" assertions="1" time="0.011063"/>
+        <testcase name="minify with data set #35" assertions="1" time="0.012127"/>
+        <testcase name="minify with data set #36" assertions="1" time="0.010505"/>
+        <testcase name="minify with data set #37" assertions="1" time="0.012846"/>
+        <testcase name="minify with data set #38" assertions="1" time="0.010722"/>
+        <testcase name="minify with data set #39" assertions="1" time="0.012814"/>
+        <testcase name="minify with data set #40" assertions="1" time="0.010797"/>
+        <testcase name="minify with data set #41" assertions="1" time="0.015624">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #41 ('\n                // check if ...ment;\n', 'if(currentElement.attr('type'...lement')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'if(currentElement.attr('type')!='text'){currentElement.remove()}
+ else newElement=currentElement'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #42" assertions="1" time="0.009979"/>
+        <testcase name="minify with data set #43" assertions="1" time="0.013732">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #43 ('var utils =\n             {\n  ...     }', 'var utils={debug:!1}\nutils.array={}')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'var utils={debug:!1}
+ utils.array={}'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #44" assertions="1" time="0.011815"/>
+        <testcase name="minify with data set #45" assertions="1" time="0.010745"/>
+        <testcase name="minify with data set #46" assertions="1" time="0.013713">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #46 ('if (this.sliding)       retur...ycle()', 'if(this.sliding)return this.$...ycle()')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'if(this.sliding)return this.$element.one('slid.bs.carousel',function(){that.to(pos)})
+ if(activeIndex==pos)return this.pause().cycle()'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #47" assertions="1" time="0.011911">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #47 ('if (e.which == 38 &amp;&amp; index &gt; .../ down', 'if(e.which==38&amp;&amp;index&gt;0)index...ndex++')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'if(e.which==38&amp;&amp;index&gt;0)index--
+ if(e.which==40&amp;&amp;index&lt;$items.length-1)index++'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #48" assertions="1" time="0.012683"/>
+        <testcase name="minify with data set #49" assertions="1" time="0.012896"/>
+        <testcase name="minify with data set #50" assertions="1" time="0.010829"/>
+        <testcase name="minify with data set #51" assertions="1" time="0.012394"/>
+        <testcase name="minify with data set #52" assertions="1" time="0.011842"/>
+        <testcase name="minify with data set #53" assertions="1" time="0.015204"/>
+        <testcase name="minify with data set #54" assertions="1" time="0.012119"/>
+        <testcase name="minify with data set #55" assertions="1" time="0.014762"/>
+        <testcase name="minify with data set #56" assertions="1" time="0.012318"/>
+        <testcase name="minify with data set #57" assertions="1" time="0.014783"/>
+        <testcase name="minify with data set #58" assertions="1" time="0.011717"/>
+        <testcase name="minify with data set #59" assertions="1" time="0.014248"/>
+        <testcase name="minify with data set #60" assertions="1" time="0.011691"/>
+        <testcase name="minify with data set #61" assertions="1" time="0.018027"/>
+        <testcase name="minify with data set #62" assertions="1" time="0.012419"/>
+        <testcase name="minify with data set #63" assertions="1" time="0.015123">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #63 ('function foo (a, b)\n{\n    ret.../ b;\n}', 'function foo(a,b){return a/b}...n a/b}')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'function foo(a,b){return a/b}
+ function foo(a,b){return a/b}'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #64" assertions="1" time="0.015438">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #64 ('if ( !data.success )\n    defe...data);', 'if(!data.success)\ndeferred.re...(data)')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'if(!data.success)
+ deferred.reject();else deferred.resolve(data)'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #65" assertions="1" time="0.018108">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #65 ('if ( typeof jQuery === 'undef...rst');', 'if(typeof jQuery==='undefined...irst')')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'if(typeof jQuery==='undefined')
+ throw new Error('.editManager.js: jQuery is required and must be loaded first')'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #66" assertions="1" time="0.010395"/>
+        <testcase name="minify with data set #67" assertions="1" time="0.012058"/>
+        <testcase name="minify with data set #68" assertions="1" time="0.011936">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #68 ('$.fn.alert             = Plug... Alert', '$.fn.alert=Plugin\n$.fn.alert....=Alert')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ '$.fn.alert=Plugin
+ $.fn.alert.Constructor=Alert'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #69" assertions="1" time="0.010372"/>
+        <testcase name="minify with data set #70" assertions="1" time="0.011761"/>
+        <testcase name="minify with data set #71" assertions="1" time="0.012970"/>
+        <testcase name="minify with data set #72" assertions="1" time="0.010718"/>
+        <testcase name="minify with data set #73" assertions="1" time="0.012780"/>
+        <testcase name="minify with data set #74" assertions="1" time="0.010463"/>
+        <testcase name="minify with data set #75" assertions="1" time="0.013219"/>
+        <testcase name="minify with data set #76" assertions="1" time="0.011483"/>
+        <testcase name="minify with data set #77" assertions="1" time="0.013565"/>
+        <testcase name="minify with data set #78" assertions="1" time="0.010555"/>
+        <testcase name="minify with data set #79" assertions="1" time="0.021460">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #79 ('a.validator.addMethod("accept...n !0\n}', 'a.validator.addMethod("accept...rn !0}')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'a.validator.addMethod("accept",function(b,c,d){var e,f,g="string"==typeof d?d.replace(/\s/g,"").replace(/,/g,"|"):"image/*",h=this.optional(c);if(h)return h;if("file"===a(c).attr("type")&amp;&amp;(g=g.replace(/\*/g,".*"),c.files&amp;&amp;c.files.length))
+ for(e=0;e&lt;c.files.length;e++)
+ if(f=c.files[e],!f.type.match(new RegExp(".?("+g+")$","i")))
+ return !1;return !0}'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #80" assertions="1" time="0.022630">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #80 ('function a() {\n  if (true)\n  ...turn\n}', 'function a(){if(!0)\nreturn\nif...eturn}')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'function a(){if(!0)
+ return
+ if(!1)
+ return}'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #81" assertions="1" time="0.021155">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #81 ('var timeRegex = /^([2][0-3]|[...ll) {}', 'var timeRegex=/^([2][0-3]|[01...ull){}')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'var timeRegex=/^([2][0-3]|[01]?[0-9])(:[0-5][0-9])?$/
+-if(start_time.match(timeRegex)==null){}'
++'var timeRegex=/^([2][0-3]|[01]?[0-9])(:[0-5][0-9])?$/if(start_time.match(timeRegex)==null){}'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #82" assertions="1" time="0.015334">
+          <failure type="PHPUnit_Framework_ExpectationFailedException">JSTest::minify with data set #82 ('function inspect() {\n    esca...]');\n}', 'function inspect(){escapedStr...,']')}')
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+ 'function inspect(){escapedString.replace(/abc/g,'\\\'')}
+ function isJSON(){str.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']')}'
+
+I:\SelfWork\OpenSource\minify\minify\tests\js\JSTest.php:51
+</failure>
+        </testcase>
+        <testcase name="minify with data set #83" assertions="1" time="0.010145"/>
+        <testcase name="minify with data set #84" assertions="1" time="0.010773"/>
+        <testcase name="minify with data set #85" assertions="1" time="0.013060"/>
+        <testcase name="minify with data set #86" assertions="1" time="0.010626"/>
+        <testcase name="minify with data set #87" assertions="1" time="0.011769"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>
