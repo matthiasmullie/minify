@@ -77,52 +77,6 @@ abstract class Minify
     }
 
     /**
-     * Load data.
-     *
-     * @param string $data Either a path to a file or the content itself.
-     *
-     * @return string
-     */
-    protected function load($data)
-    {
-        // check if the data is a file
-        if (strlen($data) < PHP_MAXPATHLEN && file_exists($data) && is_file($data)) {
-            $data = file_get_contents($data);
-
-            // strip BOM, if any
-            if (substr($data, 0, 3) == "\xef\xbb\xbf") {
-                $data = substr($data, 3);
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * Save to file.
-     *
-     * @param string $content The minified data.
-     * @param string $path    The path to save the minified data to.
-     *
-     * @throws Exception
-     */
-    protected function save($content, $path)
-    {
-        // create file & open for writing
-        if (($handler = @fopen($path, 'w')) === false) {
-            throw new Exception('The file "'.$path.'" could not be opened. Check if PHP has enough permissions.');
-        }
-
-        // write to file
-        if (@fwrite($handler, $content) === false) {
-            throw new Exception('The file "'.$path.'" could not be written to. Check if PHP has enough permissions.');
-        }
-
-        // close the file
-        @fclose($handler);
-    }
-
-    /**
      * Minify the data & (optionally) saves it to a file.
      *
      * @param string[optional] $path Path to write the data to.
@@ -185,6 +139,52 @@ abstract class Minify
      * @return string The minified data.
      */
     abstract public function execute($path = null);
+
+    /**
+     * Load data.
+     *
+     * @param string $data Either a path to a file or the content itself.
+     *
+     * @return string
+     */
+    protected function load($data)
+    {
+        // check if the data is a file
+        if ($this->canImportFile($data)) {
+            $data = file_get_contents($data);
+
+            // strip BOM, if any
+            if (substr($data, 0, 3) == "\xef\xbb\xbf") {
+                $data = substr($data, 3);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Save to file.
+     *
+     * @param string $content The minified data.
+     * @param string $path    The path to save the minified data to.
+     *
+     * @throws Exception
+     */
+    protected function save($content, $path)
+    {
+        // create file & open for writing
+        if (($handler = @fopen($path, 'w')) === false) {
+            throw new Exception('The file "'.$path.'" could not be opened. Check if PHP has enough permissions.');
+        }
+
+        // write to file
+        if (@fwrite($handler, $content) === false) {
+            throw new Exception('The file "'.$path.'" could not be written to. Check if PHP has enough permissions.');
+        }
+
+        // close the file
+        @fclose($handler);
+    }
 
     /**
      * Register a pattern to execute against the source content.
@@ -378,5 +378,16 @@ abstract class Minify
         $this->extracted = array();
 
         return $content;
+    }
+
+    /**
+     *
+     * @todo describe
+     *
+     * @param $path
+     * @return bool
+     */
+    protected function canImportFile($path) {
+        return (strlen($path) < PHP_MAXPATHLEN && is_file($path) && is_readable($path));
     }
 }
