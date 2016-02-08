@@ -438,7 +438,7 @@ class JS extends Minify
          * we want to use property notation on) - this is to make sure
          * standalone ['value'] arrays aren't confused for keys-of-an-array.
          * We can (and only have to) check the last character, because PHP's
-         * regex implementation doesn't allow un-fixed-length look-behind
+         * regex implementation doesn't allow unfixed-length look-behind
          * assertions.
          */
         preg_match('/(\[[^\]]+\])[^\]]*$/', static::REGEX_VARIABLE, $previousChar);

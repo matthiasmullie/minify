@@ -382,9 +382,9 @@ abstract class Minify
 
     /**
      *
-     * @todo describe
+     * Check if the path is a regular file and can be read
      *
-     * @param $path
+     * @param string $path
      * @return bool
      */
     protected function canImportFile($path) {
