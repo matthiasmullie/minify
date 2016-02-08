@@ -42,17 +42,14 @@ class JSTest extends PHPUnit_Framework_TestCase
      */
     public function minify($input, $expected)
     {
-        //echo "\nINPUT\n";
-        //var_dump(json_encode($input), json_encode($expected));
         $input = (array) $input;
+
         foreach ($input as $js) {
             $this->minifier->add($js);
         }
-        $result = $this->minifier->minify();
-        //echo "\nRESULT\n";
-//var_dump(json_encode($result));
 
-        //die();
+        $result = $this->minifier->minify();
+
         $this->assertEquals($expected, $result);
     }
 
