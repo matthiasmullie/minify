@@ -211,7 +211,7 @@ class JS extends Minify
         };
 
         // it's a regex if we can find an opening and (not escaped) closing /,
-        $pattern = '(\/.*?(?<!\\\\)(\\\\\\\\)*+\/\n?)';
+        $pattern = '(\/.*?(?<!\\\\)(\\\\\\\\)*+\/)';
 
         // / can't be preceded by variable, value, or similar because then
         // it's going to be division
