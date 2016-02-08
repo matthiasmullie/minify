@@ -43,9 +43,11 @@ class JSTest extends PHPUnit_Framework_TestCase
     public function minify($input, $expected)
     {
         $input = (array) $input;
+
         foreach ($input as $js) {
             $this->minifier->add($js);
         }
+
         $result = $this->minifier->minify();
 
         $this->assertEquals($expected, $result);
@@ -601,8 +603,7 @@ return}',
         $tests[] = array(
             'var timeRegex = /^([2][0-3]|[01]?[0-9])(:[0-5][0-9])?$/
 if (start_time.match(timeRegex) == null) {}',
-            'var timeRegex=/^([2][0-3]|[01]?[0-9])(:[0-5][0-9])?$/
-if(start_time.match(timeRegex)==null){}',
+            'var timeRegex=/^([2][0-3]|[01]?[0-9])(:[0-5][0-9])?$/;if(start_time.match(timeRegex)==null){}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/58
@@ -664,6 +665,13 @@ BUG
             'if(true){if(true)console.log("test")else;}',
             'if(!0){if(!0)console.log("test")}',
         );
+
+        //update tests' expected results for cross-system compatibility
+        foreach($tests as &$test) {
+            if (!empty($test[1])) {
+                $test[1] = str_replace("\r", "", $test[1]);
+            }
+        }
 
         return $tests;
     }

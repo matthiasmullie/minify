@@ -211,8 +211,6 @@ class JS extends Minify
         };
 
         // it's a regex if we can find an opening and (not escaped) closing /,
-        // include \n because it may be there for a reason
-        // (https://github.com/matthiasmullie/minify/issues/56)
         $pattern = '(\/.*?(?<!\\\\)(\\\\\\\\)*+\/\n?)';
 
         // / can't be preceded by variable, value, or similar because then
@@ -256,6 +254,11 @@ class JS extends Minify
         // collapse consecutive line feeds into just 1
         $content = preg_replace('/\n+/', "\n", $content);
 
+        // replace newlines after a closing slash of a replaced regex
+        // (https://github.com/matthiasmullie/minify/issues/56)
+        // using positive look-behind here
+        $content = preg_replace('/(?<=\/)\n/', ';', $content);
+
         $before = $this->getOperatorsForRegex($this->operatorsBefore, '/');
         $after = $this->getOperatorsForRegex($this->operatorsAfter, '/');
         $operators = $before + $after;
@@ -263,12 +266,20 @@ class JS extends Minify
         // strip whitespace that ends in (or next line begin with) an operator
         // that allows statements to be broken up over multiple lines
         unset($before['+'], $before['-'], $after['+'], $after['-']);
-        $content = preg_replace('/('.implode('|', $before).')\s+/', '\\1', $content);
-        $content = preg_replace('/\s+('.implode('|', $after).')/', '\\1', $content);
+        $content = preg_replace(
+            array(
+                '/('.implode('|', $before).')\s+/',
+                '/\s+('.implode('|', $after).')/'
+            ), '\\1', $content
+        );
 
         // make sure + and - can't be mistaken for, or joined into ++ and --
-        $content = preg_replace('/(?<![\+\-])\s*([\+\-])(?![\+\-])/', '\\1', $content);
-        $content = preg_replace('/(?<![\+\-])([\+\-])\s*(?![\+\-])/', '\\1', $content);
+        $content = preg_replace(
+            array(
+                '/(?<![\+\-])\s*([\+\-])(?![\+\-])/',
+                '/(?<![\+\-])([\+\-])\s*(?![\+\-])/'
+            ), '\\1', $content
+        );
 
         /*
          * We didn't strip whitespace after a couple of operators because they
@@ -427,7 +438,7 @@ class JS extends Minify
          * we want to use property notation on) - this is to make sure
          * standalone ['value'] arrays aren't confused for keys-of-an-array.
          * We can (and only have to) check the last character, because PHP's
-         * regex implementation doesn't allow un-fixed-length lookbehind
+         * regex implementation doesn't allow unfixed-length look-behind
          * assertions.
          */
         preg_match('/(\[[^\]]+\])[^\]]*$/', static::REGEX_VARIABLE, $previousChar);
@@ -436,8 +447,8 @@ class JS extends Minify
         /*
          * Make sure word preceding the ['value'] is not a keyword, e.g.
          * return['x']. Because -again- PHP's regex implementation doesn't allow
-         * un-fixed-length lookbehind assertions, I'm just going to do a lot of
-         * separate lookbehind assertions, one for each keyword.
+         * unfixed-length look-behind assertions, I'm just going to do a lot of
+         * separate look-behind assertions, one for each keyword.
          */
         $keywords = $this->getKeywordsForRegex($keywords);
         $keywords = '(?<!'.implode(')(?<!', $keywords).')';

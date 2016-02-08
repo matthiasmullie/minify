@@ -208,14 +208,14 @@ class CSS extends Minify
 
             // only replace the import with the content if we can grab the
             // content of the file
-            if (strlen($importPath) < PHP_MAXPATHLEN && file_exists($importPath) && is_file($importPath)) {
+            if ($this->canImportFile($importPath)) {
                 // grab referenced file & minify it (which may include importing
                 // yet other @import statements recursively)
                 $minifier = new static($importPath);
                 $importContent = $minifier->execute($source);
 
                 // check if this is only valid for certain media
-                if ($match['media']) {
+                if (!empty($match['media'])) {
                     $importContent = '@media '.$match['media'].'{'.$importContent.'}';
                 }
 

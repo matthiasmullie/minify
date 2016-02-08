@@ -1,3 +1,6 @@
 /build
 /docs
 /vendor
+/tests/js/sample
+/tests/css/sample
+composer.lock
