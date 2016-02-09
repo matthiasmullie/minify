@@ -116,6 +116,40 @@ class CommonTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
+     *
+     * @expectedException Exception
+     */
+    public function checkFileOpenFail()
+    {
+        $minifier = new Minify\JS();
+        $wrongPath = '';
+
+        $object = new ReflectionObject($minifier);
+        $method = $object->getMethod('openFileForWriting');
+        $method->setAccessible(true);
+
+        $method->invokeArgs($minifier, array($wrongPath));
+    }
+
+    /**
+     * @test
+     *
+     * @expectedException Exception
+     */
+    public function checkFileWriteFail()
+    {
+        $minifier = new Minify\JS();
+        $wrongPath = '';
+
+        $object = new ReflectionObject($minifier);
+        $method = $object->getMethod('writeToFile');
+        $method->setAccessible(true);
+
+        $method->invokeArgs($minifier, array($wrongPath, ''));
+    }
+
+    /**
+     * @test
      */
     public function gzip()
     {
