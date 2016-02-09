@@ -172,17 +172,10 @@ abstract class Minify
      */
     protected function save($content, $path)
     {
-        // create file & open for writing
-        if (($handler = @fopen($path, 'w')) === false) {
-            throw new Exception('The file "'.$path.'" could not be opened. Check if PHP has enough permissions.');
-        }
+        $handler = $this->openFileForWriting($path);
 
-        // write to file
-        if (@fwrite($handler, $content) === false) {
-            throw new Exception('The file "'.$path.'" could not be written to. Check if PHP has enough permissions.');
-        }
+        $this->writeToFile($handler, $content);
 
-        // close the file
         @fclose($handler);
     }
 
@@ -316,7 +309,7 @@ abstract class Minify
      * placeholder text, so we've rid all strings from characters that may be
      * misinterpreted. Original string content will be saved in $this->extracted
      * and after doing all other minifying, we can restore the original content
-     * via restoreStrings()
+     * via restoreStrings().
      *
      * @param string[optional] $chars
      */
@@ -382,12 +375,45 @@ abstract class Minify
 
     /**
      *
-     * Check if the path is a regular file and can be read
+     * Check if the path is a regular file and can be read.
      *
      * @param string $path
      * @return bool
      */
     protected function canImportFile($path) {
         return (strlen($path) < PHP_MAXPATHLEN && is_file($path) && is_readable($path));
+    }
+
+    /**
+     *
+     * Attempts to open file specified by $path for writing.
+     *
+     * @param   string      $path   The path to the file.
+     * @return  resource    Specifier for the target file.
+     *
+     * @throws  Exception
+     */
+    protected function openFileForWriting($path) {
+        if (($handler = @fopen($path, 'w')) === false) {
+            throw new Exception('The file "'.$path.'" could not be opened for writing. Check if PHP has enough permissions.');
+        }
+
+        return $handler;
+    }
+
+    /**
+     *
+     * Attempts to write $content to the file specified by $handler. $path is used for printing exceptions.
+     *
+     * @param   resource    $handler    The resource to write to.
+     * @param   string      $content    The content to write.
+     * @param   string      $path       The path to the file (for exception printing only).
+     *
+     * @throws  Exception
+     */
+    protected function writeToFile($handler, $content, $path = '') {
+        if (@fwrite($handler, $content) === false) {
+            throw new Exception('The file "'.$path.'" could not be written to. Check your disk space and file permissions.');
+        }
     }
 }
