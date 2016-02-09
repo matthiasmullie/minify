@@ -90,11 +90,13 @@ class JSTest extends PHPUnit_Framework_TestCase
         );
 
         // mixture of quotes starting in comment/regex, to make sure strings are
-        // matched correctly, not inside comment/regex.
+        // matched correctly, not inside comment/regex
+        // additionally test catching of empty strings as well
         $tests[] = array(
-            '/abc"def/.test("abc")',
-            '/abc"def/.test("abc")',
+            '/abc"def/.test(\'\')',
+            '/abc"def/.test(\'\')',
         );
+
         $tests[] = array(
             '/* Bogus " */var test="test";',
             'var test="test"',

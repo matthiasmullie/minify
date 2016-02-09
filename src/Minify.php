@@ -318,7 +318,9 @@ abstract class Minify
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
-            if (!$match[1]) {
+            //check the second index here, because the first always contains a quote
+            //that's why inner block could never be reached
+            if (!$match[2]) {
                 /*
                  * Empty strings need no placeholder; they can't be confused for
                  * anything else anyway.
