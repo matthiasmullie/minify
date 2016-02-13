@@ -414,7 +414,7 @@ abstract class Minify
      * @throws  Exception
      */
     protected function writeToFile($handler, $content, $path = '') {
-        if (@fwrite($handler, $content) === false) {
+        if (($result = @fwrite($handler, $content)) === false || ($result < strlen($content))) {
             throw new Exception('The file "'.$path.'" could not be written to. Check your disk space and file permissions.');
         }
     }
