@@ -384,6 +384,11 @@ only screen and (min-device-pixel-ratio: 1.5) {
             '@media (min-width:320px){p{background-color:red}}@media (min-width:1281px){p{background-color:blue}}',
         );
 
+        $tests[] = array(
+            __DIR__.'/sample/loop/first.css',
+            '',
+        );
+
         return $tests;
     }
 
