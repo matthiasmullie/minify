@@ -21,7 +21,7 @@ abstract class Minify
      *
      * @var string[]
      */
-    public $data = array();
+    protected $data = array();
 
     /**
      * Array of patterns to match.
