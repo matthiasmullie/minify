@@ -1,6 +1,7 @@
 <?php
 
 use MatthiasMullie\Minify;
+use MatthiasMullie\Minify\Exception\IOException;
 use MatthiasMullie\Scrapbook\Adapters\MemoryStore;
 use MatthiasMullie\Scrapbook\Psr6\Pool;
 
@@ -117,7 +118,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      *
-     * @expectedException Exception
+     * @expectedException MatthiasMullie\Minify\Exception\IOException
      */
     public function checkFileOpenFail()
     {

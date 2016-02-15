@@ -2,6 +2,7 @@
 
 namespace MatthiasMullie\Minify;
 
+use MatthiasMullie\Minify\Exception\IOException;
 use Psr\Cache\CacheItemInterface;
 
 /**
@@ -20,7 +21,7 @@ abstract class Minify
      *
      * @var string[]
      */
-    protected $data = array();
+    public $data = array();
 
     /**
      * Array of patterns to match.
@@ -168,7 +169,7 @@ abstract class Minify
      * @param string $content The minified data.
      * @param string $path    The path to save the minified data to.
      *
-     * @throws Exception
+     * @throws IOException
      */
     protected function save($content, $path)
     {
@@ -393,11 +394,11 @@ abstract class Minify
      * @param   string      $path   The path to the file.
      * @return  resource    Specifier for the target file.
      *
-     * @throws  Exception
+     * @throws  IOException
      */
     protected function openFileForWriting($path) {
         if (($handler = @fopen($path, 'w')) === false) {
-            throw new Exception('The file "'.$path.'" could not be opened for writing. Check if PHP has enough permissions.');
+            throw new IOException('The file "'.$path.'" could not be opened for writing. Check if PHP has enough permissions.');
         }
 
         return $handler;
@@ -411,11 +412,11 @@ abstract class Minify
      * @param   string      $content    The content to write.
      * @param   string      $path       The path to the file (for exception printing only).
      *
-     * @throws  Exception
+     * @throws  IOException
      */
     protected function writeToFile($handler, $content, $path = '') {
         if (($result = @fwrite($handler, $content)) === false || ($result < strlen($content))) {
-            throw new Exception('The file "'.$path.'" could not be written to. Check your disk space and file permissions.');
+            throw new IOException('The file "'.$path.'" could not be written to. Check your disk space and file permissions.');
         }
     }
 }
