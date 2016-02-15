@@ -2,6 +2,7 @@
 
 namespace MatthiasMullie\Minify;
 
+use MatthiasMullie\Minify\Exception\FileImportException;
 use MatthiasMullie\PathConverter\Converter;
 
 /**
@@ -20,6 +21,11 @@ class CSS extends Minify
      * @var int
      */
     protected $maxImportSize = 5;
+
+    /**
+     * @var array Chain of files to be imported
+     */
+    protected static $importChain = array();
 
     /**
      * @var string[]
@@ -208,7 +214,7 @@ class CSS extends Minify
 
             // only replace the import with the content if we can grab the
             // content of the file
-            if ($this->canImportFile($importPath)) {
+            if ($this->canImportFile($importPath) && $this->isNotInImportChain($importPath)) {
                 // grab referenced file & minify it (which may include importing
                 // yet other @import statements recursively)
                 $minifier = new static($importPath);
@@ -259,21 +265,15 @@ class CSS extends Minify
 
                 // only replace the import with the content if we're able to get
                 // the content of the file, and it's relatively small
-                $import = strlen($path) < PHP_MAXPATHLEN;
-                $import = $import && file_exists($path);
-                $import = $import && is_file($path);
-                $import = $import && filesize($path) <= $this->maxImportSize * 1024;
-                if (!$import) {
-                    continue;
+                if ($this->canImportFile($path) && $this->canImportBySize($path)) {
+                    // grab content && base64-ize
+                    $importContent = $this->load($path);
+                    $importContent = base64_encode($importContent);
+
+                    // build replacement
+                    $search[] = $match[0];
+                    $replace[] = 'url('.$this->importExtensions[$extension].';base64,'.$importContent.')';
                 }
-
-                // grab content && base64-ize
-                $importContent = $this->load($path);
-                $importContent = base64_encode($importContent);
-
-                // build replacement
-                $search[] = $match[0];
-                $replace[] = 'url('.$this->importExtensions[$extension].';base64,'.$importContent.')';
             }
 
             // replace the import statements
@@ -295,8 +295,14 @@ class CSS extends Minify
     {
         $content = '';
 
-        // loop files
+        // loop css data (raw data and files)
         foreach ($this->data as $source => $css) {
+
+            //put current source into import chain if it is a valid file
+            if ($this->canImportFile($source)) {
+                array_push(self::$importChain, $source);
+            }
+
             /*
              * Let's first take out strings & comments, since we can't just remove
              * whitespace anywhere. If whitespace occurs inside a string, we should
@@ -331,6 +337,9 @@ class CSS extends Minify
 
             // combine css
             $content .= $css;
+
+            //remove current file from chain
+            array_pop(self::$importChain);
         }
 
         $content = $this->moveImportsToTop($content);
@@ -576,5 +585,32 @@ class CSS extends Minify
         $content = str_replace(';}', '}', $content);
 
         return trim($content);
+    }
+
+    /**
+     * Check if file is small enough to be imported.
+     *
+     * @param   $path   The path to the file.
+     * @return  bool
+     */
+    protected function canImportBySize($path)
+    {
+        return (($size = @filesize($path)) && ($size <= $this->maxImportSize * 1024));
+    }
+
+    /**
+     * Check if current file was not imported previously in the same import chain.
+     *
+     * @param   $path   The path to the file.
+     * @return  bool
+     * @throws  FileImportException
+     */
+    protected function isNotInImportChain($path)
+    {
+        if (in_array($path, self::$importChain)) {
+            throw new FileImportException("Failed to import file \"{$path}\" : import loop detected");
+        }
+
+        return true;
     }
 }

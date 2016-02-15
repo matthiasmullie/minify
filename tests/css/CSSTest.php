@@ -1,6 +1,7 @@
 <?php
 
 use MatthiasMullie\Minify;
+use MatthiasMullie\Minify\Exception;
 
 /**
  * CSS minifier test case.
@@ -43,6 +44,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
     public function minify($input, $expected)
     {
         $input = (array) $input;
+
         foreach ($input as $css) {
             $this->minifier->add($css);
         }
@@ -80,6 +82,22 @@ class CSSTest extends PHPUnit_Framework_TestCase
         $result = $this->minifier->minify($target);
 
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test loop while importing file
+     *
+     * @test
+     *
+     * @expectedException MatthiasMullie\Minify\Exception\FileImportException
+     */
+    public function fileImportLoop()
+    {
+        $testFile = __DIR__.'/sample/loop/first.css';
+
+        $this->minifier->add($testFile);
+
+        $result = $this->minifier->minify();
     }
 
     /**
