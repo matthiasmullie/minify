@@ -43,6 +43,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
     public function minify($input, $expected)
     {
         $input = (array) $input;
+
         foreach ($input as $css) {
             $this->minifier->add($css);
         }
@@ -80,6 +81,22 @@ class CSSTest extends PHPUnit_Framework_TestCase
         $result = $this->minifier->minify($target);
 
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test loop while importing file.
+     *
+     * @test
+     *
+     * @expectedException MatthiasMullie\Minify\Exceptions\FileImportException
+     */
+    public function fileImportLoop()
+    {
+        $testFile = __DIR__.'/sample/loop/first.css';
+
+        $this->minifier->add($testFile);
+
+        $this->minifier->minify();
     }
 
     /**

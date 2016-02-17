@@ -1,1 +1,1 @@
-@import url(/absolute/path/to/stylesheet.css);
+@import "/absolute/path/to/stylesheet.css";

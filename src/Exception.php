@@ -3,8 +3,10 @@
 namespace MatthiasMullie\Minify;
 
 /**
+ * @deprecated Use Exceptions\BasicException instead
+ *
  * @author Matthias Mullie <minify@mullie.eu>
  */
-class Exception extends \Exception
+abstract class Exception extends \Exception
 {
 }

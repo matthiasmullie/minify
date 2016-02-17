@@ -43,9 +43,11 @@ class JSTest extends PHPUnit_Framework_TestCase
     public function minify($input, $expected)
     {
         $input = (array) $input;
+
         foreach ($input as $js) {
             $this->minifier->add($js);
         }
+
         $result = $this->minifier->minify();
 
         $this->assertEquals($expected, $result);
@@ -87,12 +89,24 @@ class JSTest extends PHPUnit_Framework_TestCase
             'a=b/c;d=e/f',
         );
 
+        $tests[] = array(
+            'a=4/
+            2',
+            'a=4/2',
+        );
+
         // mixture of quotes starting in comment/regex, to make sure strings are
-        // matched correctly, not inside comment/regex.
+        // matched correctly, not inside comment/regex
+        // additionally test catching of empty strings as well
         $tests[] = array(
             '/abc"def/.test("abc")',
             '/abc"def/.test("abc")',
         );
+        $tests[] = array(
+            '/abc"def/.test(\'\')',
+            '/abc"def/.test(\'\')',
+        );
+
         $tests[] = array(
             '/* Bogus " */var test="test";',
             'var test="test"',
@@ -664,6 +678,13 @@ BUG
             'if(true){if(true)console.log("test")else;}',
             'if(!0){if(!0)console.log("test")}',
         );
+
+        //update tests' expected results for cross-system compatibility
+        foreach ($tests as &$test) {
+            if (!empty($test[1])) {
+                $test[1] = str_replace("\r", '', $test[1]);
+            }
+        }
 
         return $tests;
     }

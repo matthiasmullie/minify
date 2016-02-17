@@ -2,6 +2,7 @@
 
 namespace MatthiasMullie\Minify;
 
+use MatthiasMullie\Minify\Exceptions\IOException;
 use Psr\Cache\CacheItemInterface;
 
 /**
@@ -77,52 +78,6 @@ abstract class Minify
     }
 
     /**
-     * Load data.
-     *
-     * @param string $data Either a path to a file or the content itself.
-     *
-     * @return string
-     */
-    protected function load($data)
-    {
-        // check if the data is a file
-        if (strlen($data) < PHP_MAXPATHLEN && file_exists($data) && is_file($data)) {
-            $data = file_get_contents($data);
-
-            // strip BOM, if any
-            if (substr($data, 0, 3) == "\xef\xbb\xbf") {
-                $data = substr($data, 3);
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * Save to file.
-     *
-     * @param string $content The minified data.
-     * @param string $path    The path to save the minified data to.
-     *
-     * @throws Exception
-     */
-    protected function save($content, $path)
-    {
-        // create file & open for writing
-        if (($handler = @fopen($path, 'w')) === false) {
-            throw new Exception('The file "'.$path.'" could not be opened. Check if PHP has enough permissions.');
-        }
-
-        // write to file
-        if (@fwrite($handler, $content) === false) {
-            throw new Exception('The file "'.$path.'" could not be written to. Check if PHP has enough permissions.');
-        }
-
-        // close the file
-        @fclose($handler);
-    }
-
-    /**
      * Minify the data & (optionally) saves it to a file.
      *
      * @param string[optional] $path Path to write the data to.
@@ -187,12 +142,49 @@ abstract class Minify
     abstract public function execute($path = null);
 
     /**
+     * Load data.
+     *
+     * @param string $data Either a path to a file or the content itself.
+     *
+     * @return string
+     */
+    protected function load($data)
+    {
+        // check if the data is a file
+        if ($this->canImportFile($data)) {
+            $data = file_get_contents($data);
+
+            // strip BOM, if any
+            if (substr($data, 0, 3) == "\xef\xbb\xbf") {
+                $data = substr($data, 3);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Save to file.
+     *
+     * @param string $content The minified data.
+     * @param string $path    The path to save the minified data to.
+     *
+     * @throws IOException
+     */
+    protected function save($content, $path)
+    {
+        $handler = $this->openFileForWriting($path);
+
+        $this->writeToFile($handler, $content);
+
+        @fclose($handler);
+    }
+
+    /**
      * Register a pattern to execute against the source content.
      *
      * @param string          $pattern     PCRE pattern.
      * @param string|callable $replacement Replacement value for matched pattern.
-     *
-     * @throws Exception
      */
     protected function registerPattern($pattern, $replacement = '')
     {
@@ -316,7 +308,7 @@ abstract class Minify
      * placeholder text, so we've rid all strings from characters that may be
      * misinterpreted. Original string content will be saved in $this->extracted
      * and after doing all other minifying, we can restore the original content
-     * via restoreStrings()
+     * via restoreStrings().
      *
      * @param string[optional] $chars
      */
@@ -325,7 +317,8 @@ abstract class Minify
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
-            if (!$match[1]) {
+            // check the second index here, because the first always contains a quote
+            if (!$match[2]) {
                 /*
                  * Empty strings need no placeholder; they can't be confused for
                  * anything else anyway.
@@ -378,5 +371,51 @@ abstract class Minify
         $this->extracted = array();
 
         return $content;
+    }
+
+    /**
+     * Check if the path is a regular file and can be read.
+     *
+     * @param string $path
+     *
+     * @return bool
+     */
+    protected function canImportFile($path)
+    {
+        return strlen($path) < PHP_MAXPATHLEN && is_file($path) && is_readable($path);
+    }
+
+    /**
+     * Attempts to open file specified by $path for writing.
+     *
+     * @param string $path The path to the file.
+     *
+     * @return resource Specifier for the target file.
+     *
+     * @throws IOException
+     */
+    protected function openFileForWriting($path)
+    {
+        if (($handler = @fopen($path, 'w')) === false) {
+            throw new IOException('The file "'.$path.'" could not be opened for writing. Check if PHP has enough permissions.');
+        }
+
+        return $handler;
+    }
+
+    /**
+     * Attempts to write $content to the file specified by $handler. $path is used for printing exceptions.
+     *
+     * @param resource $handler The resource to write to.
+     * @param string   $content The content to write.
+     * @param string   $path    The path to the file (for exception printing only).
+     *
+     * @throws IOException
+     */
+    protected function writeToFile($handler, $content, $path = '')
+    {
+        if (($result = @fwrite($handler, $content)) === false || ($result < strlen($content))) {
+            throw new IOException('The file "'.$path.'" could not be written to. Check your disk space and file permissions.');
+        }
     }
 }
