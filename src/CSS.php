@@ -590,20 +590,23 @@ class CSS extends Minify
     /**
      * Check if file is small enough to be imported.
      *
-     * @param   $path   The path to the file.
-     * @return  bool
+     * @param   $path The path to the file.
+     *
+     * @return bool
      */
     protected function canImportBySize($path)
     {
-        return (($size = @filesize($path)) && ($size <= $this->maxImportSize * 1024));
+        return ($size = @filesize($path)) && ($size <= $this->maxImportSize * 1024);
     }
 
     /**
      * Check if current file was not imported previously in the same import chain.
      *
-     * @param   $path   The path to the file.
-     * @return  bool
-     * @throws  FileImportException
+     * @param   $path The path to the file.
+     *
+     * @return bool
+     *
+     * @throws FileImportException
      */
     protected function isNotInImportChain($path)
     {

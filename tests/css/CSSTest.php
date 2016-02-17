@@ -1,7 +1,6 @@
 <?php
 
 use MatthiasMullie\Minify;
-use MatthiasMullie\Minify\Exception;
 
 /**
  * CSS minifier test case.
@@ -85,7 +84,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test loop while importing file
+     * Test loop while importing file.
      *
      * @test
      *

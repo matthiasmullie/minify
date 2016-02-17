@@ -269,7 +269,7 @@ class JS extends Minify
         $content = preg_replace(
             array(
                 '/('.implode('|', $before).')\s+/',
-                '/\s+('.implode('|', $after).')/'
+                '/\s+('.implode('|', $after).')/',
             ), '\\1', $content
         );
 
@@ -277,7 +277,7 @@ class JS extends Minify
         $content = preg_replace(
             array(
                 '/(?<![\+\-])\s*([\+\-])(?![\+\-])/',
-                '/(?<![\+\-])([\+\-])\s*(?![\+\-])/'
+                '/(?<![\+\-])([\+\-])\s*(?![\+\-])/',
             ), '\\1', $content
         );
 

@@ -1,7 +1,6 @@
 <?php
 
 use MatthiasMullie\Minify;
-use MatthiasMullie\Minify\Exception\IOException;
 use MatthiasMullie\Scrapbook\Adapters\MemoryStore;
 use MatthiasMullie\Scrapbook\Psr6\Pool;
 

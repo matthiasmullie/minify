@@ -377,26 +377,28 @@ abstract class Minify
     }
 
     /**
-     *
      * Check if the path is a regular file and can be read.
      *
      * @param string $path
+     *
      * @return bool
      */
-    protected function canImportFile($path) {
-        return (strlen($path) < PHP_MAXPATHLEN && is_file($path) && is_readable($path));
+    protected function canImportFile($path)
+    {
+        return strlen($path) < PHP_MAXPATHLEN && is_file($path) && is_readable($path);
     }
 
     /**
-     *
      * Attempts to open file specified by $path for writing.
      *
-     * @param   string      $path   The path to the file.
-     * @return  resource    Specifier for the target file.
+     * @param string $path The path to the file.
      *
-     * @throws  IOException
+     * @return resource Specifier for the target file.
+     *
+     * @throws IOException
      */
-    protected function openFileForWriting($path) {
+    protected function openFileForWriting($path)
+    {
         if (($handler = @fopen($path, 'w')) === false) {
             throw new IOException('The file "'.$path.'" could not be opened for writing. Check if PHP has enough permissions.');
         }
@@ -405,16 +407,16 @@ abstract class Minify
     }
 
     /**
-     *
      * Attempts to write $content to the file specified by $handler. $path is used for printing exceptions.
      *
-     * @param   resource    $handler    The resource to write to.
-     * @param   string      $content    The content to write.
-     * @param   string      $path       The path to the file (for exception printing only).
+     * @param resource $handler The resource to write to.
+     * @param string   $content The content to write.
+     * @param string   $path    The path to the file (for exception printing only).
      *
-     * @throws  IOException
+     * @throws IOException
      */
-    protected function writeToFile($handler, $content, $path = '') {
+    protected function writeToFile($handler, $content, $path = '')
+    {
         if (($result = @fwrite($handler, $content)) === false || ($result < strlen($content))) {
             throw new IOException('The file "'.$path.'" could not be written to. Check your disk space and file permissions.');
         }
