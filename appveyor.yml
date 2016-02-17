@@ -21,6 +21,7 @@ install:
   - IF NOT EXIST C:\tools\php (cinst -y php)
   - echo extension_dir=ext > C:\tools\php\php.ini
   - echo extension=php_openssl.dll >> C:\tools\php\php.ini
+  - echo extension=php_mbstring.dll >> C:\tools\php\php.ini
   # install composer
   - IF NOT EXIST vendor (php -r "readfile('https://getcomposer.org/installer');" | php & php composer.phar --prefer-source install)
 
