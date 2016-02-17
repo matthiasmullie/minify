@@ -23,11 +23,6 @@ class CSS extends Minify
     protected $maxImportSize = 5;
 
     /**
-     * @var array Chain of files to be imported
-     */
-    protected static $importChain = array();
-
-    /**
      * @var string[]
      */
     protected $importExtensions = array(
@@ -102,10 +97,13 @@ class CSS extends Minify
      *
      * @param string $source  The file to combine imports for.
      * @param string $content The CSS content to combine imports for.
+     * @param array  $parents Parent paths, for circular reference checks.
      *
      * @return string
+     *
+     * @throws FileImportException
      */
-    protected function combineImports($source, $content)
+    protected function combineImports($source, $content, $parents)
     {
         $importRegexes = array(
             // @import url(xxx)
@@ -214,11 +212,17 @@ class CSS extends Minify
 
             // only replace the import with the content if we can grab the
             // content of the file
-            if ($this->canImportFile($importPath) && $this->isNotInImportChain($importPath)) {
+            if ($this->canImportFile($importPath)) {
+                // check if current file was not imported previously in the same
+                // import chain.
+                if (in_array($importPath, $parents)) {
+                    throw new FileImportException('Failed to import file "'.$importPath.'": circular reference detected.');
+                }
+
                 // grab referenced file & minify it (which may include importing
                 // yet other @import statements recursively)
                 $minifier = new static($importPath);
-                $importContent = $minifier->execute($source);
+                $importContent = $minifier->execute($source, $parents);
 
                 // check if this is only valid for certain media
                 if (!empty($match['media'])) {
@@ -287,22 +291,17 @@ class CSS extends Minify
      * Minify the data.
      * Perform CSS optimizations.
      *
-     * @param string[optional] $path Path to write the data to.
+     * @param string[optional] $path    Path to write the data to.
+     * @param string[]         $parents Parent paths, for circular reference checks.
      *
      * @return string The minified data.
      */
-    public function execute($path = null)
+    public function execute($path = null, $parents = array())
     {
         $content = '';
 
         // loop css data (raw data and files)
         foreach ($this->data as $source => $css) {
-
-            // put current source into import chain if it is a valid file
-            if ($this->canImportFile($source)) {
-                array_push(self::$importChain, $source);
-            }
-
             /*
              * Let's first take out strings & comments, since we can't just remove
              * whitespace anywhere. If whitespace occurs inside a string, we should
@@ -321,8 +320,9 @@ class CSS extends Minify
             // restore the string we've extracted earlier
             $css = $this->restoreExtractedData($css);
 
-            $source = $source ?: '';
-            $css = $this->combineImports($source, $css);
+            $source = is_int($source) ? '' : $source;
+            $parents = $source ? array_merge($parents, array($source)) : $parents;
+            $css = $this->combineImports($source, $css, $parents);
             $css = $this->importFiles($source, $css);
 
             /*
@@ -337,9 +337,6 @@ class CSS extends Minify
 
             // combine css
             $content .= $css;
-
-            // remove current file from chain
-            array_pop(self::$importChain);
         }
 
         $content = $this->moveImportsToTop($content);
@@ -597,23 +594,5 @@ class CSS extends Minify
     protected function canImportBySize($path)
     {
         return ($size = @filesize($path)) && $size <= $this->maxImportSize * 1024;
-    }
-
-    /**
-     * Check if current file was not imported previously in the same import chain.
-     *
-     * @param string $path The path to the file.
-     *
-     * @return bool
-     *
-     * @throws FileImportException
-     */
-    protected function isNotInImportChain($path)
-    {
-        if (in_array($path, self::$importChain)) {
-            throw new FileImportException("Failed to import file \"{$path}\" : import loop detected");
-        }
-
-        return true;
     }
 }
