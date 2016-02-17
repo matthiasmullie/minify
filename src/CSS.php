@@ -2,7 +2,7 @@
 
 namespace MatthiasMullie\Minify;
 
-use MatthiasMullie\Minify\Exception\FileImportException;
+use MatthiasMullie\Minify\Exceptions\FileImportException;
 use MatthiasMullie\PathConverter\Converter;
 
 /**

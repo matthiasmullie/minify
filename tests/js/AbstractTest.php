@@ -117,7 +117,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      *
-     * @expectedException MatthiasMullie\Minify\Exception\IOException
+     * @expectedException MatthiasMullie\Minify\Exceptions\IOException
      */
     public function checkFileOpenFail()
     {
@@ -134,7 +134,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      *
-     * @expectedException Exception
+     * @expectedException MatthiasMullie\Minify\Exceptions\IOException
      */
     public function checkFileWriteFail()
     {

@@ -88,7 +88,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
      *
      * @test
      *
-     * @expectedException MatthiasMullie\Minify\Exception\FileImportException
+     * @expectedException MatthiasMullie\Minify\Exceptions\FileImportException
      */
     public function fileImportLoop()
     {
@@ -96,7 +96,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
 
         $this->minifier->add($testFile);
 
-        $result = $this->minifier->minify();
+        $this->minifier->minify();
     }
 
     /**

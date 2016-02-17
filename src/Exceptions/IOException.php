@@ -1,6 +1,6 @@
 <?php
 
-namespace MatthiasMullie\Minify\Exception;
+namespace MatthiasMullie\Minify\Exceptions;
 
 /**
  * @author Matthias Mullie <minify@mullie.eu>

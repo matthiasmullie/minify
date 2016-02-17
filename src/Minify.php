@@ -2,7 +2,7 @@
 
 namespace MatthiasMullie\Minify;
 
-use MatthiasMullie\Minify\Exception\IOException;
+use MatthiasMullie\Minify\Exceptions\IOException;
 use Psr\Cache\CacheItemInterface;
 
 /**
@@ -185,8 +185,6 @@ abstract class Minify
      *
      * @param string          $pattern     PCRE pattern.
      * @param string|callable $replacement Replacement value for matched pattern.
-     *
-     * @throws Exception
      */
     protected function registerPattern($pattern, $replacement = '')
     {
