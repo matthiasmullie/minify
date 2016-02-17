@@ -24,6 +24,7 @@ install:
   - echo extension=php_mbstring.dll >> C:\tools\php\php.ini
   # install composer
   - IF NOT EXIST vendor (php -r "readfile('https://getcomposer.org/installer');" | php & php composer.phar --prefer-source install)
+  - tests\convert_symlinks_to_windows_style.sh
 
 test_script:
   - vendor\bin\phpunit
