@@ -93,6 +93,10 @@ class JSTest extends PHPUnit_Framework_TestCase
         // matched correctly, not inside comment/regex
         // additionally test catching of empty strings as well
         $tests[] = array(
+            '/abc"def/.test("abc")',
+            '/abc"def/.test("abc")',
+        );
+        $tests[] = array(
             '/abc"def/.test(\'\')',
             '/abc"def/.test(\'\')',
         );
