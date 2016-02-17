@@ -1,6 +1,5 @@
+#!/usr/bin/env bash
 # http://stackoverflow.com/questions/5917249/git-symlinks-in-windows
-
-#! /bin/bash
 
 git config --global alias.rm-symlink '!__git_rm_symlink(){
     git checkout -- "$1"
