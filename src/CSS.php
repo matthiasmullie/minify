@@ -69,7 +69,7 @@ class CSS extends Minify
     /**
      * Move any import statements to the top.
      *
-     * @param $content string Nearly finished CSS content
+     * @param string $content Nearly finished CSS content
      *
      * @return string
      */
@@ -95,9 +95,9 @@ class CSS extends Minify
      * @import's will be loaded and their content merged into the original file,
      * to save HTTP requests.
      *
-     * @param string $source  The file to combine imports for.
-     * @param string $content The CSS content to combine imports for.
-     * @param array  $parents Parent paths, for circular reference checks.
+     * @param string   $source  The file to combine imports for.
+     * @param string   $content The CSS content to combine imports for.
+     * @param string[] $parents Parent paths, for circular reference checks.
      *
      * @return string
      *
