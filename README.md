@@ -124,7 +124,6 @@ composer require matthiasmullie/minify
 
 Although it's recommended to use Composer, you can actually [include these files](https://github.com/matthiasmullie/minify/issues/83) anyway you want.
 
-If you use Windows and want to run tests, than please run `tests/convert_symlinks_to_windows_style.sh` from command line in order to convert linux-style test symlinks to windows-style.
 
 ## Try it
 
