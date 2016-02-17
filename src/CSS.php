@@ -298,7 +298,7 @@ class CSS extends Minify
         // loop css data (raw data and files)
         foreach ($this->data as $source => $css) {
 
-            //put current source into import chain if it is a valid file
+            // put current source into import chain if it is a valid file
             if ($this->canImportFile($source)) {
                 array_push(self::$importChain, $source);
             }
@@ -338,7 +338,7 @@ class CSS extends Minify
             // combine css
             $content .= $css;
 
-            //remove current file from chain
+            // remove current file from chain
             array_pop(self::$importChain);
         }
 
