@@ -211,7 +211,9 @@ class JS extends Minify
         };
 
         // it's a regex if we can find an opening and (not escaped) closing /,
-        $pattern = '(\/.*?(?<!\\\\)(\\\\\\\\)*+\/)';
+        // include \n because it may be there for a reason
+        // (https://github.com/matthiasmullie/minify/issues/56)
+        $pattern = '(\/.*?(?<!\\\\)(\\\\\\\\)*+\/\n?)';
 
         // / can't be preceded by variable, value, or similar because then
         // it's going to be division
@@ -253,11 +255,6 @@ class JS extends Minify
 
         // collapse consecutive line feeds into just 1
         $content = preg_replace('/\n+/', "\n", $content);
-
-        // replace newlines after a closing slash of a replaced regex
-        // (https://github.com/matthiasmullie/minify/issues/56)
-        // using positive look-behind here
-        $content = preg_replace('/(?<=\/)\n/', ';', $content);
 
         $before = $this->getOperatorsForRegex($this->operatorsBefore, '/');
         $after = $this->getOperatorsForRegex($this->operatorsAfter, '/');

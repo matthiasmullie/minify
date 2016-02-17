@@ -89,6 +89,12 @@ class JSTest extends PHPUnit_Framework_TestCase
             'a=b/c;d=e/f',
         );
 
+        $tests[] = array(
+            'a=4/
+            2',
+            'a=4/2',
+        );
+
         // mixture of quotes starting in comment/regex, to make sure strings are
         // matched correctly, not inside comment/regex
         // additionally test catching of empty strings as well
@@ -609,7 +615,8 @@ return}',
         $tests[] = array(
             'var timeRegex = /^([2][0-3]|[01]?[0-9])(:[0-5][0-9])?$/
 if (start_time.match(timeRegex) == null) {}',
-            'var timeRegex=/^([2][0-3]|[01]?[0-9])(:[0-5][0-9])?$/;if(start_time.match(timeRegex)==null){}',
+            'var timeRegex=/^([2][0-3]|[01]?[0-9])(:[0-5][0-9])?$/
+if(start_time.match(timeRegex)==null){}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/58
