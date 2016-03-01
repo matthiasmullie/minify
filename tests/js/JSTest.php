@@ -679,6 +679,12 @@ BUG
             'if(!0){if(!0)console.log("test")}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/99
+        $tests[] = array(
+            '"object";"object2";"0";"1"',
+            '"object";"object2";"0";"1"',
+        );
+
         //update tests' expected results for cross-system compatibility
         foreach ($tests as &$test) {
             if (!empty($test[1])) {

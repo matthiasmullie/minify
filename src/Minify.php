@@ -318,7 +318,7 @@ abstract class Minify
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
             // check the second index here, because the first always contains a quote
-            if (!$match[2]) {
+            if ($match[2] === '') {
                 /*
                  * Empty strings need no placeholder; they can't be confused for
                  * anything else anyway.
