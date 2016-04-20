@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+<?php
+
+// check if script run in cli environment
+if ('cli' !== php_sapi_name()) {
+    fwrite(STDERR, $argv[1] . ' must be run in the command line' . PHP_EOL);
+    exit(1);
+}
+
+// command line utility to minify CSS
+if (file_exists(__DIR__ . '/../../../autoload.php')) {
+    // if composer install
+    require_once __DIR__ . '/../../../autoload.php';
+} else {
+    require __DIR__.'/../vendor/autoload.php';
+}
+
+$minify = new \MatthiasMullie\Minify\Command\MinifyCommand();
+
+array_splice($argv, 1, 0, $minify->getName());
+
+$argInput = new \Symfony\Component\Console\Input\ArgvInput($argv);
+
+$app = new \Symfony\Component\Console\Application();
+$app->add($minify);
+$app->run($argInput);
+
