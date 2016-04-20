@@ -48,16 +48,17 @@ class MinifyCommand extends Command
         $outputFile = $input->getOption('output');
         $appendFile = $input->getOption('append');
 
-        if (!is_array($from)){
-            $from = (array)$from;
+        if (!is_array($from)) {
+            $from = (array) $from;
         }
 
-        if (empty($type)){
+        if (empty($type)) {
             $autoDetectedType = self::getFileExt($from[0]);
             foreach ($from as $fromFile) {
                 $fileExt = self::getFileExt($fromFile);
-                if (strcasecmp($fileExt, $autoDetectedType) !== 0){
-                    $output->writeln("<error>Error: type of input files is not all the same!</error>");
+                if (strcasecmp($fileExt, $autoDetectedType) !== 0) {
+                    $output->writeln('<error>Error: type of input files is not all the same!</error>');
+
                     return 1;
                 }
             }
@@ -65,12 +66,13 @@ class MinifyCommand extends Command
             $type = $autoDetectedType;
         }
 
-        if (empty($type)){
-            $output->writeln("<error>Error: cannot find the type of input file!</error>");
+        if (empty($type)) {
+            $output->writeln('<error>Error: cannot find the type of input file!</error>');
+
             return 1;
         }
 
-        switch (strtolower($type)){
+        switch (strtolower($type)) {
             case 'css':
                 $minifier = new CSS();
                 break;
@@ -79,12 +81,14 @@ class MinifyCommand extends Command
                 break;
             default:
                 $output->writeln("<error>Error: Unsupported type: $type</error>");
+
                 return 3;
         }
 
         foreach ($from as $fromFile) {
-            if (!file_exists($fromFile)){
+            if (!file_exists($fromFile)) {
                 $output->writeln("<error>Error: File '{$fromFile}' not found!</error>");
+
                 return 2;
             }
             $minifier->add($fromFile);
@@ -92,14 +96,14 @@ class MinifyCommand extends Command
 
         $result = $minifier->minify();
 
-        if (empty($outputFile) && empty($appendFile)){
+        if (empty($outputFile) && empty($appendFile)) {
             $output->writeln($result, OutputInterface::OUTPUT_RAW);
-        } else{
-            if (!empty($outputFile)){
+        } else {
+            if (!empty($outputFile)) {
                 file_put_contents($outputFile, $result);
             }
 
-            if (!empty($appendFile)){
+            if (!empty($appendFile)) {
                 file_put_contents($appendFile, $result, FILE_APPEND);
             }
         }
