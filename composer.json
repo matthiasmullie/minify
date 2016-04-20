@@ -30,6 +30,7 @@
     },
     "bin": [
         "bin/minifycss",
-        "bin/minifyjs"
+        "bin/minifyjs",
+        "bin/minify"
     ]
 }
