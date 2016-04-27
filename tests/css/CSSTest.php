@@ -613,6 +613,16 @@ only screen and (min-device-pixel-ratio: 1.5) {
             'body{background-url:url(../assets_symlink/asset.bmp)}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/100
+        $tests[] = array(
+            array(
+                // key is a bogus path
+                '/var/www/app/www/turysta/something/css/original.css' => '.ui-icon { width: 16px; height: 16px; background-image: url(/_lay/jqueryui/ui-icons_72b42d_256x240.png); }',
+            ),
+            '/var/www/app/www/turysta/shared/_cache/_css/minified.css',
+            '.ui-icon{width:16px;height:16px;background-image:url(/_lay/jqueryui/ui-icons_72b42d_256x240.png)}',
+        );
+
         return $tests;
     }
 }

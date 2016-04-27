@@ -685,7 +685,7 @@ BUG
             '"object";"object2";"0";"1"',
         );
 
-        //update tests' expected results for cross-system compatibility
+        // update tests' expected results for cross-system compatibility
         foreach ($tests as &$test) {
             if (!empty($test[1])) {
                 $test[1] = str_replace("\r", '', $test[1]);
