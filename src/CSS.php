@@ -76,7 +76,6 @@ class CSS extends Minify
     protected function moveImportsToTop($content)
     {
         if (preg_match_all('/@import[^;]+;/', $content, $matches)) {
-
             // remove from content
             foreach ($matches[0] as $import) {
                 $content = str_replace($import, '', $content);

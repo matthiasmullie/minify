@@ -413,6 +413,16 @@ only screen and (min-device-pixel-ratio: 1.5) {
             '@media screen and (min-aspect-ratio:16/9){p{color:red}}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/107
+        $tests[] = array(
+            '@import "https://font.googleapis.com/css?family=RobotoDraft:regular&lang=en";',
+            '@import "https://font.googleapis.com/css?family=RobotoDraft:regular&lang=en";',
+        );
+        $tests[] = array(
+            '@import "https://font.googleapis.com/css?family=RobotoDraft:regular&amp;lang=en";',
+            '@import "https://font.googleapis.com/css?family=RobotoDraft:regular&amp;lang=en";',
+        );
+
         return $tests;
     }
 
