@@ -407,6 +407,12 @@ only screen and (min-device-pixel-ratio: 1.5) {
             'background:url(http://example.com/test.png);',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/104
+        $tests[] = array(
+            '@media screen and (min-aspect-ratio: 16/9) { p { color: red } }',
+            '@media screen and (min-aspect-ratio:16/9){p{color:red}}',
+        );
+
         return $tests;
     }
 
