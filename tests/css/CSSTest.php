@@ -401,6 +401,12 @@ only screen and (min-device-pixel-ratio: 1.5) {
             '@media (min-width:320px){p{background-color:red}}@media (min-width:1281px){p{background-color:blue}}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/103
+        $tests[] = array(
+            'background:url(http://example.com/test.png);',
+            'background:url(http://example.com/test.png);',
+        );
+
         return $tests;
     }
 
