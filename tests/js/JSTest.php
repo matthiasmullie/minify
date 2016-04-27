@@ -685,6 +685,16 @@ BUG
             '"object";"object2";"0";"1"',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/102
+        $tests[] = array(
+            'var pb = {};',
+            'var pb={}',
+        );
+        $tests[] = array(
+            'pb.Initialize = function(settings) {};',
+            'pb.Initialize=function(settings){}',
+        );
+
         // update tests' expected results for cross-system compatibility
         foreach ($tests as &$test) {
             if (!empty($test[1])) {
