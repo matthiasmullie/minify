@@ -695,6 +695,15 @@ BUG
             'pb.Initialize=function(settings){}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/108
+        $tests[] = array(
+            'function isHtmlNamespace(node) {
+            var ns;
+            return typeof node.namespaceURI == UNDEF || ((ns = node.namespaceURI) === null || ns == "http://www.w3.org/1999/xhtml");
+        }',
+            'function isHtmlNamespace(node){var ns;return typeof node.namespaceURI==UNDEF||((ns=node.namespaceURI)===null||ns=="http://www.w3.org/1999/xhtml")}',
+        );
+
         // update tests' expected results for cross-system compatibility
         foreach ($tests as &$test) {
             if (!empty($test[1])) {
