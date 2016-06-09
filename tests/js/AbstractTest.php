@@ -104,8 +104,8 @@ class CommonTest extends PHPUnit_Framework_TestCase
      */
     public function loadOpenBaseDirRestricted()
     {
-        if (defined('HHVM_VERSION')) {
-            $this->markTestSkipped("Can't run tests that require forking on HHVM.");
+        if (!function_exists('pcntl_fork') || defined('HHVM_VERSION')) {
+            $this->markTestSkipped("Can't fork, skip open_basedir test");
         }
 
         /*
