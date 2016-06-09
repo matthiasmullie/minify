@@ -88,6 +88,10 @@ class JSTest extends PHPUnit_Framework_TestCase
             'a = b / c; d = e / f',
             'a=b/c;d=e/f',
         );
+        $tests[] = array(
+            '(2 + 4) / 3 + 5 / 1',
+            '(2+4)/3+5/1',
+        );
 
         $tests[] = array(
             'a=4/
@@ -702,6 +706,12 @@ BUG
             return typeof node.namespaceURI == UNDEF || ((ns = node.namespaceURI) === null || ns == "http://www.w3.org/1999/xhtml");
         }',
             'function isHtmlNamespace(node){var ns;return typeof node.namespaceURI==UNDEF||((ns=node.namespaceURI)===null||ns=="http://www.w3.org/1999/xhtml")}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/115
+        $tests[] = array(
+            'if(typeof i[s].token=="string")/keyword|support|storage/.test(i[s].token)&&n.push(i[s].regex);else if(typeof i[s].token=="object")for(var u=0,a=i[s].token.length;u<a;u++)if(/keyword|support|storage/.test(i[s].token[u])){}',
+            'if(typeof i[s].token=="string")/keyword|support|storage/.test(i[s].token)&&n.push(i[s].regex);else if(typeof i[s].token=="object")for(var u=0,a=i[s].token.length;u<a;u++)if(/keyword|support|storage/.test(i[s].token[u])){}',
         );
 
         // update tests' expected results for cross-system compatibility

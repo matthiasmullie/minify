@@ -205,25 +205,27 @@ class JS extends Minify
         $callback = function ($match) use ($minifier) {
             $count = count($minifier->extracted);
             $placeholder = '/'.$count.'/';
-            $minifier->extracted[$placeholder] = $match[1];
+            $minifier->extracted[$placeholder] = $match[0];
 
             return $placeholder;
         };
 
-        // it's a regex if we can find an opening and (not escaped) closing /,
-        // include \n because it may be there for a reason
-        // (https://github.com/matthiasmullie/minify/issues/56)
-        $pattern = '(\/.*?(?<!\\\\)(\\\\\\\\)*+\/\n?)';
+        $pattern = '\/.*?(?<!\\\\)(\\\\\\\\)*+\/[gimy]*';
 
-        // / can't be preceded by variable, value, or similar because then
-        // it's going to be division
-        // checking for that is complex, so we'll do inverse:
-        // * at the beginning of the file, it's not division, but regex
-        $this->registerPattern('/^\s*\K'.$pattern.'/', $callback);
-        // * following another operator, it's not division, but regex
+        // a regular expression can only be followed by a few operators or some
+        // of the RegExp methods (a `\` followed by a variable or value is
+        // likely part of a division, not a regex)
+        $after = '[,;\)]';
+        $methods = '\.(exec|test|match|search|replace|split)\(';
+        $this->registerPattern('/'.$pattern.'\s*(?=('.$after.'|'.$methods.'))/', $callback);
+
+        // 1 more edgecase: a regex can be followed by a lot more operators or
+        // keywords if there's a newline (ASI) in between, where the operator
+        // actually starts a new statement
+        // (https://github.com/matthiasmullie/minify/issues/56)
         $operators = $this->getOperatorsForRegex($this->operatorsBefore, '/');
-        $operators += $this->getKeywordsForRegex($this->keywordsReserved, '/');
-        $this->registerPattern('/(?:'.implode('|', $operators).')\s*\K'.$pattern.'/', $callback);
+        $operators += $this->getOperatorsForRegex($this->keywordsReserved, '/');
+        $this->registerPattern('/'.$pattern.'\s*\n?(?=\s*('.implode('|', $operators).'))/', $callback);
     }
 
     /**
