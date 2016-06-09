@@ -104,6 +104,10 @@ class CommonTest extends PHPUnit_Framework_TestCase
      */
     public function loadOpenBaseDirRestricted()
     {
+        if (defined('HHVM_VERSION')) {
+            $this->markTestSkipped("Can't run tests that require forking on HHVM.");
+        }
+
         /*
          * Testing open_basedir restrictions is rather annoying, since they can
          * not be relaxed at runtime (if we tighten open_basedir for 1 test,
