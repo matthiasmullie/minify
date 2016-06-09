@@ -382,7 +382,7 @@ abstract class Minify
      */
     protected function canImportFile($path)
     {
-        return strlen($path) < PHP_MAXPATHLEN && is_file($path) && is_readable($path);
+        return strlen($path) < PHP_MAXPATHLEN && @is_file($path) && is_readable($path);
     }
 
     /**

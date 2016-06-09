@@ -88,7 +88,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function load()
+    public function loadBigString()
     {
         // content greater than PHP_MAXPATHLEN
         // https://github.com/matthiasmullie/minify/issues/90
@@ -97,6 +97,48 @@ class CommonTest extends PHPUnit_Framework_TestCase
         $minifier = new Minify\JS($content);
 
         $this->assertEquals($minifier->minify(), $content);
+    }
+
+    /**
+     * @test
+     */
+    public function loadOpenBaseDirRestricted()
+    {
+        /*
+         * Testing open_basedir restrictions is rather annoying, since they can
+         * not be relaxed at runtime (if we tighten open_basedir for 1 test,
+         * it'll also apply for all the others)
+         * I'll run the open_basedir restriction in a separate thread instead.
+         */
+
+        $pid = pcntl_fork();
+        if ($pid === -1) {
+            // can't fork, ignore this test...
+        } elseif ($pid === 0) {
+            // https://github.com/matthiasmullie/minify/issues/111
+            ini_set('open_basedir', __DIR__.'/../..');
+
+            // instead of displaying warnings & moving to the next test, just
+            // quit with the error code; the other thread will pick it up
+            set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+                // only exit if it is an error that is being reported (we don't
+                // want suppressed errors to register as failures, that happens
+                // on purpose!)
+                if (error_reporting() & $errno) {
+                    exit($errno);
+                }
+            });
+
+            $minifier = new Minify\JS('/tmp/bogus/path');
+            $minifier->minify();
+
+            // don't keep executing the rest of the tests in this thread!
+            exit;
+        } else {
+            pcntl_wait($status);
+
+            $this->assertEquals($status, 0, 'open_basedir restriction caused minifier to fail');
+        }
     }
 
     /**
