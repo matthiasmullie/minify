@@ -434,6 +434,14 @@ only screen and (min-device-pixel-ratio: 1.5) {
 }',
             'p{font-weight:400}',
         );
+        $tests[] = array(
+            'p{background-color:#ff0000}',
+            'p{background-color:red}',
+        );
+        $tests[] = array(
+            'p{color:#F0E68C}',
+            'p{color:khaki}',
+        );
 
         return $tests;
     }

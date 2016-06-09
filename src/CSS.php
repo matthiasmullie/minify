@@ -487,7 +487,38 @@ class CSS extends Minify
     {
         $content = preg_replace('/(?<![\'"])#([0-9a-z])\\1([0-9a-z])\\2([0-9a-z])\\3(?![\'"])/i', '#$1$2$3', $content);
 
-        return $content;
+        // we can shorten some even more by replacing them with their color name
+        $colors = array(
+            '#F0FFFF' => 'azure',
+            '#F5F5DC' => 'beige',
+            '#A52A2A' => 'brown',
+            '#FF7F50' => 'coral',
+            '#FFD700' => 'gold',
+            '#808080' => 'gray',
+            '#008000' => 'green',
+            '#4B0082' => 'indigo',
+            '#FFFFF0' => 'ivory',
+            '#F0E68C' => 'khaki',
+            '#FAF0E6' => 'linen',
+            '#800000' => 'maroon',
+            '#000080' => 'navy',
+            '#808000' => 'olive',
+            '#CD853F' => 'peru',
+            '#FFC0CB' => 'pink',
+            '#DDA0DD' => 'plum',
+            '#800080' => 'purple',
+            '#F00' => 'red',
+            '#FA8072' => 'salmon',
+            '#A0522D' => 'sienna',
+            '#C0C0C0' => 'silver',
+            '#FFFAFA' => 'snow',
+            '#D2B48C' => 'tan',
+            '#FF6347' => 'tomato',
+            '#EE82EE' => 'violet',
+            '#F5DEB3' => 'wheat',
+        );
+
+        return str_ireplace(array_keys($colors), $colors, $content);
     }
 
     /**
