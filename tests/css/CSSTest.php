@@ -423,6 +423,18 @@ only screen and (min-device-pixel-ratio: 1.5) {
             '@import "https://font.googleapis.com/css?family=RobotoDraft:regular&amp;lang=en";',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/109
+        $tests[] = array(
+            'p{font-weight:bold;}',
+            'p{font-weight:700}',
+        );
+        $tests[] = array(
+            'p {
+    font-weight : normal
+}',
+            'p{font-weight:400}',
+        );
+
         return $tests;
     }
 
@@ -481,19 +493,19 @@ only screen and (min-device-pixel-ratio: 1.5) {
             $source.'/issue39.css',
             null, // no output file
             // relative paths should remain untouched
-            "@font-face{font-family:'blackcat';src:url(../webfont/blackcat.eot);src:url(../webfont/blackcat.eot?#iefix) format('embedded-opentype'),url(../webfont/blackcat.svg#blackcat) format('svg'),url(../webfont/blackcat.woff) format('woff'),url(../webfont/blackcat.ttf) format('truetype');font-weight:normal;font-style:normal}",
+            "@font-face{font-family:'blackcat';src:url(../webfont/blackcat.eot);src:url(../webfont/blackcat.eot?#iefix) format('embedded-opentype'),url(../webfont/blackcat.svg#blackcat) format('svg'),url(../webfont/blackcat.woff) format('woff'),url(../webfont/blackcat.ttf) format('truetype');font-weight:400;font-style:normal}",
         );
         $tests[] = array(
             $source.'/issue39.css',
             $target.'/issue39.css',
             // relative paths should remain untouched
-            "@font-face{font-family:'blackcat';src:url(../webfont/blackcat.eot);src:url(../webfont/blackcat.eot?#iefix) format('embedded-opentype'),url(../webfont/blackcat.svg#blackcat) format('svg'),url(../webfont/blackcat.woff) format('woff'),url(../webfont/blackcat.ttf) format('truetype');font-weight:normal;font-style:normal}",
+            "@font-face{font-family:'blackcat';src:url(../webfont/blackcat.eot);src:url(../webfont/blackcat.eot?#iefix) format('embedded-opentype'),url(../webfont/blackcat.svg#blackcat) format('svg'),url(../webfont/blackcat.woff) format('woff'),url(../webfont/blackcat.ttf) format('truetype');font-weight:400;font-style:normal}",
         );
         $tests[] = array(
             $source.'/issue39.css',
             $target.'/target/issue39.css',
             // relative paths should have changed
-            "@font-face{font-family:'blackcat';src:url(../../webfont/blackcat.eot);src:url(../../webfont/blackcat.eot?#iefix) format('embedded-opentype'),url(../../webfont/blackcat.svg#blackcat) format('svg'),url(../../webfont/blackcat.woff) format('woff'),url(../../webfont/blackcat.ttf) format('truetype');font-weight:normal;font-style:normal}",
+            "@font-face{font-family:'blackcat';src:url(../../webfont/blackcat.eot);src:url(../../webfont/blackcat.eot?#iefix) format('embedded-opentype'),url(../../webfont/blackcat.svg#blackcat) format('svg'),url(../../webfont/blackcat.woff) format('woff'),url(../../webfont/blackcat.ttf) format('truetype');font-weight:400;font-style:normal}",
         );
 
         // https://github.com/forkcms/forkcms/issues/1121

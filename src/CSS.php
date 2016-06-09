@@ -314,6 +314,7 @@ class CSS extends Minify
             $css = $this->stripWhitespace($css);
             $css = $this->shortenHex($css);
             $css = $this->shortenZeroes($css);
+            $css = $this->shortenFontWeights($css);
             $css = $this->stripEmptyTags($css);
 
             // restore the string we've extracted earlier
@@ -487,6 +488,27 @@ class CSS extends Minify
         $content = preg_replace('/(?<![\'"])#([0-9a-z])\\1([0-9a-z])\\2([0-9a-z])\\3(?![\'"])/i', '#$1$2$3', $content);
 
         return $content;
+    }
+
+    /**
+     * Shorten CSS font weights.
+     *
+     * @param string $content The CSS content to shorten the font weights for.
+     *
+     * @return string
+     */
+    protected function shortenFontWeights($content)
+    {
+        $weights = array(
+            'normal' => 400,
+            'bold' => 700,
+        );
+
+        $callback = function ($match) use ($weights) {
+            return $match[1] . $weights[$match[2]];
+        };
+
+        return preg_replace_callback('/(font-weight\s*:\s*)('.implode('|', array_keys($weights)).')(?=[;}])/', $callback, $content);
     }
 
     /**
