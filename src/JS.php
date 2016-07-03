@@ -210,7 +210,7 @@ class JS extends Minify
             return $placeholder;
         };
 
-        $pattern = '\/.*?(?<!\\\\)(\\\\\\\\)*+\/[gimy]*';
+        $pattern = '\/.*?(?<!\\\\)(\\\\\\\\)*+\/[gimy]*(?!\/| |[a-z]|[A-Z])';
 
         // a regular expression can only be followed by a few operators or some
         // of the RegExp methods (a `\` followed by a variable or value is
