@@ -42,12 +42,8 @@ class JSTest extends PHPUnit_Framework_TestCase
      */
     public function minify($input, $expected)
     {
-        $input = (array) $input;
 
-        foreach ($input as $js) {
-            $this->minifier->add($js);
-        }
-
+        $this->minifier->add($input);
         $result = $this->minifier->minify();
 
         $this->assertEquals($expected, $result);
@@ -59,6 +55,25 @@ class JSTest extends PHPUnit_Framework_TestCase
     public function dataProvider()
     {
         $tests = array();
+
+        // adding multiple files
+        $tests[] = array(
+            [
+                __DIR__.'/sample/source/script1.js',
+                __DIR__.'/sample/source/script2.js'
+            ],
+            'var test=1;var test=2',
+        );
+
+        // adding multiple files and string
+        $tests[] = array(
+            [
+                __DIR__.'/sample/source/script1.js',
+                'console.log(test)',
+                __DIR__.'/sample/source/script2.js'
+            ],
+            'var test=1;console.log(test);var test=2',
+        );
 
         // escaped quotes should not terminate string
         $tests[] = array(

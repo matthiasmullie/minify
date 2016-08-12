@@ -42,13 +42,8 @@ class CSSTest extends PHPUnit_Framework_TestCase
      */
     public function minify($input, $expected)
     {
-        $input = (array) $input;
-
-        foreach ($input as $css) {
-            $this->minifier->add($css);
-        }
+        $this->minifier->add($input);
         $result = $this->minifier->minify();
-
         $this->assertEquals($expected, $result);
     }
 
@@ -126,6 +121,16 @@ class CSSTest extends PHPUnit_Framework_TestCase
     public function dataProvider()
     {
         $tests = array();
+
+        // passing in an array of css inputs
+        $tests[] = array(
+            [
+                __DIR__.'/sample/combine_imports/index.css',
+                __DIR__.'/sample/bom/bom.css',
+                'p { width: 55px , margin: 0 0 0 0}',
+            ],
+            'body{color:red}body{color:red}p{width:55px,margin:0 0 0 0}',
+        );
 
         // try importing, with both @import syntax types & media queries
         $tests[] = array(
