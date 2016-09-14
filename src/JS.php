@@ -479,8 +479,8 @@ class JS extends Minify
      */
     protected function shortenBools($content)
     {
-        $content = preg_replace('/\btrue\b/', '!0', $content);
-        $content = preg_replace('/\bfalse\b/', '!1', $content);
+        $content = preg_replace('/\btrue\b(?!:)/', '!0', $content);
+        $content = preg_replace('/\bfalse\b(?!:)/', '!1', $content);
 
         // for(;;) is exactly the same as while(true)
         $content = preg_replace('/\bwhile\(!0\){/', 'for(;;){', $content);
