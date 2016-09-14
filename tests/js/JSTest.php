@@ -769,6 +769,12 @@ func()
 {alert(\'hey\')}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/133
+        $tests[] = array(
+            'if ( args[\'message\'] instanceof Array ) { args[\'message\'] = args[\'message\'].join( \' \' );}',
+            'if(args.message instanceof Array){args.message=args.message.join(\' \')}',
+        );
+
         // update tests' expected results for cross-system compatibility
         foreach ($tests as &$test) {
             if (!empty($test[1])) {

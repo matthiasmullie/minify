@@ -168,9 +168,9 @@ class JS extends Minify
         $this->extractRegex();
         $content = $this->replace($content);
 
-        $content = $this->stripWhitespace($content);
         $content = $this->propertyNotation($content);
         $content = $this->shortenBools($content);
+        $content = $this->stripWhitespace($content);
 
         /*
          * Earlier, we extracted strings & regular expressions and replaced them
@@ -467,7 +467,7 @@ class JS extends Minify
         $keywords = $this->getKeywordsForRegex($keywords);
         $keywords = '(?<!'.implode(')(?<!', $keywords).')';
 
-        return preg_replace_callback('/(?<='.$previousChar.'|\])'.$keywords.'\[(([\'"])[0-9]+\\2)\]/u', $callback, $content);
+        return preg_replace_callback('/(?<='.$previousChar.'|\])'.$keywords.'\[\s*(([\'"])[0-9]+\\2)\s*\]/u', $callback, $content);
     }
 
     /**
