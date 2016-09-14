@@ -714,6 +714,24 @@ BUG
             'if(typeof i[s].token=="string")/keyword|support|storage/.test(i[s].token)&&n.push(i[s].regex);else if(typeof i[s].token=="object")for(var u=0,a=i[s].token.length;u<a;u++)if(/keyword|support|storage/.test(i[s].token[u])){}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/120
+        $tests[] = array(
+            'function myFuncName() {
+    function otherFuncName() {
+        if (condition) {
+            a = b / 1; // comment 1
+        } else if (condition) {
+            a = c / 2; // comment 2
+        } else if (condition) {
+            a = d / 3; // comment 3
+        } else {
+            a = 0;
+        }
+    }
+};',
+            'function myFuncName(){function otherFuncName(){if(condition){a=b/1}else if(condition){a=c/2}else if(condition){a=d/3}else{a=0}}}',
+        );
+
         // update tests' expected results for cross-system compatibility
         foreach ($tests as &$test) {
             if (!empty($test[1])) {
