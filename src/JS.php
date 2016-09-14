@@ -65,6 +65,17 @@ class JS extends Minify
     protected $keywordsAfter = array();
 
     /**
+     * List of all JavaScript operators.
+     *
+     * Will be loaded from /data/js/operators.txt
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators
+     *
+     * @var string[]
+     */
+    protected $operators = array();
+
+    /**
      * List of JavaScript operators that accept a <variable, value, ...> after
      * them. Some end of lines are not the end of a statement, like with these
      * operators.
@@ -111,6 +122,7 @@ class JS extends Minify
         $this->keywordsReserved = file($dataDir.'keywords_reserved.txt', $options);
         $this->keywordsBefore = file($dataDir.'keywords_before.txt', $options);
         $this->keywordsAfter = file($dataDir.'keywords_after.txt', $options);
+        $this->operators = file($dataDir.'operators.txt', $options);
         $this->operatorsBefore = file($dataDir.'operators_before.txt', $options);
         $this->operatorsAfter = file($dataDir.'operators_after.txt', $options);
     }
@@ -258,17 +270,19 @@ class JS extends Minify
         // collapse consecutive line feeds into just 1
         $content = preg_replace('/\n+/', "\n", $content);
 
-        $before = $this->getOperatorsForRegex($this->operatorsBefore, '/');
-        $after = $this->getOperatorsForRegex($this->operatorsAfter, '/');
-        $operators = $before + $after;
+        $operatorsBefore = $this->getOperatorsForRegex($this->operatorsBefore, '/');
+        $operatorsAfter = $this->getOperatorsForRegex($this->operatorsAfter, '/');
+        $operators = $this->getOperatorsForRegex($this->operators, '/');
+        $keywordsBefore = $this->getKeywordsForRegex($this->keywordsBefore, '/');
+        $keywordsAfter = $this->getKeywordsForRegex($this->keywordsAfter, '/');
 
         // strip whitespace that ends in (or next line begin with) an operator
         // that allows statements to be broken up over multiple lines
-        unset($before['+'], $before['-'], $after['+'], $after['-']);
+        unset($operatorsBefore['+'], $operatorsBefore['-'], $operatorsAfter['+'], $operatorsAfter['-']);
         $content = preg_replace(
             array(
-                '/('.implode('|', $before).')\s+/',
-                '/\s+('.implode('|', $after).')/',
+                '/('.implode('|', $operatorsBefore).')\s+/',
+                '/\s+('.implode('|', $operatorsAfter).')/',
             ), '\\1', $content
         );
 
@@ -280,19 +294,20 @@ class JS extends Minify
             ), '\\1', $content
         );
 
+        // collapse whitespace around reserved words into single space
+        $content = preg_replace('/(^|[;\}\s])\K('.implode('|', $keywordsBefore).')\s+/', '\\2 ', $content);
+        $content = preg_replace('/\s+('.implode('|', $keywordsAfter).')(?=([;\{\s]|$))/', ' \\1', $content);
+
         /*
          * We didn't strip whitespace after a couple of operators because they
          * could be used in different contexts and we can't be sure it's ok to
          * strip the newlines. However, we can safely strip any non-line feed
          * whitespace that follows them.
          */
-        $content = preg_replace('/([\}\)\]])[^\S\n]+(?!'.implode('|', $operators).')/', '\\1', $content);
-
-        // collapse whitespace around reserved words into single space
-        $before = $this->getKeywordsForRegex($this->keywordsBefore, '/');
-        $after = $this->getKeywordsForRegex($this->keywordsAfter, '/');
-        $content = preg_replace('/(^|[;\}\s])\K('.implode('|', $before).')\s+/', '\\2 ', $content);
-        $content = preg_replace('/\s+('.implode('|', $after).')(?=([;\{\s]|$))/', ' \\1', $content);
+        $operatorsDiffBefore = array_diff($operators, $operatorsBefore);
+        $operatorsDiffAfter = array_diff($operators, $operatorsAfter);
+        $content = preg_replace('/('.implode('|', $operatorsDiffBefore).')[^\S\n]+/', '\\1', $content);
+        $content = preg_replace('/[^\S\n]+('.implode('|', $operatorsDiffAfter).')/', '\\1', $content);
 
         /*
          * Get rid of double semicolons, except where they can be used like:

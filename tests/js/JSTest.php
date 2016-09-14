@@ -227,7 +227,8 @@ statement',
              else
              {
              }',
-            'if(!0){}
+            'if(!0)
+{}
 else{}',
         );
         $tests[] = array(
@@ -345,7 +346,8 @@ else statement',
                 // already a text element
                 else newElement = currentElement;
 ',
-            'if(currentElement.attr(\'type\')!=\'text\'){currentElement.remove()}
+            'if(currentElement.attr(\'type\')!=\'text\')
+{currentElement.remove()}
 else newElement=currentElement',
         );
         $tests[] = array(
@@ -482,8 +484,10 @@ function foo (a, b)
 {
     return a / b;
 }',
-            'function foo(a,b){return a/b}
-function foo(a,b){return a/b}',
+            'function foo(a,b)
+{return a/b}
+function foo(a,b)
+{return a/b}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/15
@@ -598,7 +602,7 @@ $.fn.alert.Constructor=Alert',
             'a.validator.addMethod("accept",function(b,c,d){var e,f,g="string"==typeof d?d.replace(/\s/g,"").replace(/,/g,"|"):"image/*",h=this.optional(c);if(h)return h;if("file"===a(c).attr("type")&&(g=g.replace(/\*/g,".*"),c.files&&c.files.length))
 for(e=0;e<c.files.length;e++)
 if(f=c.files[e],!f.type.match(new RegExp(".?("+g+")$","i")))
-return !1;return !0}',
+return!1;return!0}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/54
@@ -753,6 +757,16 @@ BUG
     }
 }',
             'Sizzle.selectors={match:{PSEUDO:/:((?:[\w\u00c0-\uFFFF-]|\\.)+)(?:\(([\'"]*)((?:\([^\)]+\)|[^\2\(\)]*)+)\2\))?/},attrMap:{"class":"className"}}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/130
+        $tests[] = array(
+            'function func(){}
+func()
+{ alert(\'hey\'); }',
+            'function func(){}
+func()
+{alert(\'hey\')}',
         );
 
         // update tests' expected results for cross-system compatibility
