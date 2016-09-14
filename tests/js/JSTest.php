@@ -781,6 +781,12 @@ func()
             'e={true:!0,false:!1}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/134
+        $tests[] = array(
+            'if (\'x\'+a in foo && \'y\'+b[a].z in bar)',
+            'if(\'x\'+a in foo&&\'y\'+b[a].z in bar)',
+        );
+
         // update tests' expected results for cross-system compatibility
         foreach ($tests as &$test) {
             if (!empty($test[1])) {
