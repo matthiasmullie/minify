@@ -215,11 +215,11 @@ class JS extends Minify
         // a regular expression can only be followed by a few operators or some
         // of the RegExp methods (a `\` followed by a variable or value is
         // likely part of a division, not a regex)
-        $after = '[,;\)]';
+        $after = '[,;\)\}]';
         $methods = '\.(exec|test|match|search|replace|split)\(';
-        $this->registerPattern('/'.$pattern.'\s*(?=('.$after.'|'.$methods.'))/', $callback);
+        $this->registerPattern('/'.$pattern.'(?=\s*('.$after.'|'.$methods.'))/', $callback);
 
-        // 1 more edgecase: a regex can be followed by a lot more operators or
+        // 1 more edge case: a regex can be followed by a lot more operators or
         // keywords if there's a newline (ASI) in between, where the operator
         // actually starts a new statement
         // (https://github.com/matthiasmullie/minify/issues/56)

@@ -732,6 +732,29 @@ BUG
             'function myFuncName(){function otherFuncName(){if(condition){a=b/1}else if(condition){a=c/2}else if(condition){a=d/3}else{a=0}}}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/128
+        $tests[] = array(
+            'angle = (i - 3) * (Math.PI * 2) / 12; // THE ANGLE TO MARK.',
+            'angle=(i-3)*(Math.PI*2)/12',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/124
+        $tests[] = array(
+            'return cond ? document._getElementsByXPath(\'.//*\' + cond, element) : [];',
+            'return cond?document._getElementsByXPath(\'.//*\'+cond,element):[]',
+        );
+        $tests[] = array(
+            'Sizzle.selectors = {
+    match: {
+        PSEUDO: /:((?:[\w\u00c0-\uFFFF-]|\\.)+)(?:\(([\'"]*)((?:\([^\)]+\)|[^\2\(\)]*)+)\2\))?/
+    },
+    attrMap: {
+        "class": "className"
+    }
+}',
+            'Sizzle.selectors={match:{PSEUDO:/:((?:[\w\u00c0-\uFFFF-]|\\.)+)(?:\(([\'"]*)((?:\([^\)]+\)|[^\2\(\)]*)+)\2\))?/},attrMap:{"class":"className"}}',
+        );
+
         // update tests' expected results for cross-system compatibility
         foreach ($tests as &$test) {
             if (!empty($test[1])) {
