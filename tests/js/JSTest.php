@@ -787,6 +787,12 @@ func()
             'if(\'x\'+a in foo&&\'y\'+b[a].z in bar)',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/136
+        $tests[] = array(
+            'XPRSHelper.isManagable = function(presetId){ if (presetId in XPRSHelper.presetTypes){ return (XPRSHelper.presetTypes[presetId]["GROUP"] in {"FEATURES":true,"SLIDESHOWS":true,"GALLERIES":true}); } return false; };',
+            'XPRSHelper.isManagable=function(presetId){if(presetId in XPRSHelper.presetTypes){return(XPRSHelper.presetTypes[presetId].GROUP in{"FEATURES":!0,"SLIDESHOWS":!0,"GALLERIES":!0})}return!1}',
+        );
+
         // update tests' expected results for cross-system compatibility
         foreach ($tests as &$test) {
             if (!empty($test[1])) {
