@@ -579,6 +579,24 @@ class CSS extends Minify
         // strip negative zeroes (-0 -> 0) & truncate zeroes (00 -> 0)
         $content = preg_replace('/'.$before.'-?0+'.$units.'?'.$after.'/', '0\\1', $content);
 
+        // remove zeroes where they make no sense in calc: e.g. calc(100px - 0)
+        // the 0 doesn't have any effect, and this isn't even valid without unit
+        // strip all `+ 0` or `- 0` occurrences: calc(10% + 0) -> calc(10%)
+        // looped because there may be multiple 0s inside 1 group of parentheses
+        do {
+            $previous = $content;
+            $content = preg_replace('/\(([^\(\)]+)\s+[\+\-]\s+0(\s+[^\(\)]+)?\)/', '(\\1\\2)', $content);
+        } while ( $content !== $previous );
+        // strip all `0 +` occurrences: calc(0 + 10%) -> calc(10%)
+        $content = preg_replace('/\(\s*0\s+\+\s+([^\(\)]+)\)/', '(\\1)', $content);
+        // strip all `0 -` occurrences: calc(0 - 10%) -> calc(-10%)
+        $content = preg_replace('/\(\s*0\s+\-\s+([^\(\)]+)\)/', '(-\\1)', $content);
+        // I'm not going to attempt to optimize away `x * 0` instances:
+        // it's dumb enough code already that it likely won't occur, and it's
+        // too complex to do right (order of operations would have to be
+        // respected etc)
+        // what I cared about most here was fixing incorrectly truncated units
+
         return $content;
     }
 

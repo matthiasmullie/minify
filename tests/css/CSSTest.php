@@ -443,6 +443,36 @@ only screen and (min-device-pixel-ratio: 1.5) {
             'p{color:khaki}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/137
+        $tests[] = array(
+            'p{width: calc(35% - 0px);}',
+            'p{width:calc(35%)}',
+        );
+        $tests[] = array(
+            'p{width: calc(0px + 35%);}',
+            'p{width:calc(35%)}',
+        );
+        $tests[] = array(
+            'p{width: calc(0px - 35%);}',
+            'p{width:calc(-35%)}',
+        );
+        $tests[] = array(
+            'p{width: calc(0px + 35% - 0px);}',
+            'p{width:calc(35%)}',
+        );
+        $tests[] = array(
+            'p{width: calc(5% + 0px + 35% - 0px + 5%);}',
+            'p{width:calc(5% + 35% + 5%)}',
+        );
+        $tests[] = array(
+            'p{width:calc(35% + (10% + 0px))}',
+            'p{width:calc(35% + (10%))}',
+        );
+        $tests[] = array(
+            'p{width:calc(35% + (10% + 0px + 10%))}',
+            'p{width:calc(35% + (10% + 10%))}',
+        );
+
         return $tests;
     }
 
