@@ -793,6 +793,17 @@ func()
             'XPRSHelper.isManagable=function(presetId){if(presetId in XPRSHelper.presetTypes){return(XPRSHelper.presetTypes[presetId].GROUP in{"FEATURES":!0,"SLIDESHOWS":!0,"GALLERIES":!0})}return!1}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/138
+        $tests[] = array(
+            'matchers.push(/^[0-9]*$/.source);',
+            'matchers.push(/^[0-9]*$/.source)',
+        );
+        $tests[] = array(
+            'matchers.push(/^[0-9]*$/.source);
+String(dateString).match(/^[0-9]*$/);',
+            'matchers.push(/^[0-9]*$/.source);String(dateString).match(/^[0-9]*$/)',
+        );
+
         // update tests' expected results for cross-system compatibility
         foreach ($tests as &$test) {
             if (!empty($test[1])) {

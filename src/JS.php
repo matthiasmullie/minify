@@ -227,7 +227,7 @@ class JS extends Minify
         // a regular expression can only be followed by a few operators or some
         // of the RegExp methods (a `\` followed by a variable or value is
         // likely part of a division, not a regex)
-        $after = '[,;\)\}]';
+        $after = '[\.,;\)\}]';
         $methods = '\.(exec|test|match|search|replace|split)\(';
         $this->registerPattern('/'.$pattern.'(?=\s*('.$after.'|'.$methods.'))/', $callback);
 
