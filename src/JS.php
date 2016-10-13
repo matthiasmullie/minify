@@ -9,7 +9,7 @@ namespace MatthiasMullie\Minify;
  *
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
- * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved.
+ * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
  * @license MIT License
  */
 class JS extends Minify
@@ -131,9 +131,9 @@ class JS extends Minify
      * Minify the data.
      * Perform JS optimizations.
      *
-     * @param string[optional] $path Path to write the data to.
+     * @param string[optional] $path Path to write the data to
      *
-     * @return string The minified data.
+     * @return string The minified data
      */
     public function execute($path = null)
     {
@@ -252,7 +252,7 @@ class JS extends Minify
      * Because it's sometimes hard to tell if a newline is part of a statement
      * that should be terminated or not, we'll just leave some of them alone.
      *
-     * @param string $content The content to strip the whitespace for.
+     * @param string $content The content to strip the whitespace for
      *
      * @return string
      */

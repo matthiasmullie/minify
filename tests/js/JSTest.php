@@ -42,7 +42,6 @@ class JSTest extends PHPUnit_Framework_TestCase
      */
     public function minify($input, $expected)
     {
-
         $this->minifier->add($input);
         $result = $this->minifier->minify();
 
@@ -60,7 +59,7 @@ class JSTest extends PHPUnit_Framework_TestCase
         $tests[] = array(
             [
                 __DIR__.'/sample/source/script1.js',
-                __DIR__.'/sample/source/script2.js'
+                __DIR__.'/sample/source/script2.js',
             ],
             'var test=1;var test=2',
         );
@@ -70,7 +69,7 @@ class JSTest extends PHPUnit_Framework_TestCase
             [
                 __DIR__.'/sample/source/script1.js',
                 'console.log(test)',
-                __DIR__.'/sample/source/script2.js'
+                __DIR__.'/sample/source/script2.js',
             ],
             'var test=1;console.log(test);var test=2',
         );
@@ -425,7 +424,7 @@ if(e.which==40&&index<$items.length-1)index++',
             'array["a","b","c"]',
             'array["a","b","c"]',
         );
-        //
+
         $tests[] = array(
             "['loader']",
             "['loader']",

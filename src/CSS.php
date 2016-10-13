@@ -12,7 +12,7 @@ use MatthiasMullie\PathConverter\Converter;
  *
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
- * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved.
+ * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
  * @license MIT License
  */
 class CSS extends Minify
@@ -83,7 +83,7 @@ class CSS extends Minify
 
             // add to top
             $content = implode('', $matches[0]).$content;
-        };
+        }
 
         return $content;
     }
@@ -94,9 +94,9 @@ class CSS extends Minify
      * @import's will be loaded and their content merged into the original file,
      * to save HTTP requests.
      *
-     * @param string   $source  The file to combine imports for.
-     * @param string   $content The CSS content to combine imports for.
-     * @param string[] $parents Parent paths, for circular reference checks.
+     * @param string   $source  The file to combine imports for
+     * @param string   $content The CSS content to combine imports for
+     * @param string[] $parents Parent paths, for circular reference checks
      *
      * @return string
      *
@@ -246,8 +246,8 @@ class CSS extends Minify
      * @url(image.jpg) images will be loaded and their content merged into the
      * original file, to save HTTP requests.
      *
-     * @param string $source  The file to import files for.
-     * @param string $content The CSS content to import files for.
+     * @param string $source  The file to import files for
+     * @param string $content The CSS content to import files for
      *
      * @return string
      */
@@ -290,10 +290,10 @@ class CSS extends Minify
      * Minify the data.
      * Perform CSS optimizations.
      *
-     * @param string[optional] $path    Path to write the data to.
-     * @param string[]         $parents Parent paths, for circular reference checks.
+     * @param string[optional] $path    Path to write the data to
+     * @param string[]         $parents Parent paths, for circular reference checks
      *
-     * @return string The minified data.
+     * @return string The minified data
      */
     public function execute($path = null, $parents = array())
     {
@@ -351,7 +351,7 @@ class CSS extends Minify
      * (e.g. ../../images/image.gif, if the new CSS file is 1 folder deeper).
      *
      * @param Converter $converter Relative path converter
-     * @param string    $content   The CSS content to update relative urls for.
+     * @param string    $content   The CSS content to update relative urls for
      *
      * @return string
      */
@@ -479,7 +479,7 @@ class CSS extends Minify
      * Shorthand hex color codes.
      * #FF0000 -> #F00.
      *
-     * @param string $content The CSS content to shorten the hex color codes for.
+     * @param string $content The CSS content to shorten the hex color codes for
      *
      * @return string
      */
@@ -524,7 +524,7 @@ class CSS extends Minify
     /**
      * Shorten CSS font weights.
      *
-     * @param string $content The CSS content to shorten the font weights for.
+     * @param string $content The CSS content to shorten the font weights for
      *
      * @return string
      */
@@ -536,7 +536,7 @@ class CSS extends Minify
         );
 
         $callback = function ($match) use ($weights) {
-            return $match[1] . $weights[$match[2]];
+            return $match[1].$weights[$match[2]];
         };
 
         return preg_replace_callback('/(font-weight\s*:\s*)('.implode('|', array_keys($weights)).')(?=[;}])/', $callback, $content);
@@ -545,7 +545,7 @@ class CSS extends Minify
     /**
      * Shorthand 0 values to plain 0, instead of e.g. -0em.
      *
-     * @param string $content The CSS content to shorten the zero values for.
+     * @param string $content The CSS content to shorten the zero values for
      *
      * @return string
      */
@@ -586,7 +586,7 @@ class CSS extends Minify
         do {
             $previous = $content;
             $content = preg_replace('/\(([^\(\)]+)\s+[\+\-]\s+0(\s+[^\(\)]+)?\)/', '(\\1\\2)', $content);
-        } while ( $content !== $previous );
+        } while ($content !== $previous);
         // strip all `0 +` occurrences: calc(0 + 10%) -> calc(10%)
         $content = preg_replace('/\(\s*0\s+\+\s+([^\(\)]+)\)/', '(\\1)', $content);
         // strip all `0 -` occurrences: calc(0 - 10%) -> calc(-10%)
@@ -623,7 +623,7 @@ class CSS extends Minify
     /**
      * Strip whitespace.
      *
-     * @param string $content The CSS content to strip the whitespace for.
+     * @param string $content The CSS content to strip the whitespace for
      *
      * @return string
      */
@@ -657,7 +657,7 @@ class CSS extends Minify
     /**
      * Check if file is small enough to be imported.
      *
-     * @param string $path The path to the file.
+     * @param string $path The path to the file
      *
      * @return bool
      */

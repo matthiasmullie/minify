@@ -11,7 +11,7 @@ use Psr\Cache\CacheItemInterface;
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
  * @author Matthias Mullie <minify@mullie.eu>
- * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved.
+ * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
  * @license MIT License
  */
 abstract class Minify
@@ -85,9 +85,9 @@ abstract class Minify
     /**
      * Minify the data & (optionally) saves it to a file.
      *
-     * @param string[optional] $path Path to write the data to.
+     * @param string[optional] $path Path to write the data to
      *
-     * @return string The minified data.
+     * @return string The minified data
      */
     public function minify($path = null)
     {
@@ -104,10 +104,10 @@ abstract class Minify
     /**
      * Minify & gzip the data & (optionally) saves it to a file.
      *
-     * @param string[optional] $path  Path to write the data to.
-     * @param int[optional]    $level Compression level, from 0 to 9.
+     * @param string[optional] $path  Path to write the data to
+     * @param int[optional]    $level Compression level, from 0 to 9
      *
-     * @return string The minified & gzipped data.
+     * @return string The minified & gzipped data
      */
     public function gzip($path = null, $level = 9)
     {
@@ -125,9 +125,9 @@ abstract class Minify
     /**
      * Minify the data & write it to a CacheItemInterface object.
      *
-     * @param CacheItemInterface $item Cache item to write the data to.
+     * @param CacheItemInterface $item Cache item to write the data to
      *
-     * @return CacheItemInterface Cache item with the minifier data.
+     * @return CacheItemInterface Cache item with the minifier data
      */
     public function cache(CacheItemInterface $item)
     {
@@ -140,16 +140,16 @@ abstract class Minify
     /**
      * Minify the data.
      *
-     * @param string[optional] $path Path to write the data to.
+     * @param string[optional] $path Path to write the data to
      *
-     * @return string The minified data.
+     * @return string The minified data
      */
     abstract public function execute($path = null);
 
     /**
      * Load data.
      *
-     * @param string $data Either a path to a file or the content itself.
+     * @param string $data Either a path to a file or the content itself
      *
      * @return string
      */
@@ -171,8 +171,8 @@ abstract class Minify
     /**
      * Save to file.
      *
-     * @param string $content The minified data.
-     * @param string $path    The path to save the minified data to.
+     * @param string $content The minified data
+     * @param string $path    The path to save the minified data to
      *
      * @throws IOException
      */
@@ -188,8 +188,8 @@ abstract class Minify
     /**
      * Register a pattern to execute against the source content.
      *
-     * @param string          $pattern     PCRE pattern.
-     * @param string|callable $replacement Replacement value for matched pattern.
+     * @param string          $pattern     PCRE pattern
+     * @param string|callable $replacement Replacement value for matched pattern
      */
     protected function registerPattern($pattern, $replacement = '')
     {
@@ -207,9 +207,9 @@ abstract class Minify
      * The only way to accurately replace these pieces is to traverse the JS one
      * character at a time and try to find whatever starts first.
      *
-     * @param string $content The content to replace patterns in.
+     * @param string $content The content to replace patterns in
      *
-     * @return string The (manipulated) content.
+     * @return string The (manipulated) content
      */
     protected function replace($content)
     {
@@ -289,9 +289,9 @@ abstract class Minify
      * This function will be called plenty of times, where $content will always
      * move up 1 character.
      *
-     * @param string          $pattern     Pattern to match.
-     * @param string|callable $replacement Replacement value.
-     * @param string          $content     Content to match pattern against.
+     * @param string          $pattern     Pattern to match
+     * @param string|callable $replacement Replacement value
+     * @param string          $content     Content to match pattern against
      *
      * @return string
      */
@@ -393,9 +393,9 @@ abstract class Minify
     /**
      * Attempts to open file specified by $path for writing.
      *
-     * @param string $path The path to the file.
+     * @param string $path The path to the file
      *
-     * @return resource Specifier for the target file.
+     * @return resource Specifier for the target file
      *
      * @throws IOException
      */
@@ -411,9 +411,9 @@ abstract class Minify
     /**
      * Attempts to write $content to the file specified by $handler. $path is used for printing exceptions.
      *
-     * @param resource $handler The resource to write to.
-     * @param string   $content The content to write.
-     * @param string   $path    The path to the file (for exception printing only).
+     * @param resource $handler The resource to write to
+     * @param string   $content The content to write
+     * @param string   $path    The path to the file (for exception printing only)
      *
      * @throws IOException
      */
