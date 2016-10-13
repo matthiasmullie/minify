@@ -53,6 +53,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
         $path2 = __DIR__.'/sample/source/script2.js';
         $content1 = file_get_contents($path1);
         $content2 = file_get_contents($path2);
+        $content3 = 'var test=3';
 
         // 1 source in add
         $minifier = new Minify\JS();
@@ -83,6 +84,26 @@ class CommonTest extends PHPUnit_Framework_TestCase
         $result = $minifier->minify();
 
         $this->assertEquals($content1.';'.$content2, $result);
+
+        // array of files in add
+        $minifier = new Minify\JS();
+        $minifier->add(array($path1, $path2));
+        $result = $minifier->minify();
+
+        $this->assertEquals($content1.';'.$content2, $result);
+
+        // array of files + overload in add
+        $minifier = new Minify\JS();
+        $minifier->add(array($path1, $path2), $content3);
+        $result = $minifier->minify();
+
+        $this->assertEquals($content1.';'.$content2.';'.$content3, $result);
+
+        $minifier = new Minify\JS();
+        $minifier->add($path1, array($path2, $content3));
+        $result = $minifier->minify();
+
+        $this->assertEquals($content1.';'.$content2.';'.$content3, $result);
     }
 
     /**

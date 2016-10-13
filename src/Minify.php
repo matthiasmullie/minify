@@ -53,7 +53,7 @@ abstract class Minify
     /**
      * Add a file or straight-up code to be minified.
      *
-     * @param string $data
+     * @param string|string[] $data
      */
     public function add($data /* $data = null, ... */)
     {
@@ -61,10 +61,15 @@ abstract class Minify
         // not used (we're using func_get_args instead to support overloading),
         // but it still needs to be defined because it makes no sense to have
         // this function without argument :)
-        $args = (array) $data + func_get_args();
+        $args = array($data) + func_get_args();
 
         // this method can be overloaded
         foreach ($args as $data) {
+            if (is_array($data)) {
+                call_user_func_array(array($this, 'add'), $data);
+                continue;
+            }
+
             // redefine var
             $data = (string) $data;
 
