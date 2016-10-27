@@ -478,6 +478,20 @@ only screen and (min-device-pixel-ratio: 1.5) {
             'p{width:calc(35% + (10% + 10%))}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/139
+        $tests[] = array(
+            __DIR__.'/sample/line_endings/lf/parent.css',
+            'p{color:green}body{color:red}',
+        );
+        $tests[] = array(
+            __DIR__.'/sample/line_endings/cr/parent.css',
+            'p{color:green}body{color:red}',
+        );
+        $tests[] = array(
+            __DIR__.'/sample/line_endings/crlf/parent.css',
+            'p{color:green}body{color:red}',
+        );
+
         return $tests;
     }
 

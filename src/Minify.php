@@ -77,6 +77,10 @@ abstract class Minify
             $value = $this->load($data);
             $key = ($data != $value) ? $data : count($this->data);
 
+            // replace CR linefeeds etc.
+            // @see https://github.com/matthiasmullie/minify/pull/139
+            $value = str_replace(array("\r\n", "\r"), "\n", $value);
+
             // store data
             $this->data[$key] = $value;
         }
@@ -159,9 +163,6 @@ abstract class Minify
         if ($this->canImportFile($data)) {
             $data = file_get_contents($data);
 
-            // replace CR linefeeds etc.
-            $data = preg_replace('~\R~', "\n", $data);
-            
             // strip BOM, if any
             if (substr($data, 0, 3) == "\xef\xbb\xbf") {
                 $data = substr($data, 3);

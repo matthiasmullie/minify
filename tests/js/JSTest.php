@@ -818,6 +818,20 @@ String(dateString).match(/^[0-9]*$/);',
             'matchers.push(/^[0-9]*$/.source);String(dateString).match(/^[0-9]*$/)',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/139
+        $tests[] = array(
+            __DIR__.'/sample/line_endings/lf/script.js',
+            'var a=1',
+        );
+        $tests[] = array(
+            __DIR__.'/sample/line_endings/cr/script.js',
+            'var a=1',
+        );
+        $tests[] = array(
+            __DIR__.'/sample/line_endings/crlf/script.js',
+            'var a=1',
+        );
+
         // update tests' expected results for cross-system compatibility
         foreach ($tests as &$test) {
             if (!empty($test[1])) {
