@@ -159,6 +159,9 @@ abstract class Minify
         if ($this->canImportFile($data)) {
             $data = file_get_contents($data);
 
+            // replace CR linefeeds etc.
+            $data = preg_replace('~\R~', "\n", $data);
+            
             // strip BOM, if any
             if (substr($data, 0, 3) == "\xef\xbb\xbf") {
                 $data = substr($data, 3);
