@@ -492,6 +492,21 @@ only screen and (min-device-pixel-ratio: 1.5) {
             'p{color:green}body{color:red}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/145
+        $tests[] = array(
+            '/* some imports */
+@import \'./css1.css\';
+@import url(\'https://www.google.com/main.css\');
+
+.empty-rule{
+}
+
+body{
+     background: white;
+}',
+            '@import "./css1.css";@import url(\'https://www.google.com/main.css\');body{background:white}',
+        );
+
         return $tests;
     }
 
