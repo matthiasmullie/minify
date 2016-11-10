@@ -93,6 +93,22 @@ class JSTest extends PHPUnit_Framework_TestCase
             '/abc\/def\//.test("abc")',
         );
         $tests[] = array(
+            '/abc\/def\//.test("abc\/def\/")',
+            '/abc\/def\//.test("abc\/def\/")',
+        );
+        $tests[] = array(
+            // there's an escape mess here; below regex represent this JS line:
+            // /abc\/def\\\//.test("abc/def\\/")
+            '/abc\/def\\\\\//.test("abc/def\\\/")',
+            '/abc\/def\\\\\//.test("abc/def\\\/")',
+        );
+        $tests[] = array(
+            // escape mess, this represents:
+            // /abc\/def\\\\\//.test("abc/def\\\\/")
+            '/abc\/def\\\\\\\\\//.test("abc/def\\\\\\\\/")',
+            '/abc\/def\\\\\\\\\//.test("abc/def\\\\\\\\/")',
+        );
+        $tests[] = array(
             'var a = /abc\/def\//.test("abc")',
             'var a=/abc\/def\//.test("abc")',
         );
@@ -830,6 +846,27 @@ String(dateString).match(/^[0-9]*$/);',
         $tests[] = array(
             __DIR__.'/sample/line_endings/crlf/script.js',
             'var a=1',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/142
+        $tests[] = array(
+            'return {
+    l: ((116 * y) - 16) / 100,  // [0,100]
+    a: ((500 * (x - y)) + 128) / 255,   // [-128,127]
+    b: ((200 * (y - z)) + 128) / 255    // [-128,127]
+};',
+            'return{l:((116*y)-16)/100,a:((500*(x-y))+128)/255,b:((200*(y-z))+128)/255}'
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/143
+        $tests[] = array(
+            "if(nutritionalPortionWeightUnit == 'lbs' && blockUnit == 'oz'){
+itemFat = (qty * (fat/nutritionalPortionWeight))/16;
+itemProtein = (qty * (protein/nutritionalPortionWeight))/16;
+itemCarbs = (qty * (carbs/nutritionalPortionWeight))/16;
+itemKcal = (qty * (kcal/nutritionalPortionWeight))/16;
+}",
+            "if(nutritionalPortionWeightUnit=='lbs'&&blockUnit=='oz'){itemFat=(qty*(fat/nutritionalPortionWeight))/16;itemProtein=(qty*(protein/nutritionalPortionWeight))/16;itemCarbs=(qty*(carbs/nutritionalPortionWeight))/16;itemKcal=(qty*(kcal/nutritionalPortionWeight))/16}",
         );
 
         // update tests' expected results for cross-system compatibility

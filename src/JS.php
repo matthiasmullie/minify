@@ -222,7 +222,12 @@ class JS extends Minify
             return $placeholder;
         };
 
-        $pattern = '\/.*?(?<!\\\\)(\\\\\\\\)*+\/[gimy]*(?![0-9a-zA-Z\/])';
+        // crazy regex explained: characters inside /.../ delimiters can be:
+        // * a /, as long as it's escaped with a \
+        //   * but that \ can not in itself be escaped
+        //   * so we need an uneven amount of \ if we have a /
+        // * any other character
+        $pattern = '\/([^\/]|(?<!\\\\)(\\\\\\\\)*\\\\\/)+\/[gimy]*(?![0-9a-zA-Z\/])';
 
         // a regular expression can only be followed by a few operators or some
         // of the RegExp methods (a `\` followed by a variable or value is
