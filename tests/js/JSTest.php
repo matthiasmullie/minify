@@ -868,6 +868,11 @@ itemKcal = (qty * (kcal/nutritionalPortionWeight))/16;
 }",
             "if(nutritionalPortionWeightUnit=='lbs'&&blockUnit=='oz'){itemFat=(qty*(fat/nutritionalPortionWeight))/16;itemProtein=(qty*(protein/nutritionalPortionWeight))/16;itemCarbs=(qty*(carbs/nutritionalPortionWeight))/16;itemKcal=(qty*(kcal/nutritionalPortionWeight))/16}",
         );
+        $tests[] = array(
+            'itemFat = (qty * (fat/nutritionalPortionWeight))/16;
+itemFat = (qty * (fat/nutritionalPortionWeight))/(28.3495*16);',
+            'itemFat=(qty*(fat/nutritionalPortionWeight))/16;itemFat=(qty*(fat/nutritionalPortionWeight))/(28.3495*16)',
+        );
 
         // update tests' expected results for cross-system compatibility
         foreach ($tests as &$test) {

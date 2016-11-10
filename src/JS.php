@@ -242,7 +242,7 @@ class JS extends Minify
         // (https://github.com/matthiasmullie/minify/issues/56)
         $operators = $this->getOperatorsForRegex($this->operatorsBefore, '/');
         $operators += $this->getOperatorsForRegex($this->keywordsReserved, '/');
-        $this->registerPattern('/'.$pattern.'\s*\n?(?=\s*('.implode('|', $operators).'))/', $callback);
+        $this->registerPattern('/'.$pattern.'\s*\n(?=\s*('.implode('|', $operators).'))/', $callback);
     }
 
     /**
