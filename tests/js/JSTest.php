@@ -874,6 +874,16 @@ itemFat = (qty * (fat/nutritionalPortionWeight))/(28.3495*16);',
             'itemFat=(qty*(fat/nutritionalPortionWeight))/16;itemFat=(qty*(fat/nutritionalPortionWeight))/(28.3495*16)',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/146
+        $tests[] = array(
+            'rnoContent = /^(?:GET|HEAD)$/,
+rprotocol = /^\/\//,
+/* ...
+ */
+prefilters = {};',
+            'rnoContent=/^(?:GET|HEAD)$/,rprotocol=/^\/\//,prefilters={}',
+        );
+
         // update tests' expected results for cross-system compatibility
         foreach ($tests as &$test) {
             if (!empty($test[1])) {
