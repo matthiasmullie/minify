@@ -222,18 +222,7 @@ class JS extends Minify
             return $placeholder;
         };
 
-        // crazy regex explained: a regular expression starts and ends with a /,
-        // but when we encounter an escaped / (`\/`), it obviously is not the
-        // end delimiter
-        // to reliably detect escaped slashes, we'll just:
-        // * match any non \ and / character
-        // * accept any \ + whatever character is next
-        // this lets us be sure that when we do reach /, it's not escaped,
-        // because such /'s would already have been captured as part of the
-        // "\ + character" match
-        // ([^\/\\\\]*(\\\\.)*)+ is roughly equivalent to ([^\/\\\\]|\\\\.)+
-        // but more memory-efficient
-        $pattern = '\/(?!\/)([^\/\\\\]*(\\\\.)*)+\/[gimy]*(?![0-9a-zA-Z\/])';
+        $pattern = '\/.+?(?<!\\\\)(\\\\\\\\)*\/[gimy]*(?![0-9a-zA-Z\/])';
 
         // a regular expression can only be followed by a few operators or some
         // of the RegExp methods (a `\` followed by a variable or value is

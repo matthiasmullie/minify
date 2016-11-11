@@ -883,6 +883,19 @@ rprotocol = /^\/\//,
 prefilters = {};',
             'rnoContent=/^(?:GET|HEAD)$/,rprotocol=/^\/\//,prefilters={}',
         );
+        $tests[] = array(
+            'elem.getAttribute("type")!==null)+"/"+elem.type
+var rprotocol=/^\/\//,prefilters={}',
+            'elem.getAttribute("type")!==null)+"/"+elem.type
+var rprotocol=/^\/\//,prefilters={}');
+
+        // known minified files to help doublecheck changes in places not yet
+        // anticipated in these tests
+        $files = glob(__DIR__.'/sample/minified/*.js');
+        foreach ($files as $file) {
+            $content = trim(file_get_contents($file));
+            $tests[] = array($content, $content);
+        }
 
         // update tests' expected results for cross-system compatibility
         foreach ($tests as &$test) {
