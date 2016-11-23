@@ -855,7 +855,7 @@ String(dateString).match(/^[0-9]*$/);',
     a: ((500 * (x - y)) + 128) / 255,   // [-128,127]
     b: ((200 * (y - z)) + 128) / 255    // [-128,127]
 };',
-            'return{l:((116*y)-16)/100,a:((500*(x-y))+128)/255,b:((200*(y-z))+128)/255}'
+            'return{l:((116*y)-16)/100,a:((500*(x-y))+128)/255,b:((200*(y-z))+128)/255}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/143
@@ -887,7 +887,8 @@ prefilters = {};',
             'elem.getAttribute("type")!==null)+"/"+elem.type
 var rprotocol=/^\/\//,prefilters={}',
             'elem.getAttribute("type")!==null)+"/"+elem.type
-var rprotocol=/^\/\//,prefilters={}');
+var rprotocol=/^\/\//,prefilters={}',
+        );
 
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests

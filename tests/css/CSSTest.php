@@ -513,7 +513,6 @@ body{
             'p{border:1px solid #f00000}',
         );
 
-
         return $tests;
     }
 
