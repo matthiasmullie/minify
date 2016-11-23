@@ -513,6 +513,28 @@ body{
             'p{border:1px solid #f00000}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/149
+        $tests[] = array(
+            ".headerWrapper{
+    background:url(/_media/images/general/bg_top_right.png) no-repeat;
+    background:url('') no-repeat;
+    background-position:100% 0;
+    width:100%;
+    min-height: 0;
+}",
+            ".headerWrapper{background:url(/_media/images/general/bg_top_right.png) no-repeat;background:url('') no-repeat;background-position:100% 0;width:100%;min-height:0}",
+        );
+        $tests[] = array(
+            ".headerWrapper{
+    /*background:url(/_media/images/general/bg_top_right.png) no-repeat;*/
+    background:url('') no-repeat;
+    background-position:100% 0;
+    width:100%;
+    min-height: 0;
+}",
+            ".headerWrapper{background:url('') no-repeat;background-position:100% 0;width:100%;min-height:0}",
+        );
+
         return $tests;
     }
 
