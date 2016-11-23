@@ -485,7 +485,7 @@ class CSS extends Minify
      */
     protected function shortenHex($content)
     {
-        $content = preg_replace('/(?<![\'"])#([0-9a-z])\\1([0-9a-z])\\2([0-9a-z])\\3(?![\'"])/i', '#$1$2$3', $content);
+        $content = preg_replace('/(?<=[: ])#([0-9a-z])\\1([0-9a-z])\\2([0-9a-z])\\3(?=[; }])/i', '#$1$2$3', $content);
 
         // we can shorten some even more by replacing them with their color name
         $colors = array(
@@ -518,7 +518,13 @@ class CSS extends Minify
             '#F5DEB3' => 'wheat',
         );
 
-        return str_ireplace(array_keys($colors), $colors, $content);
+        return preg_replace_callback(
+            '/(?<=[: ])('.implode(array_keys($colors), '|').')(?=[; }])/i',
+            function ($match) use ($colors) {
+                return $colors[strtoupper($match[0])];
+            },
+            $content
+        );
     }
 
     /**
