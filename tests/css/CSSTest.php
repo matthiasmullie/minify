@@ -535,6 +535,12 @@ body{
             ".headerWrapper{background:url('') no-repeat;background-position:100% 0;width:100%;min-height:0}",
         );
 
+        // https://github.com/matthiasmullie/minify/issues/150
+        $tests[] = array(
+            '.text { box-shadow: 0 0 1em -0.5em #000; }',
+            '.text{box-shadow:0 0 1em -.5em #000}',
+        );
+
         return $tests;
     }
 
