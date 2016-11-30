@@ -18,7 +18,11 @@ class JSTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->minifier = new Minify\JS();
+
+        // override save method, there's no point in writing the result out here
+        $this->minifier = $this->getMockBuilder('\MatthiasMullie\Minify\JS')
+            ->setMethods(array('save'))
+            ->getMock();
     }
 
     /**
@@ -31,17 +35,14 @@ class JSTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test JS minifier rules, provided by dataProvider
+     * Test JS minifier rules, provided by dataProvider.
      *
      * @test
      * @dataProvider dataProvider
      */
     public function minify($input, $expected)
     {
-        $input = (array) $input;
-        foreach ($input as $js) {
-            $this->minifier->add($js);
-        }
+        $this->minifier->add($input);
         $result = $this->minifier->minify();
 
         $this->assertEquals($expected, $result);
@@ -53,6 +54,25 @@ class JSTest extends PHPUnit_Framework_TestCase
     public function dataProvider()
     {
         $tests = array();
+
+        // adding multiple files
+        $tests[] = array(
+            [
+                __DIR__.'/sample/source/script1.js',
+                __DIR__.'/sample/source/script2.js',
+            ],
+            'var test=1;var test=2',
+        );
+
+        // adding multiple files and string
+        $tests[] = array(
+            [
+                __DIR__.'/sample/source/script1.js',
+                'console.log(test)',
+                __DIR__.'/sample/source/script2.js',
+            ],
+            'var test=1;console.log(test);var test=2',
+        );
 
         // escaped quotes should not terminate string
         $tests[] = array(
@@ -73,6 +93,22 @@ class JSTest extends PHPUnit_Framework_TestCase
             '/abc\/def\//.test("abc")',
         );
         $tests[] = array(
+            '/abc\/def\//.test("abc\/def\/")',
+            '/abc\/def\//.test("abc\/def\/")',
+        );
+        $tests[] = array(
+            // there's an escape mess here; below regex represent this JS line:
+            // /abc\/def\\\//.test("abc/def\\/")
+            '/abc\/def\\\\\//.test("abc/def\\\/")',
+            '/abc\/def\\\\\//.test("abc/def\\\/")',
+        );
+        $tests[] = array(
+            // escape mess, this represents:
+            // /abc\/def\\\\\//.test("abc/def\\\\/")
+            '/abc\/def\\\\\\\\\//.test("abc/def\\\\\\\\/")',
+            '/abc\/def\\\\\\\\\//.test("abc/def\\\\\\\\/")',
+        );
+        $tests[] = array(
             'var a = /abc\/def\//.test("abc")',
             'var a=/abc\/def\//.test("abc")',
         );
@@ -82,13 +118,29 @@ class JSTest extends PHPUnit_Framework_TestCase
             'a = b / c; d = e / f',
             'a=b/c;d=e/f',
         );
+        $tests[] = array(
+            '(2 + 4) / 3 + 5 / 1',
+            '(2+4)/3+5/1',
+        );
+
+        $tests[] = array(
+            'a=4/
+            2',
+            'a=4/2',
+        );
 
         // mixture of quotes starting in comment/regex, to make sure strings are
-        // matched correctly, not inside comment/regex.
+        // matched correctly, not inside comment/regex
+        // additionally test catching of empty strings as well
         $tests[] = array(
             '/abc"def/.test("abc")',
             '/abc"def/.test("abc")',
         );
+        $tests[] = array(
+            '/abc"def/.test(\'\')',
+            '/abc"def/.test(\'\')',
+        );
+
         $tests[] = array(
             '/* Bogus " */var test="test";',
             'var test="test"',
@@ -116,8 +168,16 @@ class JSTest extends PHPUnit_Framework_TestCase
         );
 
         $tests[] = array(
+          'for ( i = 0; ; i++ ) statement',
+          'for(i=0;;i++)statement',
+        );
+        $tests[] = array(
             'for (i = 0; (i < 10); i++) statement',
             'for(i=0;(i<10);i++)statement',
+        );
+        $tests[] = array(
+          'alert("test");;alert("test2")',
+          'alert("test");alert("test2")',
         );
         $tests[] = array(
             '-1
@@ -197,7 +257,8 @@ statement',
              else
              {
              }',
-            'if(!0){}
+            'if(!0)
+{}
 else{}',
         );
         $tests[] = array(
@@ -315,7 +376,8 @@ else statement',
                 // already a text element
                 else newElement = currentElement;
 ',
-            'if(currentElement.attr(\'type\')!=\'text\'){currentElement.remove()}
+            'if(currentElement.attr(\'type\')!=\'text\')
+{currentElement.remove()}
 else newElement=currentElement',
         );
         $tests[] = array(
@@ -378,7 +440,7 @@ if(e.which==40&&index<$items.length-1)index++',
             'array["a","b","c"]',
             'array["a","b","c"]',
         );
-        //
+
         $tests[] = array(
             "['loader']",
             "['loader']",
@@ -392,6 +454,36 @@ if(e.which==40&&index<$items.length-1)index++',
         $tests[] = array(
             'while(true){break}',
             'for(;;){break}',
+        );
+        // make sure we don't get "missing while after do-loop body"
+        $tests[] = array(
+            'do{break}while(true)',
+            'do{break}while(!0)',
+        );
+        $tests[] = array(
+            "do break\nwhile(true)",
+            "do break\nwhile(!0)",
+        );
+        $tests[] = array(
+            "do{break}while(true){alert('test')}",
+            "do{break}while(!0){alert('test')}",
+        );
+        $tests[] = array(
+            "do break\nwhile(true){alert('test')}",
+            "do break\nwhile(!0){alert('test')}",
+        );
+        // nested do-while & while
+        $tests[] = array(
+            "do{while(true){break}break}while(true){alert('test')}",
+            "do{for(;;){break}break}while(!0){alert('test')}",
+        );
+        $tests[] = array(
+            "do{while(true){break}break}while(true){alert('test')}while(true){break}",
+            "do{for(;;){break}break}while(!0){alert('test')}for(;;){break}",
+        );
+        $tests[] = array(
+            "do{while(true){break}break}while(true){alert('test')}while(true){break}do{while(true){break}break}while(true){alert('test')}while(true){break}",
+            "do{for(;;){break}break}while(!0){alert('test')}for(;;){break}do{for(;;){break}break}while(!0){alert('test')}for(;;){break}",
         );
 
         // https://github.com/matthiasmullie/minify/issues/10
@@ -422,8 +514,10 @@ function foo (a, b)
 {
     return a / b;
 }',
-            'function foo(a,b){return a/b}
-function foo(a,b){return a/b}',
+            'function foo(a,b)
+{return a/b}
+function foo(a,b)
+{return a/b}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/15
@@ -484,8 +578,8 @@ $.fn.alert.Constructor=Alert',
 
         // https://github.com/matthiasmullie/minify/issues/40
         $tests[] = array(
-            "for(v=1,_=b;;){}",
-            "for(v=1,_=b;;){}",
+            'for(v=1,_=b;;){}',
+            'for(v=1,_=b;;){}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/41
@@ -515,6 +609,301 @@ $.fn.alert.Constructor=Alert',
             'return ["x"]',
             'return["x"]',
         );
+
+        // https://github.com/matthiasmullie/minify/issues/50
+        $tests[] = array(
+            'do{var dim=this._getDaysInMonth(year,month-1);if(day<=dim){break}month++;day-=dim}while(true)}',
+            'do{var dim=this._getDaysInMonth(year,month-1);if(day<=dim){break}month++;day-=dim}while(!0)}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/53
+        $tests[] = array(
+            'a.validator.addMethod("accept", function (b, c, d) {
+    var e, f, g = "string" == typeof d ?
+        d.replace(/\s/g, "").replace(/,/g, "|") :
+        "image/*", h = this.optional(c);
+    if (h)return h;
+    if ("file" === a(c).attr("type") && (g = g.replace(/\*/g, ".*"), c.files && c.files.length))
+        for (e = 0; e < c.files.length; e++)
+            if (f = c.files[e], !f.type.match(new RegExp(".?(" + g + ")$", "i")))
+                return !1;
+    return !0
+}',
+            'a.validator.addMethod("accept",function(b,c,d){var e,f,g="string"==typeof d?d.replace(/\s/g,"").replace(/,/g,"|"):"image/*",h=this.optional(c);if(h)return h;if("file"===a(c).attr("type")&&(g=g.replace(/\*/g,".*"),c.files&&c.files.length))
+for(e=0;e<c.files.length;e++)
+if(f=c.files[e],!f.type.match(new RegExp(".?("+g+")$","i")))
+return!1;return!0}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/54
+        $tests[] = array(
+            'function a() {
+  if (true)
+    return
+  if (false)
+    return
+}',
+            'function a(){if(!0)
+return
+if(!1)
+return}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/56
+        $tests[] = array(
+            'var timeRegex = /^([2][0-3]|[01]?[0-9])(:[0-5][0-9])?$/
+if (start_time.match(timeRegex) == null) {}',
+            'var timeRegex=/^([2][0-3]|[01]?[0-9])(:[0-5][0-9])?$/
+if(start_time.match(timeRegex)==null){}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/58
+        // stripped of redundant code to expose problem case
+        $tests[] = array(
+            <<<'BUG'
+function inspect() {
+    escapedString.replace(/abc/g, '\\\'');
+}
+function isJSON() {
+    str.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']');
+}
+BUG
+,
+            <<<'BUG'
+function inspect(){escapedString.replace(/abc/g,'\\\'')}
+function isJSON(){str.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']')}
+BUG
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/59
+        $tests[] = array(
+            'isPath:function(e) {
+    return /\//.test(e);
+}',
+            'isPath:function(e){return/\//.test(e)}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/64
+        $tests[] = array(
+            '    var d3_nsPrefix = {
+        svg: "http://www.w3.org/2000/svg",
+        xhtml: "http://www.w3.org/1999/xhtml",
+        xlink: "http://www.w3.org/1999/xlink",
+        xml: "http://www.w3.org/XML/1998/namespace",
+        xmlns: "http://www.w3.org/2000/xmlns/"
+    };',
+            'var d3_nsPrefix={svg:"http://www.w3.org/2000/svg",xhtml:"http://www.w3.org/1999/xhtml",xlink:"http://www.w3.org/1999/xlink",xml:"http://www.w3.org/XML/1998/namespace",xmlns:"http://www.w3.org/2000/xmlns/"}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/66
+        $tests[] = array(
+            "$(coming.wrap).bind('onReset', function () {
+    try {
+        $(this).find('iframe').hide().attr('src', '//about:blank').end().empty();
+    } catch (e) {}
+});",
+            "$(coming.wrap).bind('onReset',function(){try{\$(this).find('iframe').hide().attr('src','//about:blank').end().empty()}catch(e){}})",
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/89
+        $tests[] = array(
+            'for(;;ja||(ja=true)){}',
+            'for(;;ja||(ja=!0)){}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/91
+        $tests[] = array(
+            'if(true){if(true)console.log("test")else;}',
+            'if(!0){if(!0)console.log("test")}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/99
+        $tests[] = array(
+            '"object";"object2";"0";"1"',
+            '"object";"object2";"0";"1"',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/102
+        $tests[] = array(
+            'var pb = {};',
+            'var pb={}',
+        );
+        $tests[] = array(
+            'pb.Initialize = function(settings) {};',
+            'pb.Initialize=function(settings){}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/108
+        $tests[] = array(
+            'function isHtmlNamespace(node) {
+            var ns;
+            return typeof node.namespaceURI == UNDEF || ((ns = node.namespaceURI) === null || ns == "http://www.w3.org/1999/xhtml");
+        }',
+            'function isHtmlNamespace(node){var ns;return typeof node.namespaceURI==UNDEF||((ns=node.namespaceURI)===null||ns=="http://www.w3.org/1999/xhtml")}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/115
+        $tests[] = array(
+            'if(typeof i[s].token=="string")/keyword|support|storage/.test(i[s].token)&&n.push(i[s].regex);else if(typeof i[s].token=="object")for(var u=0,a=i[s].token.length;u<a;u++)if(/keyword|support|storage/.test(i[s].token[u])){}',
+            'if(typeof i[s].token=="string")/keyword|support|storage/.test(i[s].token)&&n.push(i[s].regex);else if(typeof i[s].token=="object")for(var u=0,a=i[s].token.length;u<a;u++)if(/keyword|support|storage/.test(i[s].token[u])){}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/120
+        $tests[] = array(
+            'function myFuncName() {
+    function otherFuncName() {
+        if (condition) {
+            a = b / 1; // comment 1
+        } else if (condition) {
+            a = c / 2; // comment 2
+        } else if (condition) {
+            a = d / 3; // comment 3
+        } else {
+            a = 0;
+        }
+    }
+};',
+            'function myFuncName(){function otherFuncName(){if(condition){a=b/1}else if(condition){a=c/2}else if(condition){a=d/3}else{a=0}}}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/128
+        $tests[] = array(
+            'angle = (i - 3) * (Math.PI * 2) / 12; // THE ANGLE TO MARK.',
+            'angle=(i-3)*(Math.PI*2)/12',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/124
+        $tests[] = array(
+            'return cond ? document._getElementsByXPath(\'.//*\' + cond, element) : [];',
+            'return cond?document._getElementsByXPath(\'.//*\'+cond,element):[]',
+        );
+        $tests[] = array(
+            'Sizzle.selectors = {
+    match: {
+        PSEUDO: /:((?:[\w\u00c0-\uFFFF-]|\\.)+)(?:\(([\'"]*)((?:\([^\)]+\)|[^\2\(\)]*)+)\2\))?/
+    },
+    attrMap: {
+        "class": "className"
+    }
+}',
+            'Sizzle.selectors={match:{PSEUDO:/:((?:[\w\u00c0-\uFFFF-]|\\.)+)(?:\(([\'"]*)((?:\([^\)]+\)|[^\2\(\)]*)+)\2\))?/},attrMap:{"class":"className"}}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/130
+        $tests[] = array(
+            'function func(){}
+func()
+{ alert(\'hey\'); }',
+            'function func(){}
+func()
+{alert(\'hey\')}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/133
+        $tests[] = array(
+            'if ( args[\'message\'] instanceof Array ) { args[\'message\'] = args[\'message\'].join( \' \' );}',
+            'if(args.message instanceof Array){args.message=args.message.join(\' \')}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/134
+        $tests[] = array(
+            'e={true:!0,false:!1}',
+            'e={true:!0,false:!1}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/134
+        $tests[] = array(
+            'if (\'x\'+a in foo && \'y\'+b[a].z in bar)',
+            'if(\'x\'+a in foo&&\'y\'+b[a].z in bar)',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/136
+        $tests[] = array(
+            'XPRSHelper.isManagable = function(presetId){ if (presetId in XPRSHelper.presetTypes){ return (XPRSHelper.presetTypes[presetId]["GROUP"] in {"FEATURES":true,"SLIDESHOWS":true,"GALLERIES":true}); } return false; };',
+            'XPRSHelper.isManagable=function(presetId){if(presetId in XPRSHelper.presetTypes){return(XPRSHelper.presetTypes[presetId].GROUP in{"FEATURES":!0,"SLIDESHOWS":!0,"GALLERIES":!0})}return!1}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/138
+        $tests[] = array(
+            'matchers.push(/^[0-9]*$/.source);',
+            'matchers.push(/^[0-9]*$/.source)',
+        );
+        $tests[] = array(
+            'matchers.push(/^[0-9]*$/.source);
+String(dateString).match(/^[0-9]*$/);',
+            'matchers.push(/^[0-9]*$/.source);String(dateString).match(/^[0-9]*$/)',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/139
+        $tests[] = array(
+            __DIR__.'/sample/line_endings/lf/script.js',
+            'var a=1',
+        );
+        $tests[] = array(
+            __DIR__.'/sample/line_endings/cr/script.js',
+            'var a=1',
+        );
+        $tests[] = array(
+            __DIR__.'/sample/line_endings/crlf/script.js',
+            'var a=1',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/142
+        $tests[] = array(
+            'return {
+    l: ((116 * y) - 16) / 100,  // [0,100]
+    a: ((500 * (x - y)) + 128) / 255,   // [-128,127]
+    b: ((200 * (y - z)) + 128) / 255    // [-128,127]
+};',
+            'return{l:((116*y)-16)/100,a:((500*(x-y))+128)/255,b:((200*(y-z))+128)/255}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/143
+        $tests[] = array(
+            "if(nutritionalPortionWeightUnit == 'lbs' && blockUnit == 'oz'){
+itemFat = (qty * (fat/nutritionalPortionWeight))/16;
+itemProtein = (qty * (protein/nutritionalPortionWeight))/16;
+itemCarbs = (qty * (carbs/nutritionalPortionWeight))/16;
+itemKcal = (qty * (kcal/nutritionalPortionWeight))/16;
+}",
+            "if(nutritionalPortionWeightUnit=='lbs'&&blockUnit=='oz'){itemFat=(qty*(fat/nutritionalPortionWeight))/16;itemProtein=(qty*(protein/nutritionalPortionWeight))/16;itemCarbs=(qty*(carbs/nutritionalPortionWeight))/16;itemKcal=(qty*(kcal/nutritionalPortionWeight))/16}",
+        );
+        $tests[] = array(
+            'itemFat = (qty * (fat/nutritionalPortionWeight))/16;
+itemFat = (qty * (fat/nutritionalPortionWeight))/(28.3495*16);',
+            'itemFat=(qty*(fat/nutritionalPortionWeight))/16;itemFat=(qty*(fat/nutritionalPortionWeight))/(28.3495*16)',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/146
+        $tests[] = array(
+            'rnoContent = /^(?:GET|HEAD)$/,
+rprotocol = /^\/\//,
+/* ...
+ */
+prefilters = {};',
+            'rnoContent=/^(?:GET|HEAD)$/,rprotocol=/^\/\//,prefilters={}',
+        );
+        $tests[] = array(
+            'elem.getAttribute("type")!==null)+"/"+elem.type
+var rprotocol=/^\/\//,prefilters={}',
+            'elem.getAttribute("type")!==null)+"/"+elem.type
+var rprotocol=/^\/\//,prefilters={}',
+        );
+
+        // known minified files to help doublecheck changes in places not yet
+        // anticipated in these tests
+        $files = glob(__DIR__.'/sample/minified/*.js');
+        foreach ($files as $file) {
+            $content = trim(file_get_contents($file));
+            $tests[] = array($content, $content);
+        }
+
+        // update tests' expected results for cross-system compatibility
+        foreach ($tests as &$test) {
+            if (!empty($test[1])) {
+                $test[1] = str_replace("\r", '', $test[1]);
+            }
+        }
 
         return $tests;
     }

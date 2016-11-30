@@ -1,5 +1,9 @@
 <?php
+
 namespace MatthiasMullie\Minify;
+
+use MatthiasMullie\Minify\Exceptions\IOException;
+use Psr\Cache\CacheItemInterface;
 
 /**
  * Abstract minifier class.
@@ -7,14 +11,13 @@ namespace MatthiasMullie\Minify;
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
  * @author Matthias Mullie <minify@mullie.eu>
- *
- * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved.
+ * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
  * @license MIT License
  */
 abstract class Minify
 {
     /**
-     * The data to be minified
+     * The data to be minified.
      *
      * @var string[]
      */
@@ -50,7 +53,7 @@ abstract class Minify
     /**
      * Add a file or straight-up code to be minified.
      *
-     * @param string $data
+     * @param string|string[] $data
      */
     public function add($data /* $data = null, ... */)
     {
@@ -62,6 +65,11 @@ abstract class Minify
 
         // this method can be overloaded
         foreach ($args as $data) {
+            if (is_array($data)) {
+                call_user_func_array(array($this, 'add'), $data);
+                continue;
+            }
+
             // redefine var
             $data = (string) $data;
 
@@ -69,60 +77,21 @@ abstract class Minify
             $value = $this->load($data);
             $key = ($data != $value) ? $data : count($this->data);
 
+            // replace CR linefeeds etc.
+            // @see https://github.com/matthiasmullie/minify/pull/139
+            $value = str_replace(array("\r\n", "\r"), "\n", $value);
+
             // store data
             $this->data[$key] = $value;
         }
     }
 
     /**
-     * Load data.
-     *
-     * @param  string $data Either a path to a file or the content itself.
-     * @return string
-     */
-    protected function load($data)
-    {
-        // check if the data is a file
-        if (@file_exists($data) && is_file($data)) {
-            $data = @file_get_contents($data);
-
-            // strip BOM, if any
-            if (substr($data, 0, 3) == "\xef\xbb\xbf") {
-                $data = substr($data, 3);
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * Save to file
-     *
-     * @param  string    $content The minified data.
-     * @param  string    $path    The path to save the minified data to.
-     * @throws Exception
-     */
-    protected function save($content, $path)
-    {
-        // create file & open for writing
-        if (($handler = @fopen($path, 'w')) === false) {
-            throw new Exception('The file "'.$path.'" could not be opened. Check if PHP has enough permissions.');
-        }
-
-        // write to file
-        if (@fwrite($handler, $content) === false) {
-            throw new Exception('The file "'.$path.'" could not be written to. Check if PHP has enough permissions.');
-        }
-
-        // close the file
-        @fclose($handler);
-    }
-
-    /**
      * Minify the data & (optionally) saves it to a file.
      *
-     * @param  string[optional] $path Path to write the data to.
-     * @return string           The minified data.
+     * @param string[optional] $path Path to write the data to
+     *
+     * @return string The minified data
      */
     public function minify($path = null)
     {
@@ -139,9 +108,10 @@ abstract class Minify
     /**
      * Minify & gzip the data & (optionally) saves it to a file.
      *
-     * @param  string[optional] $path Path to write the data to.
-     * @param  int[optional]    $level Compression level, from 0 to 9.
-     * @return string           The minified & gzipped data.
+     * @param string[optional] $path  Path to write the data to
+     * @param int[optional]    $level Compression level, from 0 to 9
+     *
+     * @return string The minified & gzipped data
      */
     public function gzip($path = null, $level = 9)
     {
@@ -157,19 +127,73 @@ abstract class Minify
     }
 
     /**
+     * Minify the data & write it to a CacheItemInterface object.
+     *
+     * @param CacheItemInterface $item Cache item to write the data to
+     *
+     * @return CacheItemInterface Cache item with the minifier data
+     */
+    public function cache(CacheItemInterface $item)
+    {
+        $content = $this->execute();
+        $item->set($content);
+
+        return $item;
+    }
+
+    /**
      * Minify the data.
      *
-     * @param  string[optional] $path Path to write the data to.
-     * @return string           The minified data.
+     * @param string[optional] $path Path to write the data to
+     *
+     * @return string The minified data
      */
-    abstract protected function execute($path = null);
+    abstract public function execute($path = null);
+
+    /**
+     * Load data.
+     *
+     * @param string $data Either a path to a file or the content itself
+     *
+     * @return string
+     */
+    protected function load($data)
+    {
+        // check if the data is a file
+        if ($this->canImportFile($data)) {
+            $data = file_get_contents($data);
+
+            // strip BOM, if any
+            if (substr($data, 0, 3) == "\xef\xbb\xbf") {
+                $data = substr($data, 3);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Save to file.
+     *
+     * @param string $content The minified data
+     * @param string $path    The path to save the minified data to
+     *
+     * @throws IOException
+     */
+    protected function save($content, $path)
+    {
+        $handler = $this->openFileForWriting($path);
+
+        $this->writeToFile($handler, $content);
+
+        @fclose($handler);
+    }
 
     /**
      * Register a pattern to execute against the source content.
      *
-     * @param  string          $pattern     PCRE pattern.
-     * @param  string|callable $replacement Replacement value for matched pattern.
-     * @throws Exception
+     * @param string          $pattern     PCRE pattern
+     * @param string|callable $replacement Replacement value for matched pattern
      */
     protected function registerPattern($pattern, $replacement = '')
     {
@@ -187,8 +211,9 @@ abstract class Minify
      * The only way to accurately replace these pieces is to traverse the JS one
      * character at a time and try to find whatever starts first.
      *
-     * @param  string $content The content to replace patterns in.
-     * @return string The (manipulated) content.
+     * @param string $content The content to replace patterns in
+     *
+     * @return string The (manipulated) content
      */
     protected function replace($content)
     {
@@ -268,9 +293,10 @@ abstract class Minify
      * This function will be called plenty of times, where $content will always
      * move up 1 character.
      *
-     * @param  string          $pattern     Pattern to match.
-     * @param  string|callable $replacement Replacement value.
-     * @param  string          $content     Content to match pattern against.
+     * @param string          $pattern     Pattern to match
+     * @param string|callable $replacement Replacement value
+     * @param string          $content     Content to match pattern against
+     *
      * @return string
      */
     protected function replacePattern($pattern, $replacement, $content)
@@ -291,7 +317,7 @@ abstract class Minify
      * placeholder text, so we've rid all strings from characters that may be
      * misinterpreted. Original string content will be saved in $this->extracted
      * and after doing all other minifying, we can restore the original content
-     * via restoreStrings()
+     * via restoreStrings().
      *
      * @param string[optional] $chars
      */
@@ -300,7 +326,8 @@ abstract class Minify
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
-            if (!$match[1]) {
+            // check the second index here, because the first always contains a quote
+            if ($match[2] === '') {
                 /*
                  * Empty strings need no placeholder; they can't be confused for
                  * anything else anyway.
@@ -329,7 +356,7 @@ abstract class Minify
          * considered as escape-char (times 2) and to get it in the regex,
          * escaped (times 2)
          */
-        $this->registerPattern('/(['.$chars.'])(.*?((?<!\\\\)|\\\\\\\\+))\\1/s', $callback);
+        $this->registerPattern('/(['.$chars.'])(.*?(?<!\\\\)(\\\\\\\\)*+)\\1/s', $callback);
     }
 
     /**
@@ -337,7 +364,8 @@ abstract class Minify
      * replaced with placeholder text in extract*(). The original content was
      * saved in $this->extracted.
      *
-     * @param  string $content
+     * @param string $content
+     *
      * @return string
      */
     protected function restoreExtractedData($content)
@@ -352,5 +380,51 @@ abstract class Minify
         $this->extracted = array();
 
         return $content;
+    }
+
+    /**
+     * Check if the path is a regular file and can be read.
+     *
+     * @param string $path
+     *
+     * @return bool
+     */
+    protected function canImportFile($path)
+    {
+        return strlen($path) < PHP_MAXPATHLEN && @is_file($path) && is_readable($path);
+    }
+
+    /**
+     * Attempts to open file specified by $path for writing.
+     *
+     * @param string $path The path to the file
+     *
+     * @return resource Specifier for the target file
+     *
+     * @throws IOException
+     */
+    protected function openFileForWriting($path)
+    {
+        if (($handler = @fopen($path, 'w')) === false) {
+            throw new IOException('The file "'.$path.'" could not be opened for writing. Check if PHP has enough permissions.');
+        }
+
+        return $handler;
+    }
+
+    /**
+     * Attempts to write $content to the file specified by $handler. $path is used for printing exceptions.
+     *
+     * @param resource $handler The resource to write to
+     * @param string   $content The content to write
+     * @param string   $path    The path to the file (for exception printing only)
+     *
+     * @throws IOException
+     */
+    protected function writeToFile($handler, $content, $path = '')
+    {
+        if (($result = @fwrite($handler, $content)) === false || ($result < strlen($content))) {
+            throw new IOException('The file "'.$path.'" could not be written to. Check your disk space and file permissions.');
+        }
     }
 }

@@ -19,8 +19,9 @@
         "matthiasmullie/path-converter": "~1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.3.*",
-        "satooshi/php-coveralls": "dev-master"
+        "matthiasmullie/scrapbook": "~1.0",
+        "phpunit/phpunit": "~4.8",
+        "friendsofphp/php-cs-fixer": "~1.0"
     },
     "autoload": {
         "psr-4": {

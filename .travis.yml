@@ -1,15 +1,18 @@
 language: php
 
 php:
+  - 7
   - 5.6
   - 5.5
   - 5.4
-  - 5.3
-  - 7
   - hhvm
 
 before_script:
+  - pip install --user codecov
   - composer self-update && composer install --dev
 
-after_script:
-  - php vendor/bin/coveralls
+script:
+  - ./vendor/bin/phpunit
+
+after_success:
+  - codecov
