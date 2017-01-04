@@ -84,6 +84,16 @@ Minifies and optionally saves to a file, just like `minify()`, but it also `gzen
 $minifier->gzip('/target/path.js');
 ```
 
+### setFixRelativePath($value) *(CSS only)*
+
+The CSS minifier will automatically convert relative path to a combination between source and destination paths. But in some cases this can cause an issue and return a path inaccessible to the user.
+
+This method allows to turn of the conversion of relative paths inside the CSS by setting false. The default size is true.
+
+```php
+$minifier->setFixRelativePath(false);
+```
+
 ### setMaxImportSize($size) *(CSS only)*
 
 The CSS minifier will automatically embed referenced files (like images, fonts, ...) into the minified CSS, so they don't have to be fetched over multiple connections.

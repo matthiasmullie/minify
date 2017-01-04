@@ -18,6 +18,11 @@ use MatthiasMullie\PathConverter\Converter;
 class CSS extends Minify
 {
     /**
+     * @var bool
+     */
+    protected $fixRelativePath = true;
+
+    /**
      * @var int
      */
     protected $maxImportSize = 5;
@@ -37,6 +42,16 @@ class CSS extends Minify
         'tiff' => 'image/tiff',
         'xbm' => 'image/x-xbitmap',
     );
+
+    /**
+     * Set the condition to fix relative path.
+     *
+     * @param bool $value
+     */
+    public function setFixRelativePath($value)
+    {
+        $this->fixRelativePath = $value;
+    }
 
     /**
      * Set the maximum size if files to be imported.
@@ -455,7 +470,9 @@ class CSS extends Minify
             $url = $params ? substr($match['path'], 0, -strlen($params)) : $match['path'];
 
             // fix relative url
-            $url = $converter->convert($url);
+            if ($this->fixRelativePath) {
+                $url = $converter->convert($url);
+            }
 
             // now that the path has been converted, re-apply GET-params
             $url .= $params;
