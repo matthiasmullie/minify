@@ -23,13 +23,6 @@
 	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 	<![endif]-->
 
-	<style>
-		/* Only 1 of 2 ad types (adsense/amazon) will be shown, via JS */
-		.ad {
-			display: none;
-		}
-	</style>
-
 	<div class="ad adsense">
 		<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 		<script>
@@ -38,19 +31,6 @@
 				enable_page_level_ads: true
 			});
 		</script>
-	</div>
-	<div class="ad amazon">
-		<div class="alignleft">
-			<script type="text/javascript">
-				amzn_assoc_ad_type = "link_enhancement_widget";
-				amzn_assoc_tracking_id = "matthiasmulli-20";
-				amzn_assoc_linkid = "9cd92f2a334a706213517eb879169230";
-				amzn_assoc_placement = "";
-				amzn_assoc_marketplace = "amazon";
-				amzn_assoc_region = "US";
-			</script>
-			<script src="//ws-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&Operation=GetScript&ID=OneJS&WS=1&MarketPlace=US"></script>
-		</div>
 	</div>
 
 	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
@@ -139,21 +119,6 @@
 					<script>
 						(adsbygoogle = window.adsbygoogle || []).push({});
 					</script>
-				</div>
-				<div class="ad amazon">
-					<script type="text/javascript">
-						amzn_assoc_ad_type = "banner";
-						amzn_assoc_marketplace = "amazon";
-						amzn_assoc_region = "US";
-						amzn_assoc_placement = "assoc_banner_placement_default";
-						amzn_assoc_banner_type = "ez";
-						amzn_assoc_p = "13";
-						amzn_assoc_width = "468";
-						amzn_assoc_height = "60";
-						amzn_assoc_tracking_id = "matthiasmulli-20";
-						amzn_assoc_linkid = "bdb6ddfe71e6d79f789d556ed49e7bc0";
-					</script>
-					<script src="//z-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&Operation=GetScript&ID=OneJS&WS=1"></script>
 				</div>
 			</div>
 		</div>
@@ -256,9 +221,6 @@
 						(adsbygoogle = window.adsbygoogle || []).push({});
 					</script>
 				</div>
-				<div class="ad amazon">
-					<script src="//z-na.amazon-adsystem.com/widgets/onejs?MarketPlace=US&adInstanceId=fcade4fb-f41c-46f2-81cc-d789a229131f&storeId=matthiasmulli-20"></script>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -303,13 +265,5 @@
 <script src="js/modernizr.js"></script>
 <script src="js/jquery.autoexpand.js"></script>
 <script src="js/minifier.js"></script>
-
-<script>
-    if (Math.random() > .5) {
-        $('.ad.adsense').show();
-    } else {
-        $('.ad.amazon').show();
-    }
-</script>
 </body>
 </html>
