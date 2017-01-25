@@ -120,16 +120,7 @@ class CSS extends Minify
                     (?P<quotes>["\']?)
 
                         # fetch path
-                        (?P<path>
-
-                            # do not fetch data uris, external sources or absolute paths
-                            (?!(
-                                ["\']?
-                                (data:|https?:\\/\\/|\\/)
-                            ))
-
-                            .+?
-                        )
+                        (?P<path>.+?)
 
                     # (optional) close path enclosure
                     (?P=quotes)
@@ -164,16 +155,7 @@ class CSS extends Minify
                 (?P<quotes>["\'])
 
                     # fetch path
-                    (?P<path>
-
-                        # do not fetch data uris, external sources or absolute paths
-                        (?!(
-                            ["\']?
-                            (data:|https?:\\/\\/|\\/)
-                        ))
-
-                        .+?
-                    )
+                    (?P<path>.+?)
 
                 # close path enclosure
                 (?P=quotes)
@@ -211,33 +193,33 @@ class CSS extends Minify
 
             // only replace the import with the content if we can grab the
             // content of the file
-            if ($this->canImportFile($importPath)) {
-                // check if current file was not imported previously in the same
-                // import chain.
-                if (in_array($importPath, $parents)) {
-                    throw new FileImportException('Failed to import file "'.$importPath.'": circular reference detected.');
-                }
-
-                // grab referenced file & minify it (which may include importing
-                // yet other @import statements recursively)
-                $minifier = new static($importPath);
-                $importContent = $minifier->execute($source, $parents);
-
-                // check if this is only valid for certain media
-                if (!empty($match['media'])) {
-                    $importContent = '@media '.$match['media'].'{'.$importContent.'}';
-                }
-
-                // add to replacement array
-                $search[] = $match[0];
-                $replace[] = $importContent;
+            if (!$this->canImportByPath($match['path']) || !$this->canImportFile($importPath)) {
+                continue;
             }
+
+            // check if current file was not imported previously in the same
+            // import chain.
+            if (in_array($importPath, $parents)) {
+                throw new FileImportException('Failed to import file "'.$importPath.'": circular reference detected.');
+            }
+
+            // grab referenced file & minify it (which may include importing
+            // yet other @import statements recursively)
+            $minifier = new static($importPath);
+            $importContent = $minifier->execute($source, $parents);
+
+            // check if this is only valid for certain media
+            if (!empty($match['media'])) {
+                $importContent = '@media '.$match['media'].'{'.$importContent.'}';
+            }
+
+            // add to replacement array
+            $search[] = $match[0];
+            $replace[] = $importContent;
         }
 
         // replace the import statements
-        $content = str_replace($search, $replace, $content);
-
-        return $content;
+        return str_replace($search, $replace, $content);
     }
 
     /**
@@ -253,18 +235,21 @@ class CSS extends Minify
      */
     protected function importFiles($source, $content)
     {
-        $extensions = array_keys($this->importExtensions);
-        $regex = '/url\((["\']?)((?!["\']?data:).*?\.('.implode('|', $extensions).'))\\1\)/i';
-        if ($extensions && preg_match_all($regex, $content, $matches, PREG_SET_ORDER)) {
+        $regex = '/url\((["\']?)(.+?)\\1\)/i';
+        if ($this->importExtensions && preg_match_all($regex, $content, $matches, PREG_SET_ORDER)) {
             $search = array();
             $replace = array();
 
             // loop the matches
             foreach ($matches as $match) {
+                $extension = substr(strrchr($match[2], '.'), 1);
+                if ($extension && !array_key_exists($extension, $this->importExtensions)) {
+                    continue;
+                }
+
                 // get the path for the file that will be imported
                 $path = $match[2];
                 $path = dirname($source).'/'.$path;
-                $extension = $match[3];
 
                 // only replace the import with the content if we're able to get
                 // the content of the file, and it's relatively small

@@ -584,7 +584,7 @@ body{
         $tests[] = array(
             $source.'/issue29.css',
             $target.'/issue29.css',
-            "@import url(http://myurl.de);",
+            '@import url(http://myurl.de);',
         );
 
         // https://github.com/matthiasmullie/minify/issues/38
