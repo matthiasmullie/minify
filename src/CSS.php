@@ -122,10 +122,10 @@ class CSS extends Minify
                         # fetch path
                         (?P<path>
 
-                            # do not fetch data uris or external sources
+                            # do not fetch data uris, external sources or absolute paths
                             (?!(
                                 ["\']?
-                                (data|https?):
+                                (data:|https?:\\/\\/|\\/)
                             ))
 
                             .+?
@@ -166,10 +166,10 @@ class CSS extends Minify
                     # fetch path
                     (?P<path>
 
-                        # do not fetch data uris or external sources
+                        # do not fetch data uris, external sources or absolute paths
                         (?!(
                             ["\']?
-                            (data|https?):
+                            (data:|https?:\\/\\/|\\/)
                         ))
 
                         .+?
@@ -380,17 +380,7 @@ class CSS extends Minify
                 (?P<quotes>["\'])?
 
                     # fetch path
-                    (?P<path>
-
-                        # do not fetch data uris or external sources
-                        (?!(
-                            \s?
-                            ["\']?
-                            (data|https?):
-                        ))
-
-                        .+?
-                    )
+                    (?P<path>.+?)
 
                 # close path enclosure
                 (?(quotes)(?P=quotes))
@@ -417,16 +407,7 @@ class CSS extends Minify
                 (?P<quotes>["\'])
 
                     # fetch path
-                    (?P<path>
-
-                        # do not fetch data uris or external sources
-                        (?!(
-                            ["\']?
-                            (data|https?):
-                        ))
-
-                        .+?
-                    )
+                    (?P<path>.+?)
 
                 # close path enclosure
                 (?P=quotes)
@@ -450,29 +431,30 @@ class CSS extends Minify
             // determine if it's a url() or an @import match
             $type = (strpos($match[0], '@import') === 0 ? 'import' : 'url');
 
-            // attempting to interpret GET-params makes no sense, so let's discard them for awhile
-            $params = strrchr($match['path'], '?');
-            $url = $params ? substr($match['path'], 0, -strlen($params)) : $match['path'];
+            $url = $match['path'];
+            if ($this->canImportByPath($url)) {
+                // attempting to interpret GET-params makes no sense, so let's discard them for awhile
+                $params = strrchr($url, '?');
+                $url = $params ? substr($url, 0, -strlen($params)) : $url;
 
-            // fix relative url
-            $url = $converter->convert($url);
+                // fix relative url
+                $url = $converter->convert($url);
 
-            // now that the path has been converted, re-apply GET-params
-            $url .= $params;
+                // now that the path has been converted, re-apply GET-params
+                $url .= $params;
+            }
 
             // build replacement
             $search[] = $match[0];
-            if ($type == 'url') {
+            if ($type === 'url') {
                 $replace[] = 'url('.$url.')';
-            } elseif ($type == 'import') {
+            } elseif ($type === 'import') {
                 $replace[] = '@import "'.$url.'"';
             }
         }
 
         // replace urls
-        $content = str_replace($search, $replace, $content);
-
-        return $content;
+        return str_replace($search, $replace, $content);
     }
 
     /**
@@ -670,5 +652,17 @@ class CSS extends Minify
     protected function canImportBySize($path)
     {
         return ($size = @filesize($path)) && $size <= $this->maxImportSize * 1024;
+    }
+
+    /**
+     * Check if file a file can be imported, going by the path.
+     *
+     * @param string $path
+     *
+     * @return bool
+     */
+    protected function canImportByPath($path)
+    {
+        return preg_match('/^(data:|https?:|\\/)/', $path) === 0;
     }
 }

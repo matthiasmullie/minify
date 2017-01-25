@@ -504,7 +504,7 @@ only screen and (min-device-pixel-ratio: 1.5) {
 body{
      background: white;
 }',
-            '@import "./css1.css";@import url(\'https://www.google.com/main.css\');body{background:white}',
+            '@import "./css1.css";@import url(https://www.google.com/main.css);body{background:white}',
         );
 
         // https://github.com/matthiasmullie/minify/commit/3253a81d07cd01afcb651e309900d8ad58a052da#commitcomment-19223603
@@ -584,7 +584,7 @@ body{
         $tests[] = array(
             $source.'/issue29.css',
             $target.'/issue29.css',
-            "@import url('http://myurl.de');",
+            "@import url(http://myurl.de);",
         );
 
         // https://github.com/matthiasmullie/minify/issues/38
