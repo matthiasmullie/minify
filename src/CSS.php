@@ -3,6 +3,7 @@
 namespace MatthiasMullie\Minify;
 
 use MatthiasMullie\Minify\Exceptions\FileImportException;
+use MatthiasMullie\PathConverter\ConverterInterface;
 use MatthiasMullie\PathConverter\Converter;
 
 /**
@@ -284,12 +285,12 @@ class CSS extends Minify
     {
         $content = '';
 
-        // loop css data (raw data and files)
+        // loop CSS data (raw data and files)
         foreach ($this->data as $source => $css) {
             /*
-             * Let's first take out strings & comments, since we can't just remove
-             * whitespace anywhere. If whitespace occurs inside a string, we should
-             * leave it alone. E.g.:
+             * Let's first take out strings & comments, since we can't just
+             * remove whitespace anywhere. If whitespace occurs inside a string,
+             * we should leave it alone. E.g.:
              * p { content: "a   test" }
              */
             $this->extractStrings();
@@ -315,9 +316,9 @@ class CSS extends Minify
              * to be relative no longer to the source file, but to the new path.
              * If we don't write to a file, fall back to same path so no
              * conversion happens (because we still want it to go through most
-             * of the move code...)
+             * of the move code, which also addresses url() & @import syntax...)
              */
-            $converter = new Converter($source, $path ?: $source);
+            $converter = $this->getPathConverter($source, $path ?: $source);
             $css = $this->move($converter, $css);
 
             // combine css
@@ -335,12 +336,12 @@ class CSS extends Minify
      * will have to be updated when a file is being saved at another location
      * (e.g. ../../images/image.gif, if the new CSS file is 1 folder deeper).
      *
-     * @param Converter $converter Relative path converter
-     * @param string    $content   The CSS content to update relative urls for
+     * @param ConverterInterface $converter Relative path converter
+     * @param string             $content   The CSS content to update relative urls for
      *
      * @return string
      */
-    protected function move(Converter $converter, $content)
+    protected function move(ConverterInterface $converter, $content)
     {
         /*
          * Relative path references will usually be enclosed by url(). @import
@@ -649,5 +650,19 @@ class CSS extends Minify
     protected function canImportByPath($path)
     {
         return preg_match('/^(data:|https?:|\\/)/', $path) === 0;
+    }
+
+    /**
+     * Return a converter to update relative paths to be relative to the new
+     * destination.
+     *
+     * @param string $source
+     * @param string $target
+     *
+     * @return ConverterInterface
+     */
+    protected function getPathConverter($source, $target)
+    {
+        return new Converter($source, $target);
     }
 }

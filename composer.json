@@ -16,7 +16,7 @@
     "require": {
         "php": ">=5.3.0",
         "ext-pcre": "*",
-        "matthiasmullie/path-converter": "~1.0"
+        "matthiasmullie/path-converter": "~1.1"
     },
     "require-dev": {
         "matthiasmullie/scrapbook": "~1.0",
