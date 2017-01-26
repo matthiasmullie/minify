@@ -559,12 +559,12 @@ class CSS extends Minify
         // looped because there may be multiple 0s inside 1 group of parentheses
         do {
             $previous = $content;
-            $content = preg_replace('/\(([^\(\)]+)\s+[\+\-]\s+0(\s+[^\(\)]+)?\)/', '(\\1\\2)', $content);
+            $content = preg_replace('/\(([^\(\)]+) [\+\-] 0( [^\(\)]+)?\)/', '(\\1\\2)', $content);
         } while ($content !== $previous);
         // strip all `0 +` occurrences: calc(0 + 10%) -> calc(10%)
-        $content = preg_replace('/\(\s*0\s+\+\s+([^\(\)]+)\)/', '(\\1)', $content);
+        $content = preg_replace('/\(0 \+ ([^\(\)]+)\)/', '(\\1)', $content);
         // strip all `0 -` occurrences: calc(0 - 10%) -> calc(-10%)
-        $content = preg_replace('/\(\s*0\s+\-\s+([^\(\)]+)\)/', '(-\\1)', $content);
+        $content = preg_replace('/\(0 \- ([^\(\)]+)\)/', '(-\\1)', $content);
         // I'm not going to attempt to optimize away `x * 0` instances:
         // it's dumb enough code already that it likely won't occur, and it's
         // too complex to do right (order of operations would have to be
