@@ -597,6 +597,14 @@ $.fn.alert.Constructor=Alert',
             'if(1){for(i=1;i<2;i++);}',
             'if(1){for(i=1;i<2;i++);}',
         );
+        $tests[] = array(
+            'for(i in list);',
+            'for(i in list);',
+        );
+        $tests[] = array(
+            'if(1){for(i in list);}',
+            'if(1){for(i in list);}',
+        );
 
         // https://github.com/matthiasmullie/minify/issues/43
         $tests[] = array(
@@ -890,6 +898,21 @@ var rprotocol=/^\/\//,prefilters={}',
 var rprotocol=/^\/\//,prefilters={}',
         );
 
+        $tests[] = array(
+            'map: function( elems, callback, arg ) {
+                for ( i in elems ) {
+                    value = callback( elems[ i ], i, arg );
+                    if ( value != null ) {
+                        ret.push( value );
+                    }
+                }
+
+                return concat.apply( [], ret );
+            }',
+            'map:function(elems,callback,arg){for(i in elems){value=callback(elems[i],i,arg);if(value!=null){ret.push(value)}}
+return concat.apply([],ret)}',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
@@ -897,7 +920,6 @@ var rprotocol=/^\/\//,prefilters={}',
             $content = trim(file_get_contents($file));
             $tests[] = array($content, $content);
         }
-
         // update tests' expected results for cross-system compatibility
         foreach ($tests as &$test) {
             if (!empty($test[1])) {
