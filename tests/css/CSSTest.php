@@ -541,6 +541,25 @@ body{
             '.text{box-shadow:0 0 1em -.5em #000}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/159
+        $tests[] = array(
+            '.columns {
+  -webkit-flex: 1 1 0px;
+  -ms-flex: 1 1 0px;
+  flex: 1 1 0px;
+  min-width: 0;
+}',
+            '.columns{-webkit-flex:1 1 0%;-ms-flex:1 1 0%;flex:1 1 0%;min-width:0}',
+        );
+        $tests[] = array(
+            'html{height:100%;font-family:sans-serif}.grid{max-width:60em;display:-webkit-box;display:-ms-flexbox;display:flex;margin:0 auto;-ms-flex-wrap:wrap;flex-wrap:wrap}.column{margin:.5em;-webkit-box-flex:1;-ms-flex:1 1 0px;flex:1 1 0px;border:1px solid #333;height:1em;padding:1em;text-align:center;color:#333}',
+            'html{height:100%;font-family:sans-serif}.grid{max-width:60em;display:-webkit-box;display:-ms-flexbox;display:flex;margin:0 auto;-ms-flex-wrap:wrap;flex-wrap:wrap}.column{margin:.5em;-webkit-box-flex:1;-ms-flex:1 1 0%;flex:1 1 0%;border:1px solid #333;height:1em;padding:1em;text-align:center;color:#333}',
+        );
+        $tests[] = array(
+            'p{flex:1 1 0;-ms-flex-basis:0%;}',
+            'p{flex:1 1 0%;-ms-flex-basis:0%}',
+        );
+
         return $tests;
     }
 

@@ -571,6 +571,12 @@ class CSS extends Minify
         // respected etc)
         // what I cared about most here was fixing incorrectly truncated units
 
+        // IE doesn't seem to understand a unitless flex-basis value, so let's
+        // add it in again (make it `%`, which is only 1 char: 0%, 0px, 0
+        // anything, it's all just the same)
+        $content = preg_replace('/flex:([^ ]+ [^ ]+ )0([;\}])/', 'flex:${1}0%${2}', $content);
+        $content = preg_replace('/flex-basis:0([;\}])/', 'flex-basis:0%${1}', $content);
+
         return $content;
     }
 
