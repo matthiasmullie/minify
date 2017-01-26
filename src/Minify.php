@@ -54,6 +54,8 @@ abstract class Minify
      * Add a file or straight-up code to be minified.
      *
      * @param string|string[] $data
+     *
+     * @return static
      */
     public function add($data /* $data = null, ... */)
     {
@@ -84,6 +86,8 @@ abstract class Minify
             // store data
             $this->data[$key] = $value;
         }
+
+        return $this;
     }
 
     /**
