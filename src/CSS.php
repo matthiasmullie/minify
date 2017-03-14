@@ -442,7 +442,7 @@ class CSS extends Minify
              * @see https://hg.mozilla.org/mozilla-central/rev/14abca4e7378
              */
             $url = trim($url);
-            if (preg_match('/[\s\)#\x{7f}-\x{9f}]/u', $url, $test)) {
+            if (preg_match('/[\s\)#\x{7f}-\x{9f}]/u', $url)) {
                 $url = $match['quotes'] . $url . $match['quotes'];
             }
 
