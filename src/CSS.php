@@ -430,6 +430,17 @@ class CSS extends Minify
                 $url .= $params;
             }
 
+            /*
+             * Urls with control characters above 0x7e should be quoted.
+             * Urls with `)` (as could happen with data: uris) should also be
+             * quoted, to avoid being confused for the url() closing parenthesis
+             *
+             * @see developer.mozilla.org/nl/docs/Web/CSS/url#The_url()_functional_notation
+             */
+            if (preg_match('/[\)\x{7f}-\x{9f}]/u', $url)) {
+                $url = $match['quotes'] . $url . $match['quotes'];
+            }
+
             // build replacement
             $search[] = $match[0];
             if ($type === 'url') {
