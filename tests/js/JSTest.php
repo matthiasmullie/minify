@@ -897,7 +897,6 @@ var rprotocol=/^\/\//,prefilters={}',
             'elem.getAttribute("type")!==null)+"/"+elem.type
 var rprotocol=/^\/\//,prefilters={}',
         );
-
         $tests[] = array(
             'map: function( elems, callback, arg ) {
                 for ( i in elems ) {
@@ -946,6 +945,12 @@ return concat.apply([],ret)}',
             'Calendar.createElement=function(type,parent){var el=null;if(document.createElementNS){el=document.createElementNS("http://www.w3.org/1999/xhtml",type)}else{el=document.createElement(type)}
 if(typeof parent!="undefined"){parent.appendChild(el)}
 return el}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/163
+        $tests[] = array(
+            'q = d / 4 / b.width()',
+            'q=d/4/b.width()',
         );
 
         // known minified files to help doublecheck changes in places not yet
