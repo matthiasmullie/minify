@@ -913,6 +913,20 @@ var rprotocol=/^\/\//,prefilters={}',
 return concat.apply([],ret)}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/167
+        $tests[] = array(
+            'this.valueMap.false',
+            'this.valueMap.false',
+        );
+        $tests[] = array(
+            'this.valueMap . false',
+            'this.valueMap.false',
+        );
+        $tests[] = array(
+            'false!==true',
+            '!1!==!0',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');

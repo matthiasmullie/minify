@@ -480,10 +480,23 @@ class JS extends Minify
      */
     protected function shortenBools($content)
     {
-        $content = preg_replace('/\btrue\b(?!:)/', '!0', $content);
-        $content = preg_replace('/\bfalse\b(?!:)/', '!1', $content);
+        /*
+         * 'true' or 'false' could be used as property names (which may be
+         * followed by whitespace) - we must not replace those!
+         * Since PHP doesn't allow variable-length (to account for the
+         * whitespace) lookbehind assertions, I need to capture the leading
+         * character and check if it's a `.`
+         */
+        $callback = function ($match) {
+            if (trim($match[1]) === '.') {
+                return $match[0];
+            }
 
-        // for(;;) is exactly the same as while(true)
+            return $match[1].($match[2] === 'true' ? '!0' : '!1');
+        };
+        $content = preg_replace_callback('/(^|.\s*)\b(true|false)\b(?!:)/', $callback, $content);
+
+        // for(;;) is exactly the same as while(true), but shorter :)
         $content = preg_replace('/\bwhile\(!0\){/', 'for(;;){', $content);
 
         // now make sure we didn't turn any do ... while(true) into do ... for(;;)
