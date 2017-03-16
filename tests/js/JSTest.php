@@ -927,6 +927,27 @@ return concat.apply([],ret)}',
             '!1!==!0',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/164
+        $tests[] = array(
+            'Calendar.createElement = function(type, parent) {
+    var el = null;
+    if (document.createElementNS) {
+        // use the XHTML namespace; IE won\'t normally get here unless
+        // _they_ "fix" the DOM2 implementation.
+        el = document.createElementNS("http://www.w3.org/1999/xhtml", type);
+    } else {
+        el = document.createElement(type);
+    }
+    if (typeof parent != "undefined") {
+        parent.appendChild(el);
+    }
+    return el;
+};',
+            'Calendar.createElement=function(type,parent){var el=null;if(document.createElementNS){el=document.createElementNS("http://www.w3.org/1999/xhtml",type)}else{el=document.createElement(type)}
+if(typeof parent!="undefined"){parent.appendChild(el)}
+return el}',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
