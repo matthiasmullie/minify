@@ -368,8 +368,8 @@ class JS extends Minify
     protected function getOperatorsForRegex(array $operators, $delimiter = '/')
     {
         // escape operators for use in regex
-        $delimiter = array_fill(0, count($operators), $delimiter);
-        $escaped = array_map('preg_quote', $operators, $delimiter);
+        $delimiters = array_fill(0, count($operators), $delimiter);
+        $escaped = array_map('preg_quote', $operators, $delimiters);
 
         $operators = array_combine($operators, $escaped);
 
@@ -381,7 +381,7 @@ class JS extends Minify
         $operators['.'] = '(?<![0-9]\s)\.';
 
         // don't confuse = with other assignment shortcuts (e.g. +=)
-        $chars = preg_quote('+-*\=<>%&|');
+        $chars = preg_quote('+-*\=<>%&|', $delimiter);
         $operators['='] = '(?<!['.$chars.'])\=';
 
         return $operators;
