@@ -946,6 +946,10 @@ return concat.apply([],ret)}',
 if(typeof parent!="undefined"){parent.appendChild(el)}
 return el}',
         );
+        $tests[] = array(
+            "$(this).find('iframe').hide().attr('src', '//about:blank').end().empty();",
+            "$(this).find('iframe').hide().attr('src','//about:blank').end().empty()",
+        );
 
         // https://github.com/matthiasmullie/minify/issues/163
         $tests[] = array(
