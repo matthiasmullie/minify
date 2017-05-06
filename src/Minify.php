@@ -17,6 +17,12 @@ use Psr\Cache\CacheItemInterface;
 abstract class Minify
 {
     /**
+     * Leave comment in compressed file
+     * if it starts with /*! or contains @license or @preserve tags.
+     * @var bool
+     */
+    protected $leavePreservedComments = false;
+    /**
      * The data to be minified.
      *
      * @var string[]
@@ -430,5 +436,18 @@ abstract class Minify
         if (($result = @fwrite($handler, $content)) === false || ($result < strlen($content))) {
             throw new IOException('The file "'.$path.'" could not be written to. Check your disk space and file permissions.');
         }
+    }
+
+    /**
+     * Set Leave comment in compressed file parameter
+     * If true, minify will leave comment in compressed file
+     * if it starts with /*! or contains @license or @preserve tags.
+     * If false, all comments will be removed
+     *
+     * @param bool $value
+     */
+    public function setLeavePreservedComments($value)
+    {
+        $this->leavePreservedComments = $value;
     }
 }

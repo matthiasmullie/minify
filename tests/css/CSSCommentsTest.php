@@ -3,9 +3,9 @@
 use MatthiasMullie\Minify;
 
 /**
- * CSS minifier test case.
+ * CSS minifier test case with comments perverse.
  */
-class CSSTest extends PHPUnit_Framework_TestCase
+class CSSCommentsTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var Minify\CSS
@@ -23,6 +23,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
         $this->minifier = $this->getMockBuilder('\MatthiasMullie\Minify\CSS')
             ->setMethods(array('save'))
             ->getMock();
+        $this->minifier->setLeavePreservedComments(true);
     }
 
     /**
@@ -95,7 +96,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test minifier import configuration methods.
+     * Test minifier configuration methods.
      *
      * @test
      */
@@ -592,7 +593,53 @@ body{
             "p{src:url('../../font/archivo_narrow_regular.svg#archivo narrow') format('svg')}",
             "p{src:url('../../font/archivo_narrow_regular.svg#archivo narrow') format('svg')}",
         );
-
+        $tests[] = array(
+            '/* Test comment */',
+            '',
+        );
+        $tests[] = array(
+            '/*! Test leave comment */',
+            '/*! Test leave comment */',
+        );
+        $tests[] = array(
+            '/* Leave comment with @preserve */',
+            '/* Leave comment with @preserve */',
+        );
+        $tests[] = array(
+            '/* Leave comment with @license*/',
+            '/* Leave comment with @license*/',
+        );
+        $tests[] = array(
+            '/* Remove comment with incorrect tag license */',
+            '',
+        );
+        $tests[] = array(
+            '/*!
+ * Bootstrap v4.0.0-alpha.6 (https://getbootstrap.com)
+ * Copyright 2011-2017 The Bootstrap Authors
+ * Copyright 2011-2017 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */',
+            '/*! * Bootstrap v4.0.0-alpha.6 (https://getbootstrap.com) * Copyright 2011-2017 The Bootstrap Authors * Copyright 2011-2017 Twitter,Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE) */',
+        );
+        $tests[] = array (
+          '/*!
+ * Bootstrap v4.0.0-alpha.6 (https://getbootstrap.com)
+ * Copyright 2011-2017 The Bootstrap Authors
+ * Copyright 2011-2017 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */@media print{*,::after,::before,blockquote::first-letter,blockquote::first-line,div::first-letter,div::first-line,li::first-letter,li::first-line,p::first-letter,p::first-line{text-shadow:none!important;-webkit-box-shadow:none!important;box-shadow:none!important}',
+            '/*! * Bootstrap v4.0.0-alpha.6 (https://getbootstrap.com) * Copyright 2011-2017 The Bootstrap Authors * Copyright 2011-2017 Twitter,Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE) */@media print{*,::after,::before,blockquote::first-letter,blockquote::first-line,div::first-letter,div::first-line,li::first-letter,li::first-line,p::first-letter,p::first-line{text-shadow:none!important;-webkit-box-shadow:none!important;box-shadow:none!important}'
+        );
+        $tests[] = array (
+            '/*
+ * Bootstrap v4.0.0-alpha.6 (https://getbootstrap.com)
+ * Copyright 2011-2017 The Bootstrap Authors
+ * Copyright 2011-2017 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */@media print{*,::after,::before,blockquote::first-letter,blockquote::first-line,div::first-letter,div::first-line,li::first-letter,li::first-line,p::first-letter,p::first-line{text-shadow:none!important;-webkit-box-shadow:none!important;box-shadow:none!important}',
+            '@media print{*,::after,::before,blockquote::first-letter,blockquote::first-line,div::first-letter,div::first-line,li::first-letter,li::first-line,p::first-letter,p::first-line{text-shadow:none!important;-webkit-box-shadow:none!important;box-shadow:none!important}'
+        );
         return $tests;
     }
 
