@@ -127,6 +127,34 @@ class CommandTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function runCommandWithPreserveComments()
+    {
+        vfsStream::newFile('test.css')
+            ->withContent('/*!
+                 * Bootstrap v3.3.7 (http://getbootstrap.com)
+                 * Copyright 2011-2016 Twitter, Inc.
+                 * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+                 */
+                /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
+                html {
+                    font-family: sans-serif;
+                    -webkit-text-size-adjust: 100%;
+                    -ms-text-size-adjust: 100%;
+                }
+                body {
+                    margin: 0;
+                }')
+            ->at($this->rootDir);
+        $this->commandTester->execute(array(
+                'from' => array(vfsStream::url('test/test.css')),
+                '--preserveComments' => true,
+            ), array());
+        $this->assertEquals('/*! * Bootstrap v3.3.7 (http://getbootstrap.com) * Copyright 2011-2016 Twitter,Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE) */ /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */ html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}body{margin:0}'.PHP_EOL, $this->commandTester->getDisplay());
+    }
+
+    /**
+     * @test
+     */
     public function runCommandWithJsFile()
     {
         vfsStream::newFile('test.js')
