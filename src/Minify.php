@@ -19,6 +19,7 @@ abstract class Minify
     /**
      * Leave comment in compressed file
      * if it starts with /*! or contains @license or @preserve tags.
+     *
      * @var bool
      */
     protected $leavePreservedComments = false;
@@ -442,7 +443,7 @@ abstract class Minify
      * Set Leave comment in compressed file parameter
      * If true, minify will leave comment in compressed file
      * if it starts with /*! or contains @license or @preserve tags.
-     * If false, all comments will be removed
+     * If false, all comments will be removed.
      *
      * @param bool $value
      */

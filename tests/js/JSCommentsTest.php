@@ -1016,11 +1016,11 @@ return el}',
 **Includes Sizzle.js*http://sizzlejs.com/
 **Copyright jQuery Foundation and other contributors*Released under the MIT license*http://jquery.org/license**Date:2016-05-20T17:23Z*/',
         );
-        $tests[] = array (
+        $tests[] = array(
             '/*! jQuery v2.2.4 | (c) jQuery Foundation | jquery.org/license */',
-            '/*! jQuery v2.2.4 | (c) jQuery Foundation | jquery.org/license */'
+            '/*! jQuery v2.2.4 | (c) jQuery Foundation | jquery.org/license */',
         );
-        $tests[] = array (
+        $tests[] = array(
             '/**!
  * easy-pie-chart
  * Lightweight plugin to render simple, animated and retina optimized pie charts
@@ -1029,9 +1029,8 @@ return el}',
  * @author Robert Fleischmann <rendro87@gmail.com> (http://robert-fleischmann.de)
  * @version 2.1.7
  **/',
-            '/**!*easy-pie-chart*Lightweight plugin to render simple,animated and retina optimized pie charts**@license*@author Robert Fleischmann<rendro87@gmail.com>(http://robert-fleischmann.de)*@version 2.1.7**/'
+            '/**!*easy-pie-chart*Lightweight plugin to render simple,animated and retina optimized pie charts**@license*@author Robert Fleischmann<rendro87@gmail.com>(http://robert-fleischmann.de)*@version 2.1.7**/',
         );
-
 
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests

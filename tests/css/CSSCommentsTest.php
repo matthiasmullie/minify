@@ -84,7 +84,7 @@ class CSSCommentsTest extends PHPUnit_Framework_TestCase
      *
      * @test
      *
-     * @expectedException MatthiasMullie\Minify\Exceptions\FileImportException
+     * @expectedException \MatthiasMullie\Minify\Exceptions\FileImportException
      */
     public function fileImportLoop()
     {
@@ -622,24 +622,25 @@ body{
  */',
             '/*! * Bootstrap v4.0.0-alpha.6 (https://getbootstrap.com) * Copyright 2011-2017 The Bootstrap Authors * Copyright 2011-2017 Twitter,Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE) */',
         );
-        $tests[] = array (
+        $tests[] = array(
           '/*!
  * Bootstrap v4.0.0-alpha.6 (https://getbootstrap.com)
  * Copyright 2011-2017 The Bootstrap Authors
  * Copyright 2011-2017 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */@media print{*,::after,::before,blockquote::first-letter,blockquote::first-line,div::first-letter,div::first-line,li::first-letter,li::first-line,p::first-letter,p::first-line{text-shadow:none!important;-webkit-box-shadow:none!important;box-shadow:none!important}',
-            '/*! * Bootstrap v4.0.0-alpha.6 (https://getbootstrap.com) * Copyright 2011-2017 The Bootstrap Authors * Copyright 2011-2017 Twitter,Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE) */@media print{*,::after,::before,blockquote::first-letter,blockquote::first-line,div::first-letter,div::first-line,li::first-letter,li::first-line,p::first-letter,p::first-line{text-shadow:none!important;-webkit-box-shadow:none!important;box-shadow:none!important}'
+            '/*! * Bootstrap v4.0.0-alpha.6 (https://getbootstrap.com) * Copyright 2011-2017 The Bootstrap Authors * Copyright 2011-2017 Twitter,Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE) */@media print{*,::after,::before,blockquote::first-letter,blockquote::first-line,div::first-letter,div::first-line,li::first-letter,li::first-line,p::first-letter,p::first-line{text-shadow:none!important;-webkit-box-shadow:none!important;box-shadow:none!important}',
         );
-        $tests[] = array (
+        $tests[] = array(
             '/*
  * Bootstrap v4.0.0-alpha.6 (https://getbootstrap.com)
  * Copyright 2011-2017 The Bootstrap Authors
  * Copyright 2011-2017 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */@media print{*,::after,::before,blockquote::first-letter,blockquote::first-line,div::first-letter,div::first-line,li::first-letter,li::first-line,p::first-letter,p::first-line{text-shadow:none!important;-webkit-box-shadow:none!important;box-shadow:none!important}',
-            '@media print{*,::after,::before,blockquote::first-letter,blockquote::first-line,div::first-letter,div::first-line,li::first-letter,li::first-line,p::first-letter,p::first-line{text-shadow:none!important;-webkit-box-shadow:none!important;box-shadow:none!important}'
+            '@media print{*,::after,::before,blockquote::first-letter,blockquote::first-line,div::first-letter,div::first-line,li::first-letter,li::first-line,p::first-letter,p::first-line{text-shadow:none!important;-webkit-box-shadow:none!important;box-shadow:none!important}',
         );
+
         return $tests;
     }
 

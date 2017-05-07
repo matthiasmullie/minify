@@ -83,7 +83,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
      *
      * @test
      *
-     * @expectedException MatthiasMullie\Minify\Exceptions\FileImportException
+     * @expectedException \MatthiasMullie\Minify\Exceptions\FileImportException
      */
     public function fileImportLoop()
     {

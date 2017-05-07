@@ -14,7 +14,7 @@ if (file_exists(__DIR__.'/../../../autoload.php')) {
 }
 $minify = new \MatthiasMullie\Minify\Command\MinifyCommand();
 array_splice($argv, 1, 0, $minify->getName());
-$argInput = new \Symfony\Component\Console\Input\ArgvInput(array_merge($argv, array('-t', 'js')));
+$argInput = new \Symfony\Component\Console\Input\ArgvInput($argv);
 $app = new \Symfony\Component\Console\Application();
 $app->add($minify);
 $app->run($argInput);
