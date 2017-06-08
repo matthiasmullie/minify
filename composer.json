@@ -23,6 +23,9 @@
         "phpunit/phpunit": "~4.8",
         "friendsofphp/php-cs-fixer": "~1.0"
     },
+    "suggest": {
+        "psr/cache-implementation": "Cache implementation to use with Minify::cache"
+    },
     "autoload": {
         "psr-4": {
             "MatthiasMullie\\Minify\\": "src/"
