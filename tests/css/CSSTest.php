@@ -588,6 +588,18 @@ body{
             "p{src:url('../../font/archivo_narrow_regular.svg#archivo narrow') format('svg')}",
         );
 
+        // https://github.com/matthiasmullie/minify/issues/183
+        $tests[] = array(
+            ".mce-container,
+.mce-container *,
+.mce-widget,
+.mce-widget *,
+.mce-reset {
+    color: red;
+}",
+            ".mce-container,.mce-container *,.mce-widget,.mce-widget *,.mce-reset{color:red}",
+        );
+
         return $tests;
     }
 
