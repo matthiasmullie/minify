@@ -963,6 +963,26 @@ return el}',
             'label=input.val().replace(/\\\\/g,\'/\').replace(/.*\//,\'\')',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/178
+        $tests[] = array(
+            'lunr.SortedSet.prototype.add = function () {
+  var i, element
+
+  for (i = 0; i < arguments.length; i++) {
+    element = arguments[i]
+    if (~this.indexOf(element)) continue
+    this.elements.splice(this.locationFor(element), 0, element)
+  }
+
+  this.length = this.elements.length
+}',
+            'lunr.SortedSet.prototype.add=function(){var i,element
+for(i=0;i<arguments.length;i++){element=arguments[i]
+if(~this.indexOf(element))continue
+this.elements.splice(this.locationFor(element),0,element)}
+this.length=this.elements.length}',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
