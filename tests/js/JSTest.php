@@ -957,6 +957,12 @@ return el}',
             'q=d/4/b.width()',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/182
+        $tests[] = array(
+            'label = input.val().replace(/\\\\/g, \'/\').replace(/.*\//, \'\');',
+            'label=input.val().replace(/\\\\/g,\'/\').replace(/.*\//,\'\')',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
