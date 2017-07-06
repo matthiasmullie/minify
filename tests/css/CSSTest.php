@@ -600,6 +600,16 @@ body{
             ".mce-container,.mce-container *,.mce-widget,.mce-widget *,.mce-reset{color:red}",
         );
 
+        // https://github.com/matthiasmullie/minify/issues/184
+        $tests[] = array(
+            ".soliloquy-container, .soliloquy-container * {color:red}",
+            ".soliloquy-container,.soliloquy-container *{color:red}",
+        );
+        $tests[] = array(
+            "p{background: transparent url(images/preloader.gif) no-repeat scroll 50% 50%;}",
+            "p{background:transparent url(images/preloader.gif) no-repeat scroll 50% 50%}",
+        );
+
         return $tests;
     }
 
