@@ -80,8 +80,7 @@ class JS extends Minify
      * them. Some end of lines are not the end of a statement, like with these
      * operators.
      *
-     * Note: Most operators are fine, we've only removed !, ++ and --.
-     * There can't be a newline separating ! and whatever it is negating.
+     * Note: Most operators are fine, we've only removed ++ and --.
      * ++ & -- have to be joined with the value they're in-/decrementing.
      *
      * Will be loaded from /data/js/operators_before.txt
@@ -97,7 +96,8 @@ class JS extends Minify
      * them. Some end of lines are not the end of a statement, like when
      * continued by one of these operators on the newline.
      *
-     * Note: Most operators are fine, we've only removed ), ], ++ and --.
+     * Note: Most operators are fine, we've only removed ), ], ++, --, ! and ~.
+     * There can't be a newline separating ! or ~ and whatever it is negating.
      * ++ & -- have to be joined with the value they're in-/decrementing.
      * ) & ] are "special" in that they have lots or usecases. () for example
      * is used for function calls, for grouping, in if () and for (), ...

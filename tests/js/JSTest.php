@@ -983,6 +983,17 @@ this.elements.splice(this.locationFor(element),0,element)}
 this.length=this.elements.length}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/185
+        $tests[] = array(
+            'var thisPos = indexOf(stack, this);
+~thisPos ? stack.splice(thisPos + 1) : stack.push(this)
+~thisPos ? keys.splice(thisPos, Infinity, key) : keys.push(key)
+if (~indexOf(stack, value)) value = cycleReplacer.call(this, key, value)',
+            'var thisPos=indexOf(stack,this);~thisPos?stack.splice(thisPos+1):stack.push(this)
+~thisPos?keys.splice(thisPos,Infinity,key):keys.push(key)
+if(~indexOf(stack,value))value=cycleReplacer.call(this,key,value)',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
