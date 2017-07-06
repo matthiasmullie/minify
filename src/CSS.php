@@ -597,7 +597,7 @@ class CSS extends Minify
     }
 
     /**
-     * Strip comments from source code.
+     * Strip empty tags from source code.
      *
      * @param string $content
      *
