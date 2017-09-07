@@ -1005,6 +1005,69 @@ var str2 = "some other string here";',
 var str1="//this-text-shoudl-remain-intact";var str2="some other string here"',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/189
+        $tests[] = array(
+            '(function() {
+  window.Selector = Class.create({
+    initialize: function(expression) {
+      this.expression = expression.strip();
+    },
+
+    findElements: function(rootElement) {
+      return Prototype.Selector.select(this.expression, rootElement);
+    },
+
+    match: function(element) {
+      return Prototype.Selector.match(element, this.expression);
+    },
+
+    toString: function() {
+      return this.expression;
+    },
+
+    inspect: function() {
+      return "#<Selector: " + this.expression + ">";
+    }
+  });
+
+  Object.extend(Selector, {
+    matchElements: function(elements, expression) {
+      var match = Prototype.Selector.match,
+          results = [];
+
+      for (var i = 0, length = elements.length; i < length; i++) {
+        var element = elements[i];
+        if (match(element, expression)) {
+          results.push(Element.extend(element));
+        }
+      }
+      return results;
+    },
+
+    findElement: function(elements, expression, index) {
+      index = index || 0;
+      var matchIndex = 0, element;
+      for (var i = 0, length = elements.length; i < length; i++) {
+        element = elements[i];
+        if (Prototype.Selector.match(element, expression) && index === matchIndex++) {
+          return Element.extend(element);
+        }
+      }
+    },
+
+    findChildElements: function(element, expressions) {
+      var selector = expressions.toArray().join(\', \');
+      return Prototype.Selector.select(selector, element || document);
+    }
+  });
+})();
+
+function someOtherFunction() {
+}',
+            '(function(){window.Selector=Class.create({initialize:function(expression){this.expression=expression.strip()},findElements:function(rootElement){return Prototype.Selector.select(this.expression,rootElement)},match:function(element){return Prototype.Selector.match(element,this.expression)},toString:function(){return this.expression},inspect:function(){return "#<Selector: "+this.expression+">"}});Object.extend(Selector,{matchElements:function(elements,expression){var match=Prototype.Selector.match,results=[];for(var i=0,length=elements.length;i<length;i++){var element=elements[i];if(match(element,expression)){results.push(Element.extend(element))}}
+return results},findElement:function(elements,expression,index){index=index||0;var matchIndex=0,element;for(var i=0,length=elements.length;i<length;i++){element=elements[i];if(Prototype.Selector.match(element,expression)&&index===matchIndex++){return Element.extend(element)}}},findChildElements:function(element,expressions){var selector=expressions.toArray().join(\', \');return Prototype.Selector.select(selector,element||document)}})})();function someOtherFunction(){}',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
