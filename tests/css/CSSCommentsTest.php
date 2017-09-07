@@ -3,9 +3,9 @@
 use MatthiasMullie\Minify;
 
 /**
- * CSS minifier test case.
+ * CSS minifier test case with comments perverse.
  */
-class CSSTest extends PHPUnit_Framework_TestCase
+class CSSCommentsTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var Minify\CSS
@@ -23,6 +23,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
         $this->minifier = $this->getMockBuilder('\MatthiasMullie\Minify\CSS')
             ->setMethods(array('save'))
             ->getMock();
+        $this->minifier->setLeavePreservedComments(true);
     }
 
     /**
@@ -95,7 +96,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test minifier import configuration methods.
+     * Test minifier configuration methods.
      *
      * @test
      */
@@ -592,57 +593,52 @@ body{
             "p{src:url('../../font/archivo_narrow_regular.svg#archivo narrow') format('svg')}",
             "p{src:url('../../font/archivo_narrow_regular.svg#archivo narrow') format('svg')}",
         );
-
-        // https://github.com/matthiasmullie/minify/issues/183
         $tests[] = array(
-            ".mce-container,
-.mce-container *,
-.mce-widget,
-.mce-widget *,
-.mce-reset {
-    color: red;
-}",
-            ".mce-container,.mce-container *,.mce-widget,.mce-widget *,.mce-reset{color:red}",
-        );
-
-        // https://github.com/matthiasmullie/minify/issues/184
-        $tests[] = array(
-            ".soliloquy-container, .soliloquy-container * {color:red}",
-            ".soliloquy-container,.soliloquy-container *{color:red}",
+            '/* Test comment */',
+            '',
         );
         $tests[] = array(
-            "p{background: transparent url(images/preloader.gif) no-repeat scroll 50% 50%;}",
-            "p{background:transparent url(images/preloader.gif) no-repeat scroll 50% 50%}",
-        );
-
-        // https://github.com/matthiasmullie/minify/issues/191
-        $tests[] = array(
-            "some .weird- selector{display:none}",
-            "some .weird- selector{display:none}",
+            '/*! Test leave comment */',
+            '/*! Test leave comment */',
         );
         $tests[] = array(
-            "p:nth-child( - n + 3 ){display:none}",
-            "p:nth-child(-n+3){display:none}",
+            '/* Leave comment with @preserve */',
+            '/* Leave comment with @preserve */',
         );
         $tests[] = array(
-            "p:nth-child( + 3 ){display:none}",
-            "p:nth-child(+3){display:none}",
+            '/* Leave comment with @license*/',
+            '/* Leave comment with @license*/',
         );
         $tests[] = array(
-            "p:nth-child( n + 3 ){display:none}",
-            "p:nth-child(n+3){display:none}",
+            '/* Remove comment with incorrect tag license */',
+            '',
         );
         $tests[] = array(
-            "p:nth-child( odd ){display:none}",
-            "p:nth-child(odd){display:none}",
+            '/*!
+ * Bootstrap v4.0.0-alpha.6 (https://getbootstrap.com)
+ * Copyright 2011-2017 The Bootstrap Authors
+ * Copyright 2011-2017 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */',
+            '/*! * Bootstrap v4.0.0-alpha.6 (https://getbootstrap.com) * Copyright 2011-2017 The Bootstrap Authors * Copyright 2011-2017 Twitter,Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE) */',
         );
         $tests[] = array(
-            "p:nth-child( n ){display:none}",
-            "p:nth-child(n){display:none}",
+          '/*!
+ * Bootstrap v4.0.0-alpha.6 (https://getbootstrap.com)
+ * Copyright 2011-2017 The Bootstrap Authors
+ * Copyright 2011-2017 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */@media print{*,::after,::before,blockquote::first-letter,blockquote::first-line,div::first-letter,div::first-line,li::first-letter,li::first-line,p::first-letter,p::first-line{text-shadow:none!important;-webkit-box-shadow:none!important;box-shadow:none!important}',
+            '/*! * Bootstrap v4.0.0-alpha.6 (https://getbootstrap.com) * Copyright 2011-2017 The Bootstrap Authors * Copyright 2011-2017 Twitter,Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE) */@media print{*,::after,::before,blockquote::first-letter,blockquote::first-line,div::first-letter,div::first-line,li::first-letter,li::first-line,p::first-letter,p::first-line{text-shadow:none!important;-webkit-box-shadow:none!important;box-shadow:none!important}',
         );
         $tests[] = array(
-            "p:nth-child( -n ){display:none}",
-            "p:nth-child(-n){display:none}",
+            '/*
+ * Bootstrap v4.0.0-alpha.6 (https://getbootstrap.com)
+ * Copyright 2011-2017 The Bootstrap Authors
+ * Copyright 2011-2017 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */@media print{*,::after,::before,blockquote::first-letter,blockquote::first-line,div::first-letter,div::first-line,li::first-letter,li::first-line,p::first-letter,p::first-line{text-shadow:none!important;-webkit-box-shadow:none!important;box-shadow:none!important}',
+            '@media print{*,::after,::before,blockquote::first-letter,blockquote::first-line,div::first-letter,div::first-line,li::first-letter,li::first-line,p::first-letter,p::first-line{text-shadow:none!important;-webkit-box-shadow:none!important;box-shadow:none!important}',
         );
 
         return $tests;

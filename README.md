@@ -84,6 +84,17 @@ Minifies and optionally saves to a file, just like `minify()`, but it also `gzen
 $minifier->gzip('/target/path.js');
 ```
 
+### setLeavePreservedComments($value)
+
+If you want to save comments starting with /*! or contains @license or @preserve tags in minified files.
+Usually this comments contain license information.
+
+Default false.
+
+```php
+$minifier->setLeavePreservedComments(true);
+```
+
 ### setMaxImportSize($size) *(CSS only)*
 
 The CSS minifier will automatically embed referenced files (like images, fonts, ...) into the minified CSS, so they don't have to be fetched over multiple connections.

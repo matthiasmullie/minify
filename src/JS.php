@@ -186,11 +186,17 @@ class JS extends Minify
      */
     protected function stripComments()
     {
-        // single-line comments
-        $this->registerPattern('/\/\/.*$/m', '');
-
-        // multi-line comments
-        $this->registerPattern('/\/\*.*?\*\//s', '');
+        if ($this->leavePreservedComments) {
+            // multi-line comments
+            $this->registerPattern('/\/\*(?!(!.*?\*\/|.*?@license.*?\*\/|.*?@preserve.*?\*\/)).*?\*\//s', '');
+            // single-line comments License can have a URL, so we need to save URLs
+            $this->registerPattern('/(?<!(:))\/\/.*$/m', '');
+        } else {
+            // multi-line comments
+            $this->registerPattern('/\/\*.*?\*\//s', '');
+            // single-line comments
+            $this->registerPattern('/\/\/.*$/m', '');
+        }
     }
 
     /**

@@ -4,6 +4,7 @@
         <testsuite name="Minify test suite">
             <directory suffix="Test.php">tests/css</directory>
             <directory suffix="Test.php">tests/js</directory>
+            <directory suffix="Test.php">tests/cli</directory>
         </testsuite>
     </testsuites>
     <logging>

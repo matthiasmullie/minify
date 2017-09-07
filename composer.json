@@ -16,12 +16,14 @@
     "require": {
         "php": ">=5.3.0",
         "ext-pcre": "*",
-        "matthiasmullie/path-converter": "~1.1"
+        "matthiasmullie/path-converter": "~1.1",
+        "symfony/console": ">=2.0 <3.0"
     },
     "require-dev": {
         "matthiasmullie/scrapbook": "~1.0",
         "phpunit/phpunit": "~4.8",
-        "friendsofphp/php-cs-fixer": "~1.0"
+        "friendsofphp/php-cs-fixer": "~1.0",
+        "mikey179/vfsStream": "~1"
     },
     "suggest": {
         "psr/cache-implementation": "Cache implementation to use with Minify::cache"
