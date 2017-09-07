@@ -610,6 +610,36 @@ body{
             "p{background:transparent url(images/preloader.gif) no-repeat scroll 50% 50%}",
         );
 
+        // https://github.com/matthiasmullie/minify/issues/191
+        $tests[] = array(
+            "some .weird- selector{display:none}",
+            "some .weird- selector{display:none}",
+        );
+        $tests[] = array(
+            "p:nth-child( - n + 3 ){display:none}",
+            "p:nth-child(-n+3){display:none}",
+        );
+        $tests[] = array(
+            "p:nth-child( + 3 ){display:none}",
+            "p:nth-child(+3){display:none}",
+        );
+        $tests[] = array(
+            "p:nth-child( n + 3 ){display:none}",
+            "p:nth-child(n+3){display:none}",
+        );
+        $tests[] = array(
+            "p:nth-child( odd ){display:none}",
+            "p:nth-child(odd){display:none}",
+        );
+        $tests[] = array(
+            "p:nth-child( n ){display:none}",
+            "p:nth-child(n){display:none}",
+        );
+        $tests[] = array(
+            "p:nth-child( -n ){display:none}",
+            "p:nth-child(-n){display:none}",
+        );
+
         return $tests;
     }
 
