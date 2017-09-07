@@ -994,6 +994,17 @@ if (~indexOf(stack, value)) value = cycleReplacer.call(this, key, value)',
 if(~indexOf(stack,value))value=cycleReplacer.call(this,key,value)',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/186
+        $tests[] = array(
+            'd/=60;z("/foo/.")
+/*! This comment should be removed by the minify process */
+
+var str1 = "//this-text-shoudl-remain-intact";
+var str2 = "some other string here";',
+            'd/=60;z("/foo/.")
+var str1="//this-text-shoudl-remain-intact";var str2="some other string here"',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
