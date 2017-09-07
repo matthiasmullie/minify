@@ -1068,6 +1068,38 @@ function someOtherFunction() {
 return results},findElement:function(elements,expression,index){index=index||0;var matchIndex=0,element;for(var i=0,length=elements.length;i<length;i++){element=elements[i];if(Prototype.Selector.match(element,expression)&&index===matchIndex++){return Element.extend(element)}}},findChildElements:function(element,expressions){var selector=expressions.toArray().join(\', \');return Prototype.Selector.select(selector,element||document)}})})();function someOtherFunction(){}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/190
+        $tests[] = array(
+            'function fullwidth_portfolio_carousel_slide( $arrow ) {
+                    var $the_portfolio = $arrow.parents(\'.et_pb_fullwidth_portfolio\'),
+                        $portfolio_items = $the_portfolio.find(\'.et_pb_portfolio_items\'),
+                        $the_portfolio_items = $portfolio_items.find(\'.et_pb_portfolio_item\'),
+                        $active_carousel_group = $portfolio_items.find(\'.et_pb_carousel_group.active\'),
+                        slide_duration = 700,
+                        items = $portfolio_items.data(\'items\'),
+                        columns = $portfolio_items.data(\'portfolio-columns\'),
+                        item_width = $active_carousel_group.innerWidth() / columns, //$active_carousel_group.children().first().innerWidth(),
+                        original_item_width = ( 100 / columns ) + \'%\';
+
+                    if ( \'undefined\' == typeof items ) {
+                        return;
+                    }
+
+                    if ( $the_portfolio.data(\'carouseling\') ) {
+                        return;
+                    }
+
+                    $the_portfolio.data(\'carouseling\', true);
+
+                    $active_carousel_group.children().each(function(){
+                        $(this).css({\'width\': $(this).innerWidth() + 1, \'position\':\'absolute\', \'left\': ( $(this).innerWidth() * ( $(this).data(\'position\') - 1 ) ) });
+                    });
+                }',
+            'function fullwidth_portfolio_carousel_slide($arrow){var $the_portfolio=$arrow.parents(\'.et_pb_fullwidth_portfolio\'),$portfolio_items=$the_portfolio.find(\'.et_pb_portfolio_items\'),$the_portfolio_items=$portfolio_items.find(\'.et_pb_portfolio_item\'),$active_carousel_group=$portfolio_items.find(\'.et_pb_carousel_group.active\'),slide_duration=700,items=$portfolio_items.data(\'items\'),columns=$portfolio_items.data(\'portfolio-columns\'),item_width=$active_carousel_group.innerWidth()/columns,original_item_width=(100/columns)+\'%\';if(\'undefined\'==typeof items){return}
+if($the_portfolio.data(\'carouseling\')){return}
+$the_portfolio.data(\'carouseling\',!0);$active_carousel_group.children().each(function(){$(this).css({\'width\':$(this).innerWidth()+1,\'position\':\'absolute\',\'left\':($(this).innerWidth()*($(this).data(\'position\')-1))})})}',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
