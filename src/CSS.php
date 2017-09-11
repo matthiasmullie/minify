@@ -437,12 +437,14 @@ class CSS extends Minify
              * Urls with `)` (as could happen with data: uris) should also be
              * quoted to avoid being confused for the url() closing parentheses.
              * And urls with a # have also been reported to cause issues.
+             * Urls with quotes inside should also remain escaped.
              *
              * @see https://developer.mozilla.org/nl/docs/Web/CSS/url#The_url()_functional_notation
              * @see https://hg.mozilla.org/mozilla-central/rev/14abca4e7378
+             * @see https://github.com/matthiasmullie/minify/issues/193
              */
             $url = trim($url);
-            if (preg_match('/[\s\)#\x{7f}-\x{9f}]/u', $url)) {
+            if (preg_match('/[\s\)\'"#\x{7f}-\x{9f}]/u', $url)) {
                 $url = $match['quotes'] . $url . $match['quotes'];
             }
 
