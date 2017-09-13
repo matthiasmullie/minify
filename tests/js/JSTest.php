@@ -1115,6 +1115,17 @@ $the_portfolio.data(\'carouseling\',!0);$active_carousel_group.children().each(f
             'if(!0||/^(https?:)?\/\//.test(\'xxx\'))alert(1)',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/196
+        $tests[] = array(
+            'if ( true ) {
+    console.log(true);
+// ...comment number 2 (something with dots?)
+} else {
+    console.log(false);
+}',
+            'if(!0){console.log(!0)}else{console.log(!1)}',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
