@@ -1100,6 +1100,17 @@ if($the_portfolio.data(\'carouseling\')){return}
 $the_portfolio.data(\'carouseling\',!0);$active_carousel_group.children().each(function(){$(this).css({\'width\':$(this).innerWidth()+1,\'position\':\'absolute\',\'left\':($(this).innerWidth()*($(this).data(\'position\')-1))})})}',
         );
 
+        $tests[] = array(
+            'if("some   string" /*or comment*/)/regex/',
+            'if("some   string")/regex/',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/195
+        $tests[] = array(
+            '"function"!=typeof/./&&"object"!=typeof Int8Array',
+            '"function"!=typeof/./&&"object"!=typeof Int8Array',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
