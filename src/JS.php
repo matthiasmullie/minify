@@ -222,14 +222,16 @@ class JS extends Minify
             return $placeholder;
         };
 
-        $pattern = '\/[^=]*?(?<!\\\\)(\\\\\\\\)*\/[gimy]*(?![0-9a-zA-Z\/])';
+        $pattern = '\/.*?(?<!\\\\)(\\\\\\\\)*\/[gimy]*(?![0-9a-zA-Z\/])';
 
         // a regular expression can only be followed by a few operators or some
         // of the RegExp methods (a `\` followed by a variable or value is
         // likely part of a division, not a regex)
+        $keywords = $this->getKeywordsForRegex($this->keywordsReserved, '/');
+        $before = '([=:,;\)\}\(\{]|^|'.implode('|', $keywords).')\s*';
         $after = '[\.,;\)\}]';
         $methods = '\.(exec|test|match|search|replace|split)\(';
-        $this->registerPattern('/'.$pattern.'(?=\s*('.$after.'|'.$methods.'))/', $callback);
+        $this->registerPattern('/'.$before.'\K'.$pattern.'(?=\s*('.$after.'|'.$methods.'))/', $callback);
 
         // 1 more edge case: a regex can be followed by a lot more operators or
         // keywords if there's a newline (ASI) in between, where the operator
