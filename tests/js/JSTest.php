@@ -1110,6 +1110,10 @@ $the_portfolio.data(\'carouseling\',!0);$active_carousel_group.children().each(f
             '"function"!=typeof/./&&"object"!=typeof Int8Array',
             '"function"!=typeof/./&&"object"!=typeof Int8Array',
         );
+        $tests[] = array(
+            'if (true || /^(https?:)?\/\//.test(\'xxx\')) alert(1);',
+            'if(!0||/^(https?:)?\/\//.test(\'xxx\'))alert(1)',
+        );
 
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
