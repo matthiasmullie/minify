@@ -1126,6 +1126,12 @@ $the_portfolio.data(\'carouseling\',!0);$active_carousel_group.children().each(f
             'if(!0){console.log(!0)}else{console.log(!1)}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/197
+        $tests[] = array(
+            'if(!e.allow_html_data_urls&&V.test(k)&&!/^data:image\//i.test(k))return',
+            'if(!e.allow_html_data_urls&&V.test(k)&&!/^data:image\//i.test(k))return',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');

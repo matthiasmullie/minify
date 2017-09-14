@@ -248,7 +248,7 @@ class JS extends Minify
         // of the RegExp methods (a `\` followed by a variable or value is
         // likely part of a division, not a regex)
         $keywords = array('do', 'in', 'new', 'else', 'throw', 'yield', 'delete', 'return',  'typeof');
-        $before = '(?P<before>[=:,;\}\(\{&\|]|^|'.implode('|', $keywords).')';
+        $before = '(?P<before>[=:,;\}\(\{&\|!]|^|'.implode('|', $keywords).')';
         $propertiesAndMethods = array(
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp#Properties
             'prototype',
