@@ -1132,6 +1132,24 @@ $the_portfolio.data(\'carouseling\',!0);$active_carousel_group.children().each(f
             'if(!e.allow_html_data_urls&&V.test(k)&&!/^data:image\//i.test(k))return',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/199
+        $tests[] = array(
+            '// This case was fixed on version 1.3.50
+// function () {
+//    return false;
+// };
+
+// Next two cases failed since version 1.3.49
+// function () {
+//    return false; //.click();
+// };
+
+// function () {
+//    ;//;
+// }',
+            '',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
