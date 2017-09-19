@@ -8,6 +8,23 @@
 [![License](http://img.shields.io/packagist/l/matthiasmullie/minify.svg)](https://github.com/matthiasmullie/minify/blob/master/LICENSE)
 
 
+Removes whitespace, strips comments, combines files (incl. `@import` statements and small assets in CSS files), and optimizes/shortens a few common programming patterns, such as:
+
+**JavaScript**
+* `object['property']` -> `object.property`
+* `true`, `false` -> `!0`, `!1`
+* `while(true)` -> `for(;;)`
+
+**CSS**
+* `@import url("http://path")` -> `@import "http://path"`
+* `#ff0000`, `#ff00ff` -> `red`, `#f0f`
+* `-0px`, `50.00px` -> `0`, `50px`
+* `bold` -> `700`
+* `p {}` -> removed
+
+And it comes with a huge test suite.
+
+
 ## Usage
 
 ### CSS
