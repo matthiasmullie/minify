@@ -18,7 +18,8 @@ install:
   # install ssl
   - IF NOT EXIST "C:\Program Files\OpenSSL" (cinst -y OpenSSL.Light)
   # install php
-  - IF NOT EXIST C:\tools\php (cinst -y php)
+  - ps: Set-Service wuauserv -StartupType Manual # http://help.appveyor.com/discussions/problems/5616-not-able-to-build-due-to-problem-in-chocolateyinstallps1
+  - IF NOT EXIST C:\tools\php (cinst --params '""/InstallDir:C:\tools\php""' -y php)
   - echo extension_dir=ext > C:\tools\php\php.ini
   - echo extension=php_openssl.dll >> C:\tools\php\php.ini
   - echo extension=php_mbstring.dll >> C:\tools\php\php.ini
