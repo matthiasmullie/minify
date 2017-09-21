@@ -12,13 +12,17 @@ WORKDIR /var/www
 COPY . .
 
 # install dependencies
+RUN rm -rf vendor
 RUN composer install
 
 # to support loading the directory as volume, we'll move vendor out of the way so it
 # doesn't get overwritten by more recent code; we'll put it back before running anything
-RUN mv vendor ../vendor
-RUN echo 'cp -r /var/vendor /var/www/vendor && exec "$@"' > /etc/run.sh
-RUN chmod +x /etc/run.sh
+RUN mv vendor ../docker-vendor
+RUN echo 'mv /var/www/vendor /var/current-vendor 2>/dev/null || : && \
+    mv /var/docker-vendor /var/www/vendor && \
+    /bin/sh -c "$@" || : && \
+    mv /var/www/vendor /var/docker-vendor && \
+    mv /var/current-vendor /var/www/vendor 2>/dev/null || :' > /etc/run.sh
 ENTRYPOINT ["/bin/sh", "/etc/run.sh"]
 
 CMD ["vendor/bin/phpunit"]
