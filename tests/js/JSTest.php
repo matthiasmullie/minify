@@ -1150,6 +1150,12 @@ $the_portfolio.data(\'carouseling\',!0);$active_carousel_group.children().each(f
             '',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/204
+        $tests[] = array(
+            'data = data.replace(this.video.reUrlYoutube, iframeStart + \'//www.youtube.com/embed/$1\' + iframeEnd);',
+            'data=data.replace(this.video.reUrlYoutube,iframeStart+\'//www.youtube.com/embed/$1\'+iframeEnd)'
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
