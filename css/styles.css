@@ -215,6 +215,9 @@ Hero
 .hero h1 { font-size: 40px; letter-spacing: 12px; margin: 10px; }
 .hero h1 span { color: #a1a9b0; display: inline-block; }
 .hero p { letter-spacing: 1px; }
+.hero input[type=text], .hero textarea { background-color: rgba(255, 255, 255, 0.5); border: solid 1px #999; padding: 20px; width: 100%; color: #000; }
+.hero input[type=submit], .herobutton { background: rgba(15, 131, 213, 0.5); border: solid 1px rgba(13, 115, 188, 0.5); padding: 20px; color: #fff; text-transform: uppercase; letter-spacing: 1px; transition: all 0.5s ease; -moz-transition: all 0.5s ease; -webkit-transition: all 0.5s ease; -o-transition: all 0.5s ease; }
+.hero input[type=submit]:hover, .herobutton { background: rgba(15, 131, 213, 1); border: solid 1px rgba(13, 115, 188, 1); color: #fff; }
 .learn-more-btn { background: rgba(15, 131, 213, 1); padding: 20px 40px; border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; -o-border-radius: 5px; color: #fff; text-transform: uppercase; letter-spacing: 1px; display: inline-block; -webkit-box-shadow: 0px 3px 0px 0px #0d73bc; -moz-box-shadow: 0px 3px 0px 0px #0d73bc; box-shadow: 0px 3px 0px 0px #0d73bc; margin: 20px 0 0; font-weight: bold; }
 .learn-more-btn:hover, .learn-more-btn:focus { background: rgba(15, 131, 213, 0.6); color: #fff; }
 /* ==========================================================================
@@ -223,9 +226,6 @@ Intro
 .intro { background: #f3f5f8; }
 .intro p { margin: 50px 0 0; }
 h1.arrow { font-size: 15px; text-transform: uppercase; color: #353535; letter-spacing: 1px; background: url('../img/h1-bg.png') no-repeat center bottom; padding-bottom: 30px; font-weight: bold; }
-.intro input[type=text], .intro textarea { background-color: rgba(255, 255, 255, 0.5); border: solid 1px #999; padding: 20px; width: 100%; color: #000; }
-.intro input[type=submit], .intro button { background: rgba(15, 131, 213, 0.5); border: solid 1px rgba(13, 115, 188, 0.5); padding: 20px; color: #fff; text-transform: uppercase; letter-spacing: 1px; transition: all 0.5s ease; -moz-transition: all 0.5s ease; -webkit-transition: all 0.5s ease; -o-transition: all 0.5s ease; }
-.intro input[type=submit]:hover, .intro button { background: rgba(15, 131, 213, 1); border: solid 1px rgba(13, 115, 188, 1); color: #fff; }
 /* ==========================================================================
 Contribute
 ========================================================================== */
