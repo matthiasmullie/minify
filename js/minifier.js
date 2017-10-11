@@ -36,7 +36,7 @@ $(function() {
 	minify = function() {
 		var $form = $('#hero form'),
 			$submitButton = $('#hero input[type=submit]'),
-			$spinner = $('<button><i class="fa fa-spinner fa-spin"></i></button>');
+			$spinner = $('<button class="learn-more-btn"><i class="fa fa-spinner fa-spin"></i></button>');
 
 			$submitButton.replaceWith($spinner);
 
