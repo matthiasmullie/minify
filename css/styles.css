@@ -261,7 +261,7 @@ ul.legals li { display: inline-block; }
 ul.legals li::after { content: " |"; }
 ul.legals li:last-child::after { content: ""; }
 .legals { text-align: left; }
-.credit { text-align: right; }
+.credit { text-align: right; opacity: .7; }
 /* ==========================================================================
 Waypoints
 ========================================================================== */
