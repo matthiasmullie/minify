@@ -1,2 +1,4 @@
-source 'https://rubygems.org'
-gem 'github-pages'
+source "https://rubygems.org"
+ruby RUBY_VERSION
+
+gem "github-pages", group: :jekyll_plugins
