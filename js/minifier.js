@@ -15,7 +15,7 @@ $(function() {
 			}
 		}
 
-		$('#intro input[name=type]').prop('checked', false);
+		$('#hero input[name=type]').prop('checked', false);
 		$('#type_' + extension)
 			.prop('checked', true)
 			.trigger('change');
@@ -23,7 +23,7 @@ $(function() {
 	checkType = function(e) {
 		e.preventDefault();
 
-		var extension = $('#intro input[name=type]:checked').val();
+		var extension = $('#hero input[name=type]:checked').val();
 
 		if (extension) {
 			minify();
@@ -34,8 +34,8 @@ $(function() {
 		}
 	},
 	minify = function() {
-		var $form = $('#intro form'),
-			$submitButton = $('#intro input[type=submit]'),
+		var $form = $('#hero form'),
+			$submitButton = $('#hero input[type=submit]'),
 			$spinner = $('<button><i class="fa fa-spinner fa-spin"></i></button>');
 
 			$submitButton.replaceWith($spinner);
@@ -74,9 +74,9 @@ $(function() {
 	};
 
 	$('#source').on('change, keyup', selectType);
-	$('#intro form').on('submit', checkType);
-	$('#intro input[name=type]').on('change', discardErrorSuccess);
-	$('#intro #source').on('keyup', discardErrorSuccess);
+	$('#hero form').on('submit', checkType);
+	$('#hero input[name=type]').on('change', discardErrorSuccess);
+	$('#hero #source').on('keyup', discardErrorSuccess);
 
 	$('#source').autoExpand();
 });
