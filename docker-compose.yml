@@ -1,0 +1,11 @@
+version: '3'
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/var/www/src
+      - ./data:/var/www/data
+      - ./tests:/var/www/tests
+      - ./phpunit.xml.dist:/var/www/phpunit.xml.dist

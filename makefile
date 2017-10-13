@@ -7,6 +7,13 @@ docs:
 image:
 	docker build -t matthiasmullie/minify .
 
+up:
+	docker-compose up -d php
+
+down:
+	docker-compose stop -t0 php
+
 test:
-	[ ! -z `docker images -q matthiasmullie/minify` ] || make image
-	docker run --rm --name minify -v `pwd`:/var/www matthiasmullie/minify vendor/bin/phpunit
+	[ $(UP) -eq 1 ] && make up || true
+	$(eval cmd='docker-compose run php vendor/bin/phpunit')
+	eval $(cmd); status=$$?; [ $(DOWN) -eq 1 ] && make down; exit $$status
