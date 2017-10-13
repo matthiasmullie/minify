@@ -250,10 +250,6 @@ class JS extends Minify
         $keywords = array('do', 'in', 'new', 'else', 'throw', 'yield', 'delete', 'return',  'typeof');
         $before = '(?P<before>[=:,;\}\(\{&\|!]|^|'.implode('|', $keywords).')';
         $propertiesAndMethods = array(
-            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp#Properties
-            'prototype',
-            'length',
-            'lastIndex',
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp#Properties_2
             'constructor',
             'flags',
@@ -267,10 +263,6 @@ class JS extends Minify
             'compile(',
             'exec(',
             'test(',
-            'match',
-            'replace(',
-            'search(',
-            'split(',
             'toSource(',
             'toString(',
         );
