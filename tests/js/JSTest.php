@@ -1155,6 +1155,21 @@ $the_portfolio.data(\'carouseling\',!0);$active_carousel_group.children().each(f
             'data = data.replace(this.video.reUrlYoutube, iframeStart + \'//www.youtube.com/embed/$1\' + iframeEnd);',
             'data=data.replace(this.video.reUrlYoutube,iframeStart+\'//www.youtube.com/embed/$1\'+iframeEnd)'
         );
+        $tests[] = array(
+            'pattern = /(\/)\'/;
+a = \'b\';',
+            'pattern=/(\/)\'/;a=\'b\'',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/205
+        $tests[] = array(
+            'return { lineComment: parserConfig.slashComments ? "//" : null }',
+            'return{lineComment:parserConfig.slashComments?"//":null}',
+        );
+        $tests[] = array(
+            '\'//\'.match(/\/|\'/);',
+            '\'//\'.match(/\/|\'/)',
+        );
 
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
