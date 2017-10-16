@@ -1,4 +1,13 @@
 <?php
+/**
+ * CSS Minifier
+ *
+ * Please report bugs on https://github.com/matthiasmullie/minify/issues
+ *
+ * @author Matthias Mullie <minify@mullie.eu>
+ * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
+ * @license MIT License
+ */
 
 namespace MatthiasMullie\Minify;
 
@@ -7,10 +16,11 @@ use MatthiasMullie\PathConverter\ConverterInterface;
 use MatthiasMullie\PathConverter\Converter;
 
 /**
- * CSS minifier.
+ * CSS minifier
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
+ * @package Minify
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
@@ -19,12 +29,12 @@ use MatthiasMullie\PathConverter\Converter;
 class CSS extends Minify
 {
     /**
-     * @var int
+     * @var int maximum inport size in kB
      */
     protected $maxImportSize = 5;
 
     /**
-     * @var string[]
+     * @var string[] valid import extensions
      */
     protected $importExtensions = array(
         'gif' => 'data:image/gif',
@@ -276,8 +286,8 @@ class CSS extends Minify
      * Minify the data.
      * Perform CSS optimizations.
      *
-     * @param string[optional] $path    Path to write the data to
-     * @param string[]         $parents Parent paths, for circular reference checks
+     * @param string[optional]   $path    Path to write the data to
+     * @param string[][optional] $parents Parent paths, for circular reference checks
      *
      * @return string The minified data
      */
