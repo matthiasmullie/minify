@@ -1,12 +1,21 @@
 <?php
-
-namespace MatthiasMullie\Minify;
-
 /**
- * JavaScript minifier.
+ * JavaScript minifier
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
+ * @author Matthias Mullie <minify@mullie.eu>
+ * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
+ * @license MIT License
+ */
+namespace MatthiasMullie\Minify;
+
+/**
+ * JavaScript Minifier Class
+ *
+ * Please report bugs on https://github.com/matthiasmullie/minify/issues
+ *
+ * @package Minify
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
