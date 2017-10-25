@@ -120,9 +120,13 @@ class JS extends Minify
     protected $operatorsAfter = array();
 
     /**
+     * Public property so it can be accessed from inside the closure in
+     * extractRegex. Once PHP5.3 compatibility is dropped, we can make this
+     * property protected again.
+     *
      * @var array
      */
-    protected $nestedExtracted = array();
+    public $nestedExtracted = array();
 
     /**
      * {@inheritdoc}
