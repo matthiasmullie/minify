@@ -239,7 +239,7 @@ class JS extends Minify
             // e.g. `if("some   string"/* or comment */)` should become
             //      `if("some   string")`
             if (isset($match['before'])) {
-                $other = new static();
+                $other = new $minifier();
                 $other->extractStrings('\'"`', "$count-");
                 $other->stripComments();
                 $match['before'] = $other->replace($match['before']);
