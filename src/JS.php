@@ -197,8 +197,12 @@ class JS extends Minify
 
     /**
      * Strip comments from source code.
+     *
+     * Public method so it can be accessed from inside the closure in
+     * extractRegex. Once PHP5.3 compatibility is dropped, we can make this
+     * method protected again.
      */
-    protected function stripComments()
+    public function stripComments()
     {
         // single-line comments
         $this->registerPattern('/\/\/.*$/m', '');
@@ -604,5 +608,27 @@ class JS extends Minify
         }
 
         return $content;
+    }
+
+    /**
+     * Protected method in parent made public, so it can be accessed from inside
+     * the closure in extractRegex. Once PHP5.3 compatibility is dropped, we can
+     * remove this.
+     *
+     * {@inheritdoc}
+     */
+    public function extractStrings($chars = '\'"', $placeholderPrefix = '') {
+        parent::extractStrings($chars, $placeholderPrefix);
+    }
+
+    /**
+     * Protected method in parent made public, so it can be accessed from inside
+     * the closure in extractRegex. Once PHP5.3 compatibility is dropped, we can
+     * remove this.
+     *
+     * {@inheritdoc}
+     */
+    public function replace($content) {
+        return parent::replace($content);
     }
 }
