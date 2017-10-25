@@ -1171,6 +1171,12 @@ a = \'b\';',
             '\'//\'.match(/\/|\'/)',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/209
+        $tests[] = array(
+            'var my_regexes = [/[a-z]{3}\//g, \'a string\', 1];',
+            'var my_regexes=[/[a-z]{3}\//g,\'a string\',1]',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
