@@ -247,7 +247,7 @@ class JS extends Minify
                 $other->extractStrings('\'"`', "$count-");
                 $other->stripComments();
                 $match['before'] = $other->replace($match['before']);
-                $this->nestedExtracted += $other->extracted;
+                $minifier->nestedExtracted += $other->extracted;
             }
 
             return (isset($match['before']) ? $match['before'] : '').
