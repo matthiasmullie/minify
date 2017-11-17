@@ -646,7 +646,7 @@ body{
             ".swiper-button-prev{background-image:url(\"data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M27%2C22L27%2C22L5%2C44l-2.1-2.1L22.8%2C22L2.9%2C2.1L5%2C0L27%2C22L27%2C22z'%20fill%3D'%23fff'%2F%3E%3C%2Fsvg%3E\");right:10px;left:auto}",
         );
 
-        // https://github.com/matthiasmullie/minify/issues/193
+        // https://github.com/matthiasmullie/minify/issues/210
         $tests[] = array(
             '/*xs*/
 @media (max-width: 767px) {
@@ -661,6 +661,16 @@ body{
 /*lg*/
 @media (min-width: 1200px) {}',
             '@media (max-width:767px){.basket_ad{margin-top:0}}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/212
+        $tests[] = array(
+            'p{color:#000000}',
+            'p{color:#000}',
+        );
+        $tests[] = array(
+            'p{border:0.5px solid red}',
+            'p{border:.5px solid red}',
         );
 
         return $tests;
