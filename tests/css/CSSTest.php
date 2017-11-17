@@ -673,6 +673,16 @@ body{
             'p{border:.5px solid red}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/215
+        $tests[] = array(
+            '@import "http://minify.dev/?a=1&amp;b=some/*lala*/thing";p{color:red}',
+            '@import "http://minify.dev/?a=1&amp;b=some/*lala*/thing";p{color:red}',
+        );
+        $tests[] = array(
+            'p{color:red};@import "http://minify.dev/?a=1&amp;b=some/*lala*/thing"',
+            '@import "http://minify.dev/?a=1&amp;b=some/*lala*/thing";p{color:red}',
+        );
+
         return $tests;
     }
 
