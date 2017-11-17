@@ -1189,6 +1189,13 @@ a = \'b\';',
             'if(last){for(i=1;i<3;i++);}else if(first){for(i in list);}else{while(this.rm(name,check,!1));}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/214
+        $tests[] = array(
+            '/\/|\'/;
+\'.ctd_panel_content .ctd_preview\';',
+            '/\/|\'/;\'.ctd_panel_content .ctd_preview\'',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
