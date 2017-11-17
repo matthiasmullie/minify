@@ -617,7 +617,10 @@ class CSS extends Minify
      */
     protected function stripEmptyTags($content)
     {
-        return preg_replace('/(^|\}|;)[^\{\};]+\{\s*\}/', '\\1', $content);
+        $content = preg_replace('/(?<=^)[^\{\};]+\{\s*\}/', '', $content);
+        $content = preg_replace('/(?<=(\}|;))[^\{\};]+\{\s*\}/', '', $content);
+
+        return $content;
     }
 
     /**
