@@ -1177,6 +1177,18 @@ a = \'b\';',
             'var my_regexes=[/[a-z]{3}\//g,\'a string\',1]',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/211
+        $tests[] = array(
+            'if (last){
+  for(i=1;i<3;i++);
+} else if (first){
+  for(i in list);
+} else {
+  while(this.rm(name, check, false));
+}',
+            'if(last){for(i=1;i<3;i++);}else if(first){for(i in list);}else{while(this.rm(name,check,!1));}',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');

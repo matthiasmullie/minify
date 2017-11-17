@@ -157,19 +157,6 @@ class JS extends Minify
     {
         $content = '';
 
-        // loop files
-        foreach ($this->data as $source => $js) {
-            /*
-             * Combine js: separating the scripts by a ;
-             * I'm also adding a newline: it will be eaten when whitespace is
-             * stripped, but we need to make sure we're not just appending
-             * a new script right after a previous script that ended with a
-             * singe-line comment on the last line (in which case it would also
-             * be seen as part of that comment)
-             */
-            $content .= $js."\n;";
-        }
-
         /*
          * Let's first take out strings, comments and regular expressions.
          * All of these can contain JS code-like characters, and we should make
@@ -184,11 +171,24 @@ class JS extends Minify
         $this->extractStrings('\'"`');
         $this->stripComments();
         $this->extractRegex();
-        $content = $this->replace($content);
 
-        $content = $this->propertyNotation($content);
-        $content = $this->shortenBools($content);
-        $content = $this->stripWhitespace($content);
+        // loop files
+        foreach ($this->data as $source => $js) {
+            // take out strings, comments & regex (for which we've registered
+            // the regexes just a few lines earlier)
+            $js = $this->replace($js);
+
+            $js = $this->propertyNotation($js);
+            $js = $this->shortenBools($js);
+            $js = $this->stripWhitespace($js);
+
+            // combine js: separating the scripts by a ;
+            $content .= $js.";";
+        }
+
+        // clean up leftover `;`s from the combination of multiple scripts
+        $content = ltrim($content, ';');
+        $content = substr($content, 0, -1);
 
         /*
          * Earlier, we extracted strings & regular expressions and replaced them
@@ -413,12 +413,13 @@ class JS extends Minify
          * semicolon), like: `for(i=1;i<3;i++);`, of `for(i in list);`
          * Here, nothing happens during the loop; it's just used to keep
          * increasing `i`. With that ; omitted, the next line would be expected
-         * to be the for-loop's body...
+         * to be the for-loop's body... Same goes for while loops.
          * I'm going to double that semicolon (if any) so after the next line,
          * which strips semicolons here & there, we're still left with this one.
          */
         $content = preg_replace('/(for\([^;\{]*;[^;\{]*;[^;\{]*\));(\}|$)/s', '\\1;;\\2', $content);
         $content = preg_replace('/(for\([^;\{]+\s+in\s+[^;\{]+\));(\}|$)/s', '\\1;;\\2', $content);
+        $content = preg_replace('/(while\([^;\{]+\));(\}|$)/s', '\\1;;\\2', $content); // @todo: no if part of a do{}while()
 
         /*
          * We also can't strip empty else-statements. Even though they're
