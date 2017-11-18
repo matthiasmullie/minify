@@ -88,7 +88,7 @@ class CSS extends Minify
     {
         if (preg_match_all('/(;?)(@import (?<url>url\()?(?P<quotes>["\']?).+?(?P=quotes)(?(url)\)))/', $content, $matches)) {
             // remove from content
-            foreach ($matches[0] as $i => $import) {
+            foreach ($matches[0] as $import) {
                 $content = str_replace($import, '', $content);
             }
 
