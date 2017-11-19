@@ -683,6 +683,12 @@ body{
             '@import "http://minify.dev/?a=1&amp;b=some/*lala*/thing";p{color:red}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/216
+        $tests[] = array(
+            '.link-wrapper a:before{content:"Click for Download";}',
+            '.link-wrapper a:before{content:"Click for Download"}',
+        );
+
         return $tests;
     }
 
