@@ -451,31 +451,31 @@ only screen and (min-device-pixel-ratio: 1.5) {
         // https://github.com/matthiasmullie/minify/issues/137
         $tests[] = array(
             'p{width: calc(35% - 0px);}',
-            'p{width:calc(35%)}',
+            'p{width:calc(35% - 0px)}',
         );
         $tests[] = array(
             'p{width: calc(0px + 35%);}',
-            'p{width:calc(35%)}',
+            'p{width:calc(0px + 35%)}',
         );
         $tests[] = array(
             'p{width: calc(0px - 35%);}',
-            'p{width:calc(-35%)}',
+            'p{width:calc(0px - 35%)}',
         );
         $tests[] = array(
             'p{width: calc(0px + 35% - 0px);}',
-            'p{width:calc(35%)}',
+            'p{width:calc(0px + 35% - 0px)}',
         );
         $tests[] = array(
             'p{width: calc(5% + 0px + 35% - 0px + 5%);}',
-            'p{width:calc(5% + 35% + 5%)}',
+            'p{width:calc(5% + 0px + 35% - 0px + 5%)}',
         );
         $tests[] = array(
             'p{width:calc(35% + (10% + 0px))}',
-            'p{width:calc(35% + (10%))}',
+            'p{width:calc(35% + (10% + 0px))}',
         );
         $tests[] = array(
             'p{width:calc(35% + (10% + 0px + 10%))}',
-            'p{width:calc(35% + (10% + 10%))}',
+            'p{width:calc(35% + (10% + 0px + 10%))}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/139
@@ -687,6 +687,20 @@ body{
         $tests[] = array(
             '.link-wrapper a:before{content:"Click for Download";}',
             '.link-wrapper a:before{content:"Click for Download"}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/217
+        $tests[] = array(
+            'div { background:url("sprite.svg") calc(-192px * 1) calc(0px * 1) no-repeat; }',
+            'div{background:url(sprite.svg) calc(-192px * 1) calc(0px * 1) no-repeat}',
+        );
+        $tests[] = array(
+            'div { background:url("sprite.svg") calc((-192px - 60px) * 0) calc(0px * 1) no-repeat; }',
+            'div{background:url(sprite.svg) calc((-192px - 60px) * 0) calc(0px * 1) no-repeat}',
+        );
+        $tests[] = array(
+            'div{border:calc((-192px - 60px) * 0) calc(0px * 1) calc(5px + (2px + (0px * 1) + 5px) * 3) calc(0px - 0px) solid red}',
+            'div{border:calc((-192px - 60px) * 0) calc(0px * 1) calc(5px + (2px + (0px * 1) + 5px) * 3) calc(0px - 0px) solid red}',
         );
 
         return $tests;

@@ -553,6 +553,16 @@ class CSS extends Minify
      */
     protected function shortenZeroes($content)
     {
+        // we don't want to strip units in `calc()` expressions:
+        // `5px - 0px` is valid, but `5px - 0` is not
+        // `10px * 0` is valid (equates to 0), and so is `10 * 0px`, but
+        // `10 * 0` is invalid
+        // best to just leave `calc()`s alone, even if they could be optimized
+        // (which is a whole other undertaking, where units & order of
+        // operations all need to be considered...)
+        $calcs = $this->findCalcs($content);
+        $content = str_replace($calcs, array_keys($calcs), $content);
+
         // reusable bits of code throughout these regexes:
         // before & after are used to make sure we don't match lose unintended
         // 0-like values (e.g. in #000, or in http://url/1.0)
@@ -581,29 +591,14 @@ class CSS extends Minify
         // strip negative zeroes (-0 -> 0) & truncate zeroes (00 -> 0)
         $content = preg_replace('/'.$before.'-?0+'.$units.'?'.$after.'/', '0\\1', $content);
 
-        // remove zeroes where they make no sense in calc: e.g. calc(100px - 0)
-        // the 0 doesn't have any effect, and this isn't even valid without unit
-        // strip all `+ 0` or `- 0` occurrences: calc(10% + 0) -> calc(10%)
-        // looped because there may be multiple 0s inside 1 group of parentheses
-        do {
-            $previous = $content;
-            $content = preg_replace('/\(([^\(\)]+) [\+\-] 0( [^\(\)]+)?\)/', '(\\1\\2)', $content);
-        } while ($content !== $previous);
-        // strip all `0 +` occurrences: calc(0 + 10%) -> calc(10%)
-        $content = preg_replace('/\(0 \+ ([^\(\)]+)\)/', '(\\1)', $content);
-        // strip all `0 -` occurrences: calc(0 - 10%) -> calc(-10%)
-        $content = preg_replace('/\(0 \- ([^\(\)]+)\)/', '(-\\1)', $content);
-        // I'm not going to attempt to optimize away `x * 0` instances:
-        // it's dumb enough code already that it likely won't occur, and it's
-        // too complex to do right (order of operations would have to be
-        // respected etc)
-        // what I cared about most here was fixing incorrectly truncated units
-
         // IE doesn't seem to understand a unitless flex-basis value, so let's
         // add it in again (make it `%`, which is only 1 char: 0%, 0px, 0
         // anything, it's all just the same)
         $content = preg_replace('/flex:([^ ]+ [^ ]+ )0([;\}])/', 'flex:${1}0%${2}', $content);
         $content = preg_replace('/flex-basis:0([;\}])/', 'flex-basis:0%${1}', $content);
+
+        // restore `calc()` expressions
+        $content = str_replace(array_keys($calcs), $calcs, $content);
 
         return $content;
     }
@@ -665,6 +660,39 @@ class CSS extends Minify
         $content = str_replace(';}', '}', $content);
 
         return trim($content);
+    }
+
+    /**
+     * Find all `calc()` occurrences.
+     *
+     * @param string $content The CSS content to find `calc()`s in.
+     *
+     * @return string[]
+     */
+    protected function findCalcs($content)
+    {
+        $results = array();
+        preg_match_all('/calc(\(.+?)(?=$|;|calc\()/', $content, $matches, PREG_SET_ORDER);
+
+        foreach ($matches as $match) {
+            $length = strlen($match[1]);
+            $expr = '';
+            $opened = 0;
+
+            for ($i = 0; $i < $length; $i++) {
+                $char = $match[1][$i];
+                $expr .= $char;
+                if ($char === '(') {
+                    $opened++;
+                } elseif ($char === ')' && --$opened === 0) {
+                    break;
+                }
+            }
+
+            $results['calc('.count($results).')'] = 'calc'.$expr;
+        }
+
+        return $results;
     }
 
     /**
