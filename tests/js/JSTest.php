@@ -1196,6 +1196,31 @@ a = \'b\';',
             '/\/|\'/;\'.ctd_panel_content .ctd_preview\'',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/218
+        $tests[] = array(
+            "inside: {
+    'rule': /@[\w-]+/
+    // See rest below
+}",
+            "inside:{'rule':/@[\w-]+/}",
+        );
+        $tests[] = array(
+            "inside: {
+    'rule': /@[\w-]+/ // See rest below
+}",
+            "inside:{'rule':/@[\w-]+/}",
+        );
+        $tests[] = array(
+            "inside: {
+    'rule': /@[\w-]+/// See rest below
+}",
+            "inside:{'rule':/@[\w-]+/}",
+        );
+        $tests[] = array(
+            "(1 + 2) / 3 / 4",
+            "(1+2)/3/4",
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
