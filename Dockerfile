@@ -1,4 +1,5 @@
-FROM php:cli
+ARG version=cli
+FROM php:$version
 
 COPY . /var/www
 WORKDIR /var/www

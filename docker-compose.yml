@@ -1,4 +1,4 @@
-version: '3'
+version: '2.1'
 services:
   php:
     build:
@@ -9,3 +9,23 @@ services:
       - ./data:/var/www/data
       - ./tests:/var/www/tests
       - ./phpunit.xml.dist:/var/www/phpunit.xml.dist
+  '7.2':
+    extends: php
+    build:
+      args:
+        version: 7.2-cli
+  '7.1':
+    extends: php
+    build:
+      args:
+        version: 7.1-cli
+  '7.0':
+    extends: php
+    build:
+      args:
+        version: 7.0-cli
+  '5.6':
+    extends: php
+    build:
+      args:
+        version: 5.6-cli
