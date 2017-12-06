@@ -1188,6 +1188,14 @@ a = \'b\';',
 }',
             'if(last){for(i=1;i<3;i++);}else if(first){for(i in list);}else{while(this.rm(name,check,!1));}',
         );
+        $tests[] = array(
+            'if(0){do{}while(1)}',
+            'if(0){do{}while(1)}',
+        );
+        $tests[] = array(
+            'if(0){do{}while(1);}',
+            'if(0){do{}while(1);}',
+        );
 
         // https://github.com/matthiasmullie/minify/issues/214
         $tests[] = array(

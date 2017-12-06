@@ -373,7 +373,13 @@ class JS extends Minify
          */
         $content = preg_replace('/(for\([^;\{]*;[^;\{]*;[^;\{]*\));(\}|$)/s', '\\1;;\\2', $content);
         $content = preg_replace('/(for\([^;\{]+\s+in\s+[^;\{]+\));(\}|$)/s', '\\1;;\\2', $content);
-        $content = preg_replace('/(while\([^;\{]+\));(\}|$)/s', '\\1;;\\2', $content); // @todo: no if part of a do{}while()
+        /*
+         * Below will also keep `;` after a `do{}while();` along with `while();`
+         * While these could be stripped after do-while, detecting this
+         * distinction is cumbersome, so I'll play it safe and make sure `;`
+         * after any kind of `while` is kept.
+         */
+        $content = preg_replace('/(while\([^;\{]+\));(\}|$)/s', '\\1;;\\2', $content);
 
         /*
          * We also can't strip empty else-statements. Even though they're
