@@ -345,6 +345,12 @@ class JS extends Minify
         $content = preg_replace('/[^\S\n]+('.implode('|', $operatorsDiffAfter).')/', '\\1', $content);
 
         /*
+         * Whitespace after `return` can be omitted in a few occasions
+         * (such as when followed by a string or regex)
+         */
+        $content = preg_replace('/\breturn\s+(["\'\/\+\-])/', 'return$1', $content);
+
+        /*
          * Get rid of double semicolons, except where they can be used like:
          * "for(v=1,_=b;;)", "for(v=1;;v++)" or "for(;;ja||(ja=true))".
          * I'll safeguard these double semicolons inside for-loops by
