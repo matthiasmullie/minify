@@ -236,7 +236,7 @@ class JS extends Minify
         // one being escaped)
         // this should allow all chars, except for an unescaped `/` (= the one
         // closing the regex)
-        $pattern = '\\/([^\\/\\\\]|\\\\.)+\\/[gimy]*';
+        $pattern = '\\/([^\\/\\\\]*+|(\\\\.)*+)+\\/[gimy]*';
 
         // a regular expression can only be followed by a few operators or some
         // of the RegExp methods (a `\` followed by a variable or value is
