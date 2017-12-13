@@ -58,6 +58,55 @@
 <body id="top">
 {% include ga.html %}
 <header id="home">
+	<style>
+		.projects-bar {
+			font-family: Arial, sans-serif;
+			font-size: 14px;
+			background: #222;
+			width: 100%;
+			overflow: auto;
+		}
+		.projects-bar:after {
+			content: "";
+			clear: both;
+			display: table;
+		}
+		.projects-bar a:last-child {
+			float: right;
+		}
+		.projects-bar a {
+			display: inline-block;
+			color: #ccc;
+			line-height: 40px;
+			padding: 5px 25px 0;
+			text-decoration: none;
+		}
+		.projects-bar a:hover {
+			color: #fff;
+		}
+		.projects-bar a.active {
+			border-bottom: 5px solid #ccc;
+		}
+		.projects-bar a img {
+			height: 20px;
+			display: inline;
+			vertical-align: middle;
+			width: auto;
+		}
+		@media (max-width: 767px) {
+			.projects-bar a {
+				display: inline-block;
+				color: #ccc;
+				line-height: 30px;
+			}
+		}
+	</style>
+	<div class="projects-bar">
+		<a href="https://www.minifier.org" title="JS &amp; CSS minifier" class="active">JS &amp; CSS minifier</a>
+		<a href="https://www.scrapbook.cash" title="Scrapbook cache library">Scrapbook cache library</a>
+		<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=73CVYMBETDAP4">Support Minify: <img src="https://www.mullie.eu/public/donate.jpg"></a>
+	</div>
+
 	<section class="hero" id="hero">
 		<div class="container">
 			<div class="row">
