@@ -1234,6 +1234,10 @@ a = \'b\';',
             '$export.F*/Version\/10\.\d+(\.\d+)? Safari\//.test(userAgent)',
             '$export.F*/Version\/10\.\d+(\.\d+)? Safari\//.test(userAgent)',
         );
+        $tests[] = array(
+            'new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/)',
+            'new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/)',
+        );
 
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
