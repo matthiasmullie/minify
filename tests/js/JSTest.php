@@ -1229,6 +1229,12 @@ a = \'b\';',
             "(1+2)/3/4",
         );
 
+        // https://github.com/matthiasmullie/minify/issues/221
+        $tests[] = array(
+            '$export.F*/Version\/10\.\d+(\.\d+)? Safari\//.test(userAgent)',
+            '$export.F*/Version\/10\.\d+(\.\d+)? Safari\//.test(userAgent)',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
