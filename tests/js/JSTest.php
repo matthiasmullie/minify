@@ -1239,6 +1239,12 @@ a = \'b\';',
             'new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/)',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/227
+        $tests[] = array(
+            __DIR__.'/sample/bugs/227/original.js',
+            file_get_contents(__DIR__.'/sample/bugs/227/minified.js'),
+        );
+
         // https://github.com/matthiasmullie/minify/issues/229
         $tests[] = array(
             '// Source: wp-includes/js/twemoji.min.js
