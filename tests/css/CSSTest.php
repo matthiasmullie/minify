@@ -703,6 +703,15 @@ body{
             'div{border:calc((-192px - 60px) * 0) calc(0px * 1) calc(5px + (2px + (0px * 1) + 5px) * 3) calc(0px - 0px) solid red}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/235
+        $tests[] = array(
+            '#site-header.medium-header .top-col.logo-col{
+    -webkit-flex: auto 0 0;
+    flex: auto 0 0;
+}',
+            '#site-header.medium-header .top-col.logo-col{-webkit-flex:auto 0 0;flex:auto 0 0}',
+        );
+
         return $tests;
     }
 
