@@ -246,13 +246,13 @@ abstract class Minify
                 }
 
                 $match = null;
-                if (preg_match($pattern, $content, $match)) {
+                if (preg_match($pattern, $content, $match, PREG_OFFSET_CAPTURE)) {
                     $matches[$i] = $match;
 
                     // we'll store the match position as well; that way, we
                     // don't have to redo all preg_matches after changing only
                     // the first (we'll still know where those others are)
-                    $positions[$i] = strpos($content, $match[0]);
+                    $positions[$i] = $match[0][1];
                 } else {
                     // if the pattern couldn't be matched, there's no point in
                     // executing it again in later runs on this same content;
@@ -273,7 +273,7 @@ abstract class Minify
             // other found was not inside what the first found)
             $discardLength = min($positions);
             $firstPattern = array_search($discardLength, $positions);
-            $match = $matches[$firstPattern][0];
+            $match = $matches[$firstPattern][0][0];
 
             // execute the pattern that matches earliest in the content string
             list($pattern, $replacement) = $this->patterns[$firstPattern];

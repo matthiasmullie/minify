@@ -1251,6 +1251,16 @@ a = \'b\';',
             file_get_contents(__DIR__.'/sample/bugs/229/minified.js'),
         );
 
+        // https://github.com/matthiasmullie/minify/issues/231
+        $tests[] = array(
+            'var x = (2 + 2) / 2; /// =2',
+            'var x=(2+2)/2',
+        );
+        $tests[] = array(
+            'if(1)/real + regex/.test("real   regex")',
+            'if(1)/real + regex/.test("real   regex")',
+        );
+
         // https://github.com/matthiasmullie/minify/issues/234
         $tests[] = array(
             'if ( !item.hasClass(\'megamenu\') && (menuPositionX + subMenuWidth) > ( windowWidth - containerWidth )/2 + containerWidth) {

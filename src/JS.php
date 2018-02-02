@@ -244,7 +244,7 @@ class JS extends Minify
         // of the RegExp methods (a `\` followed by a variable or value is
         // likely part of a division, not a regex)
         $keywords = array('do', 'in', 'new', 'else', 'throw', 'yield', 'delete', 'return',  'typeof');
-        $before = '([=:,;\+\-\*\/\}\(\{\[&\|!\)]|^|'.implode('|', $keywords).')\s*';
+        $before = '([=:,;\+\-\*\/\}\(\{\[&\|!]|^|'.implode('|', $keywords).')\s*';
         $propertiesAndMethods = array(
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp#Properties_2
             'constructor',
@@ -265,6 +265,21 @@ class JS extends Minify
         $delimiters = array_fill(0, count($propertiesAndMethods), '/');
         $propertiesAndMethods = array_map('preg_quote', $propertiesAndMethods, $delimiters);
         $after = '(?=\s*[\.,;\)\}&\|+]|\/\/|$|\.('.implode('|', $propertiesAndMethods).'))';
+        $this->registerPattern('/'.$before.'\K'.$pattern.$after.'/', $callback);
+
+        // regular expressions following a `)` are rather annoying to detect...
+        // quite often, `/` after `)` is a division operator & if it happens to
+        // be followed by another one (or a comment), it is likely to be
+        // confused for a regular expression
+        // however, it's perfectly possible for a regex to follow a `)`: after
+        // a single-line `if()`, `while()`, ... statement, for example
+        // since, when they occur like that, they're always the start of a
+        // statement, there's only a limited amount of ways they can be useful:
+        // by calling the regex methods directly
+        // if a regex following `)` is not followed by `.<property or method>`,
+        // it's quite likely not a regex
+        $before = '\)\s*';
+        $after = '(?=\s*\.('.implode('|', $propertiesAndMethods).'))';
         $this->registerPattern('/'.$before.'\K'.$pattern.$after.'/', $callback);
 
         // 1 more edge case: a regex can be followed by a lot more operators or

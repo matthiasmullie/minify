@@ -17,5 +17,5 @@ down:
 
 test:
 	[ $(UP) -eq 1 ] && make up || true
-	$(eval cmd='docker-compose run $(PHP) vendor/bin/phpunit tests/js/JSTest.php')
+	$(eval cmd='docker-compose run $(PHP) vendor/bin/phpunit')
 	eval $(cmd); status=$$?; [ $(DOWN) -eq 1 ] && make down; exit $$status
