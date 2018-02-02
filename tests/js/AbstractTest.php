@@ -7,7 +7,7 @@ use MatthiasMullie\Scrapbook\Psr6\Pool;
 /**
  * Tests common functions of abstract Minify class by using JS implementation.
  */
-class CommonTest extends PHPUnit_Framework_TestCase
+class AbstractTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @test
