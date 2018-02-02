@@ -281,7 +281,7 @@ abstract class Minify
 
             // figure out which part of the string was unmatched; that's the
             // part we'll execute the patterns on again next
-            $content = substr($content, $discardLength);
+            $content = (string) substr($content, $discardLength);
             $unmatched = (string) substr($content, strpos($content, $match) + strlen($match));
 
             // move the replaced part to $processed and prepare $content to

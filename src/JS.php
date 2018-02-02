@@ -179,7 +179,7 @@ class JS extends Minify
 
         // clean up leftover `;`s from the combination of multiple scripts
         $content = ltrim($content, ';');
-        $content = substr($content, 0, -1);
+        $content = (string) substr($content, 0, -1);
 
         /*
          * Earlier, we extracted strings & regular expressions and replaced them
