@@ -257,9 +257,7 @@ statement',
              else
              {
              }',
-            'if(!0)
-{}
-else{}',
+            'if(!0){}else{}',
         );
         $tests[] = array(
             'do
@@ -376,9 +374,7 @@ else statement',
                 // already a text element
                 else newElement = currentElement;
 ',
-            'if(currentElement.attr(\'type\')!=\'text\')
-{currentElement.remove()}
-else newElement=currentElement',
+            'if(currentElement.attr(\'type\')!=\'text\'){currentElement.remove()}else newElement=currentElement',
         );
         $tests[] = array(
             'var jsBackend =
@@ -514,10 +510,8 @@ function foo (a, b)
 {
     return a / b;
 }',
-            'function foo(a,b)
-{return a/b}
-function foo(a,b)
-{return a/b}',
+            'function foo(a,b){return a/b}
+function foo(a,b){return a/b}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/15
@@ -803,8 +797,7 @@ BUG
 func()
 { alert(\'hey\'); }',
             'function func(){}
-func()
-{alert(\'hey\')}',
+func(){alert(\'hey\')}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/133

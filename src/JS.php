@@ -364,8 +364,12 @@ class JS extends Minify
         /*
          * Whitespace after `return` can be omitted in a few occasions
          * (such as when followed by a string or regex)
+         * Same for whitespace in between `)` and `{`, or between `{` and some
+         * keywords.
          */
         $content = preg_replace('/\breturn\s+(["\'\/\+\-])/', 'return$1', $content);
+        $content = preg_replace('/\)\s+\{/', '){', $content);
+        $content = preg_replace('/}\n(else|catch|finally)\b/', '}$1', $content);
 
         /*
          * Get rid of double semicolons, except where they can be used like:
