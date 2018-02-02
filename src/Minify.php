@@ -405,6 +405,16 @@ abstract class Minify
      */
     protected function canImportFile($path)
     {
+        $parsed = parse_url($path);
+        if (
+            // file is elsewhere
+            isset($parsed['host']) ||
+            // file responds to queries (may change, or need to bypass cache)
+            isset($parsed['query'])
+        ) {
+            return false;
+        }
+
         return strlen($path) < PHP_MAXPATHLEN && @is_file($path) && is_readable($path);
     }
 
