@@ -1,4 +1,6 @@
 PHP ?= '7.2'
+UP ?= 1
+DOWN ?= 1
 
 docs:
 	wget http://apigen.org/apigen.phar
