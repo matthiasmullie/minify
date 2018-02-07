@@ -287,9 +287,10 @@ class CSS extends Minify
      * Perform CSS optimizations.
      *
      * @param string[optional] $path    Path to write the data to
-     * @param string[]         $parents Parent paths, for circular reference checks
+     * @param string[] $parents Parent paths, for circular reference checks
      *
      * @return string The minified data
+     * @throws FileImportException
      */
     public function execute($path = null, $parents = array())
     {
@@ -336,6 +337,37 @@ class CSS extends Minify
         }
 
         $content = $this->moveImportsToTop($content);
+
+        /*
+         * After getting the merged data of all css files
+         * this method here will remove duplicate css selectors
+         * for instance, a user might add two css files like default.css & default.css?v=1
+         * both files contain the same selectors "body {font-family: xxx}"
+         * this method will deal with those duplicates and remove them from the final content.
+         */
+        $content = $this->removeDuplicates($content);
+
+        return $content;
+    }
+
+    /**
+     * Remove Duplicate CSS Selectors
+     * for example if there is duplicate body{font-size:13px}
+     * this method will return one selector
+     *
+     * @param $content
+     * @return string
+     */
+    private function removeDuplicates($content)
+    {
+
+        // Collect Selectors
+        preg_match_all('/(?ims)([a-z0-9, \s\.\:#_\-@]+)\{([^\}]*)\}/', $content, $selectors);
+
+        if (isset($selectors[0]))
+
+            // return a unique array of selectors and implode it into a string
+            return implode(null, array_unique($selectors[0]));
 
         return $content;
     }
