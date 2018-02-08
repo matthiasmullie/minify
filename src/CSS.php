@@ -37,16 +37,16 @@ class CSS extends Minify
      * @var string[] valid import extensions
      */
     protected $importExtensions = array(
-        'gif' => 'data:image/gif',
-        'png' => 'data:image/png',
-        'jpe' => 'data:image/jpeg',
-        'jpg' => 'data:image/jpeg',
+        'gif'  => 'data:image/gif',
+        'png'  => 'data:image/png',
+        'jpe'  => 'data:image/jpeg',
+        'jpg'  => 'data:image/jpeg',
         'jpeg' => 'data:image/jpeg',
-        'svg' => 'data:image/svg+xml',
+        'svg'  => 'data:image/svg+xml',
         'woff' => 'data:application/x-font-woff',
-        'tif' => 'image/tiff',
+        'tif'  => 'image/tiff',
         'tiff' => 'image/tiff',
-        'xbm' => 'image/x-xbitmap',
+        'xbm'  => 'image/x-xbitmap',
     );
 
     /**
@@ -93,7 +93,7 @@ class CSS extends Minify
             }
 
             // add to top
-            $content = implode(';', $matches[2]).';'.trim($content, ';');
+            $content = implode(';', $matches[2]) . ';' . trim($content, ';');
         }
 
         return $content;
@@ -105,8 +105,8 @@ class CSS extends Minify
      * @import's will be loaded and their content merged into the original file,
      * to save HTTP requests.
      *
-     * @param string   $source  The file to combine imports for
-     * @param string   $content The CSS content to combine imports for
+     * @param string $source The file to combine imports for
+     * @param string $content The CSS content to combine imports for
      * @param string[] $parents Parent paths, for circular reference checks
      *
      * @return string
@@ -200,7 +200,7 @@ class CSS extends Minify
         // loop the matches
         foreach ($matches as $match) {
             // get the path for the file that will be imported
-            $importPath = dirname($source).'/'.$match['path'];
+            $importPath = dirname($source) . '/' . $match['path'];
 
             // only replace the import with the content if we can grab the
             // content of the file
@@ -211,7 +211,7 @@ class CSS extends Minify
             // check if current file was not imported previously in the same
             // import chain.
             if (in_array($importPath, $parents)) {
-                throw new FileImportException('Failed to import file "'.$importPath.'": circular reference detected.');
+                throw new FileImportException('Failed to import file "' . $importPath . '": circular reference detected.');
             }
 
             // grab referenced file & minify it (which may include importing
@@ -221,7 +221,7 @@ class CSS extends Minify
 
             // check if this is only valid for certain media
             if (!empty($match['media'])) {
-                $importContent = '@media '.$match['media'].'{'.$importContent.'}';
+                $importContent = '@media ' . $match['media'] . '{' . $importContent . '}';
             }
 
             // add to replacement array
@@ -239,7 +239,7 @@ class CSS extends Minify
      * @url(image.jpg) images will be loaded and their content merged into the
      * original file, to save HTTP requests.
      *
-     * @param string $source  The file to import files for
+     * @param string $source The file to import files for
      * @param string $content The CSS content to import files for
      *
      * @return string
@@ -260,7 +260,7 @@ class CSS extends Minify
 
                 // get the path for the file that will be imported
                 $path = $match[2];
-                $path = dirname($source).'/'.$path;
+                $path = dirname($source) . '/' . $path;
 
                 // only replace the import with the content if we're able to get
                 // the content of the file, and it's relatively small
@@ -271,7 +271,7 @@ class CSS extends Minify
 
                     // build replacement
                     $search[] = $match[0];
-                    $replace[] = 'url('.$this->importExtensions[$extension].';base64,'.$importContent.')';
+                    $replace[] = 'url(' . $this->importExtensions[$extension] . ';base64,' . $importContent . ')';
                 }
             }
 
@@ -304,15 +304,28 @@ class CSS extends Minify
              * we should leave it alone. E.g.:
              * p { content: "a   test" }
              */
+
             $this->extractStrings();
-            $this->stripComments();
+
+            if ($this->options['css-strip-comments'] === true)
+                $this->stripComments();
+
             $css = $this->replace($css);
 
-            $css = $this->stripWhitespace($css);
-            $css = $this->shortenHex($css);
-            $css = $this->shortenZeroes($css);
-            $css = $this->shortenFontWeights($css);
-            $css = $this->stripEmptyTags($css);
+            if ($this->options['css-strip-whitespace'] === true)
+                $css = $this->stripWhitespace($css);
+
+            if ($this->options['css-shorten-hex'] === true)
+                $css = $this->shortenHex($css);
+
+            if ($this->options['css-shorten-zeroes'] === true)
+                $css = $this->shortenZeroes($css);
+
+            if ($this->options['css-shorten-font-weights'] === true)
+                $css = $this->shortenFontWeights($css);
+
+            if ($this->options['css-strip-empty-tags'] === true)
+                $css = $this->stripEmptyTags($css);
 
             // restore the string we've extracted earlier
             $css = $this->restoreExtractedData($css);
@@ -379,7 +392,7 @@ class CSS extends Minify
      * (e.g. ../../images/image.gif, if the new CSS file is 1 folder deeper).
      *
      * @param ConverterInterface $converter Relative path converter
-     * @param string             $content   The CSS content to update relative urls for
+     * @param string $content The CSS content to update relative urls for
      *
      * @return string
      */
@@ -493,9 +506,9 @@ class CSS extends Minify
             // build replacement
             $search[] = $match[0];
             if ($type === 'url') {
-                $replace[] = 'url('.$url.')';
+                $replace[] = 'url(' . $url . ')';
             } elseif ($type === 'import') {
-                $replace[] = '@import "'.$url.'"';
+                $replace[] = '@import "' . $url . '"';
             }
         }
 
@@ -535,7 +548,7 @@ class CSS extends Minify
             '#FFC0CB' => 'pink',
             '#DDA0DD' => 'plum',
             '#800080' => 'purple',
-            '#F00' => 'red',
+            '#F00'    => 'red',
             '#FA8072' => 'salmon',
             '#A0522D' => 'sienna',
             '#C0C0C0' => 'silver',
@@ -547,7 +560,7 @@ class CSS extends Minify
         );
 
         return preg_replace_callback(
-            '/(?<=[: ])('.implode(array_keys($colors), '|').')(?=[; }])/i',
+            '/(?<=[: ])(' . implode(array_keys($colors), '|') . ')(?=[; }])/i',
             function ($match) use ($colors) {
                 return $colors[strtoupper($match[0])];
             },
@@ -566,14 +579,14 @@ class CSS extends Minify
     {
         $weights = array(
             'normal' => 400,
-            'bold' => 700,
+            'bold'   => 700,
         );
 
         $callback = function ($match) use ($weights) {
-            return $match[1].$weights[$match[2]];
+            return $match[1] . $weights[$match[2]];
         };
 
-        return preg_replace_callback('/(font-weight\s*:\s*)('.implode('|', array_keys($weights)).')(?=[;}])/', $callback, $content);
+        return preg_replace_callback('/(font-weight\s*:\s*)(' . implode('|', array_keys($weights)) . ')(?=[;}])/', $callback, $content);
     }
 
     /**
@@ -609,19 +622,19 @@ class CSS extends Minify
         // practice, Webkit (especially Safari) seems to stumble over at least
         // 0%, potentially other units as well. Only stripping 'px' for now.
         // @see https://github.com/matthiasmullie/minify/issues/60
-        $content = preg_replace('/'.$before.'(-?0*(\.0+)?)(?<=0)px'.$after.'/', '\\1', $content);
+        $content = preg_replace('/' . $before . '(-?0*(\.0+)?)(?<=0)px' . $after . '/', '\\1', $content);
 
         // strip 0-digits (.0 -> 0)
-        $content = preg_replace('/'.$before.'\.0+'.$units.'?'.$after.'/', '0\\1', $content);
+        $content = preg_replace('/' . $before . '\.0+' . $units . '?' . $after . '/', '0\\1', $content);
         // strip trailing 0: 50.10 -> 50.1, 50.10px -> 50.1px
-        $content = preg_replace('/'.$before.'(-?[0-9]+\.[0-9]+)0+'.$units.'?'.$after.'/', '\\1\\2', $content);
+        $content = preg_replace('/' . $before . '(-?[0-9]+\.[0-9]+)0+' . $units . '?' . $after . '/', '\\1\\2', $content);
         // strip trailing 0: 50.00 -> 50, 50.00px -> 50px
-        $content = preg_replace('/'.$before.'(-?[0-9]+)\.0+'.$units.'?'.$after.'/', '\\1\\2', $content);
+        $content = preg_replace('/' . $before . '(-?[0-9]+)\.0+' . $units . '?' . $after . '/', '\\1\\2', $content);
         // strip leading 0: 0.1 -> .1, 01.1 -> 1.1
-        $content = preg_replace('/'.$before.'(-?)0+([0-9]*\.[0-9]+)'.$units.'?'.$after.'/', '\\1\\2\\3', $content);
+        $content = preg_replace('/' . $before . '(-?)0+([0-9]*\.[0-9]+)' . $units . '?' . $after . '/', '\\1\\2\\3', $content);
 
         // strip negative zeroes (-0 -> 0) & truncate zeroes (00 -> 0)
-        $content = preg_replace('/'.$before.'-?0+'.$units.'?'.$after.'/', '0\\1', $content);
+        $content = preg_replace('/' . $before . '-?0+' . $units . '?' . $after . '/', '0\\1', $content);
 
         // IE doesn't seem to understand a unitless flex-basis value (correct -
         // it goes against the spec), so let's add it in again (make it `%`,
@@ -687,7 +700,7 @@ class CSS extends Minify
         // not in things like `calc(3px + 2px)`, shorthands like `3px -2px`, or
         // selectors like `div.weird- p`
         $pseudos = array('nth-child', 'nth-last-child', 'nth-last-of-type', 'nth-of-type');
-        $content = preg_replace('/:('.implode('|', $pseudos).')\(\s*([+-]?)\s*(.+?)\s*([+-]?)\s*(.*?)\s*\)/', ':$1($2$3$4$5)', $content);
+        $content = preg_replace('/:(' . implode('|', $pseudos) . ')\(\s*([+-]?)\s*(.+?)\s*([+-]?)\s*(.*?)\s*\)/', ':$1($2$3$4$5)', $content);
 
         // remove semicolon/whitespace followed by closing bracket
         $content = str_replace(';}', '}', $content);
@@ -722,7 +735,7 @@ class CSS extends Minify
                 }
             }
 
-            $results['calc('.count($results).')'] = 'calc'.$expr;
+            $results['calc(' . count($results) . ')'] = 'calc' . $expr;
         }
 
         return $results;

@@ -8,6 +8,7 @@
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
  * @license MIT License
  */
+
 namespace MatthiasMullie\Minify;
 
 use MatthiasMullie\Minify\Exceptions\IOException;
@@ -25,6 +26,44 @@ use Psr\Cache\CacheItemInterface;
  */
 abstract class Minify
 {
+
+    /**
+     * Default Minify Options list
+     *
+     * @var array
+     */
+    public $options = array(
+        'css-strip-comments'       => true,
+        'css-strip-whitespace'     => true,
+        'css-shorten-hex'          => true,
+        'css-shorten-zeroes'       => true,
+        'css-shorten-font-weights' => true,
+        'css-strip-empty-tags'     => true,
+    );
+
+    /**
+     * Set Minify options
+     * useful for class customizations.
+     *
+     * @param $key
+     * @param null $value
+     * @return $this
+     */
+    public function setOptions($key, $value = null)
+    {
+
+        if (is_array($key)) {
+            foreach ($key as $_key => $_value)
+                $this->setOptions($_key, $_value);
+        } else {
+            if (array_key_exists($key, $this->options))
+                $this->options[$key] = $value;
+        }
+
+
+        return $this;
+    }
+
     /**
      * The data to be minified.
      *
@@ -82,7 +121,7 @@ abstract class Minify
             }
 
             // redefine var
-            $data = (string) $data;
+            $data = (string)$data;
 
             // load data
             $value = $this->load($data);
@@ -105,6 +144,7 @@ abstract class Minify
      * @param string[optional] $path Path to write the data to
      *
      * @return string The minified data
+     * @throws IOException
      */
     public function minify($path = null)
     {
@@ -122,9 +162,9 @@ abstract class Minify
      * Minify & gzip the data & (optionally) saves it to a file.
      *
      * @param string[optional] $path  Path to write the data to
-     * @param int[optional]    $level Compression level, from 0 to 9
-     *
+     * @param int $level
      * @return string The minified & gzipped data
+     * @throws IOException
      */
     public function gzip($path = null, $level = 9)
     {
@@ -189,7 +229,7 @@ abstract class Minify
      * Save to file.
      *
      * @param string $content The minified data
-     * @param string $path    The path to save the minified data to
+     * @param string $path The path to save the minified data to
      *
      * @throws IOException
      */
@@ -205,7 +245,7 @@ abstract class Minify
     /**
      * Register a pattern to execute against the source content.
      *
-     * @param string          $pattern     PCRE pattern
+     * @param string $pattern PCRE pattern
      * @param string|callable $replacement Replacement value for matched pattern
      */
     protected function registerPattern($pattern, $replacement = '')
@@ -281,8 +321,8 @@ abstract class Minify
 
             // figure out which part of the string was unmatched; that's the
             // part we'll execute the patterns on again next
-            $content = (string) substr($content, $discardLength);
-            $unmatched = (string) substr($content, strpos($content, $match) + strlen($match));
+            $content = (string)substr($content, $discardLength);
+            $unmatched = (string)substr($content, strpos($content, $match) + strlen($match));
 
             // move the replaced part to $processed and prepare $content to
             // again match batch of patterns against
@@ -306,9 +346,9 @@ abstract class Minify
      * This function will be called plenty of times, where $content will always
      * move up 1 character.
      *
-     * @param string          $pattern     Pattern to match
+     * @param string $pattern Pattern to match
      * @param string|callable $replacement Replacement value
-     * @param string          $content     Content to match pattern against
+     * @param string $content Content to match pattern against
      *
      * @return string
      */
@@ -352,8 +392,8 @@ abstract class Minify
             }
 
             $count = count($minifier->extracted);
-            $placeholder = $match[1].$placeholderPrefix.$count.$match[1];
-            $minifier->extracted[$placeholder] = $match[1].$match[2].$match[1];
+            $placeholder = $match[1] . $placeholderPrefix . $count . $match[1];
+            $minifier->extracted[$placeholder] = $match[1] . $match[2] . $match[1];
 
             return $placeholder;
         };
@@ -370,7 +410,7 @@ abstract class Minify
          * considered as escape-char (times 2) and to get it in the regex,
          * escaped (times 2)
          */
-        $this->registerPattern('/(['.$chars.'])(.*?(?<!\\\\)(\\\\\\\\)*+)\\1/s', $callback);
+        $this->registerPattern('/([' . $chars . '])(.*?(?<!\\\\)(\\\\\\\\)*+)\\1/s', $callback);
     }
 
     /**
@@ -430,7 +470,7 @@ abstract class Minify
     protected function openFileForWriting($path)
     {
         if (($handler = @fopen($path, 'w')) === false) {
-            throw new IOException('The file "'.$path.'" could not be opened for writing. Check if PHP has enough permissions.');
+            throw new IOException('The file "' . $path . '" could not be opened for writing. Check if PHP has enough permissions.');
         }
 
         return $handler;
@@ -440,15 +480,15 @@ abstract class Minify
      * Attempts to write $content to the file specified by $handler. $path is used for printing exceptions.
      *
      * @param resource $handler The resource to write to
-     * @param string   $content The content to write
-     * @param string   $path    The path to the file (for exception printing only)
+     * @param string $content The content to write
+     * @param string $path The path to the file (for exception printing only)
      *
      * @throws IOException
      */
     protected function writeToFile($handler, $content, $path = '')
     {
         if (($result = @fwrite($handler, $content)) === false || ($result < strlen($content))) {
-            throw new IOException('The file "'.$path.'" could not be written to. Check your disk space and file permissions.');
+            throw new IOException('The file "' . $path . '" could not be written to. Check your disk space and file permissions.');
         }
     }
 }
