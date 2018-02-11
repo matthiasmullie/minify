@@ -1,6 +1,6 @@
 <?php
 /**
- * Abstract minifier class
+ * Abstract minifier class.
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
@@ -8,6 +8,7 @@
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
  * @license MIT License
  */
+
 namespace MatthiasMullie\Minify;
 
 use MatthiasMullie\Minify\Exceptions\IOException;
@@ -18,13 +19,16 @@ use Psr\Cache\CacheItemInterface;
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
- * @package Minify
  * @author Matthias Mullie <minify@mullie.eu>
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
  * @license MIT License
  */
 abstract class Minify
 {
+    const LEVEL_AUTODETECT = 0;
+    const LEVEL_JOIN = 1;
+    const LEVEL_FULL = 2;
+
     /**
      * The data to be minified.
      *
@@ -47,6 +51,13 @@ abstract class Minify
      * @var string[]
      */
     public $extracted = array();
+
+    /**
+     * One of types above. Minified sources can skip minification for improved speed.
+     *
+     * @var int
+     */
+    protected $optimizationLevel = self::LEVEL_AUTODETECT;
 
     /**
      * Init the minify class - optionally, code may be passed along already.
@@ -152,6 +163,20 @@ abstract class Minify
         $item->set($content);
 
         return $item;
+    }
+
+    /**
+     * Option setter.
+     *
+     * @param int $level
+     *
+     * @return $this
+     */
+    public function setOptimalizationLevel($level)
+    {
+        $this->optimizationLevel = $level;
+
+        return $this;
     }
 
     /**
@@ -450,5 +475,22 @@ abstract class Minify
         if (($result = @fwrite($handler, $content)) === false || ($result < strlen($content))) {
             throw new IOException('The file "'.$path.'" could not be written to. Check your disk space and file permissions.');
         }
+    }
+
+    /**
+     * @param string $sourceFilename
+     *
+     * @return bool
+     */
+    protected function shouldMinifyFully($sourceFilename)
+    {
+        if ($this->optimizationLevel === self::LEVEL_JOIN) {
+            return false;
+        }
+        if ($this->optimizationLevel === self::LEVEL_FULL) {
+            return true;
+        }
+
+        return !preg_match('~[\.-]min\.~', $sourceFilename);
     }
 }

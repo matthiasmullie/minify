@@ -1146,7 +1146,7 @@ $the_portfolio.data(\'carouseling\',!0);$active_carousel_group.children().each(f
         // https://github.com/matthiasmullie/minify/issues/204
         $tests[] = array(
             'data = data.replace(this.video.reUrlYoutube, iframeStart + \'//www.youtube.com/embed/$1\' + iframeEnd);',
-            'data=data.replace(this.video.reUrlYoutube,iframeStart+\'//www.youtube.com/embed/$1\'+iframeEnd)'
+            'data=data.replace(this.video.reUrlYoutube,iframeStart+\'//www.youtube.com/embed/$1\'+iframeEnd)',
         );
         $tests[] = array(
             'pattern = /(\/)\'/;
@@ -1218,8 +1218,8 @@ a = \'b\';',
             "inside:{'rule':/@[\w-]+/}",
         );
         $tests[] = array(
-            "(1 + 2) / 3 / 4",
-            "(1+2)/3/4",
+            '(1 + 2) / 3 / 4',
+            '(1+2)/3/4',
         );
 
         // https://github.com/matthiasmullie/minify/issues/221
@@ -1275,6 +1275,10 @@ var largeScreen=2048',
             $content = trim(file_get_contents($file));
             $tests[] = array($content, $content);
         }
+
+        // skip minification of minified files
+        $tests[] = array(__DIR__.'/sample/minified_sources/file.min.js', 'var a = true;');
+
         // update tests' expected results for cross-system compatibility
         foreach ($tests as &$test) {
             if (!empty($test[1])) {

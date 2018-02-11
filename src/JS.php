@@ -1,6 +1,6 @@
 <?php
 /**
- * JavaScript minifier
+ * JavaScript minifier.
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
@@ -8,14 +8,14 @@
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
  * @license MIT License
  */
+
 namespace MatthiasMullie\Minify;
 
 /**
- * JavaScript Minifier Class
+ * JavaScript Minifier Class.
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
- * @package Minify
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
@@ -146,7 +146,7 @@ class JS extends Minify
      */
     public function execute($path = null)
     {
-        $content = '';
+        $content = [];
 
         /*
          * Let's first take out strings, comments and regular expressions.
@@ -165,29 +165,36 @@ class JS extends Minify
 
         // loop files
         foreach ($this->data as $source => $js) {
-            // take out strings, comments & regex (for which we've registered
-            // the regexes just a few lines earlier)
-            $js = $this->replace($js);
+            /*
+             * Combine js: separating the scripts by a ;
+             * I'm also adding a newline: it will be eaten when whitespace is
+             * stripped, but we need to make sure we're not just appending
+             * a new script right after a previous script that ended with a
+             * singe-line comment on the last line (in which case it would also
+             * be seen as part of that comment)
+             */
+            $source = is_int($source) ? '' : $source;
+            $fully = $this->shouldMinifyFully($source);
 
-            $js = $this->propertyNotation($js);
-            $js = $this->shortenBools($js);
-            $js = $this->stripWhitespace($js);
+            if ($fully) {
+                $js = $this->replace($js);
 
-            // combine js: separating the scripts by a ;
-            $content .= $js.";";
+                $js = $this->propertyNotation($js);
+                $js = $this->shortenBools($js);
+                $js = $this->stripWhitespace($js);
+
+                /*
+                 * Earlier, we extracted strings & regular expressions and replaced them
+                 * with placeholder text. This will restore them.
+                 */
+                $js = $this->restoreExtractedData($js);
+            }
+            if (strlen($js)) {
+                $content[] = $js;
+            }
         }
 
-        // clean up leftover `;`s from the combination of multiple scripts
-        $content = ltrim($content, ';');
-        $content = (string) substr($content, 0, -1);
-
-        /*
-         * Earlier, we extracted strings & regular expressions and replaced them
-         * with placeholder text. This will restore them.
-         */
-        $content = $this->restoreExtractedData($content);
-
-        return $content;
+        return implode(';', $content);
     }
 
     /**
@@ -335,7 +342,9 @@ class JS extends Minify
             array(
                 '/('.implode('|', $operatorsBefore).')\s+/',
                 '/\s+('.implode('|', $operatorsAfter).')/',
-            ), '\\1', $content
+            ),
+            '\\1',
+            $content
         );
 
         // make sure + and - can't be mistaken for, or joined into ++ and --
@@ -343,7 +352,9 @@ class JS extends Minify
             array(
                 '/(?<![\+\-])\s*([\+\-])(?![\+\-])/',
                 '/(?<![\+\-])([\+\-])\s*(?![\+\-])/',
-            ), '\\1', $content
+            ),
+            '\\1',
+            $content
         );
 
         // collapse whitespace around reserved words into single space

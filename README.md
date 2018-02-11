@@ -133,6 +133,21 @@ $minifier->setImportExtensions($extensions);
 ```
 
 
+### setOptimalizationLevel($level)
+
+*Minify::LEVEL_AUTODETECT* (default): The minifier will detect minified sources based on filename and will not minify them again. External sources in CSS are always embedded into minified CSS.
+
+*Minify::LEVEL_JOIN*: All files will be just joined together and external sources will be embedded if configured.
+
+*Minify::LEVEL_FULL*: All files will be minified (old behaviour).
+
+Speed optimalization on selected minified bootstrap sources are (approx): 100% on full, 35% on autodetect, 10% on join.
+
+```php
+$minifier->setOptimalizationLevel(Minify\Minify::LEVEL_FULL);
+```
+
+
 ## Installation
 
 Simply add a dependency on matthiasmullie/minify to your composer.json file if you use [Composer](https://getcomposer.org/) to manage the dependencies of your project:

@@ -1,6 +1,6 @@
 <?php
 /**
- * CSS Minifier
+ * CSS Minifier.
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
@@ -16,11 +16,10 @@ use MatthiasMullie\PathConverter\ConverterInterface;
 use MatthiasMullie\PathConverter\Converter;
 
 /**
- * CSS minifier
+ * CSS minifier.
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
- * @package Minify
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
@@ -295,6 +294,9 @@ class CSS extends Minify
     {
         $content = '';
 
+        $this->extractStrings();
+        $this->stripComments();
+
         // loop CSS data (raw data and files)
         foreach ($this->data as $source => $css) {
             /*
@@ -303,21 +305,23 @@ class CSS extends Minify
              * we should leave it alone. E.g.:
              * p { content: "a   test" }
              */
-            $this->extractStrings();
-            $this->stripComments();
-            $css = $this->replace($css);
-
-            $css = $this->stripWhitespace($css);
-            $css = $this->shortenHex($css);
-            $css = $this->shortenZeroes($css);
-            $css = $this->shortenFontWeights($css);
-            $css = $this->stripEmptyTags($css);
-
-            // restore the string we've extracted earlier
-            $css = $this->restoreExtractedData($css);
-
             $source = is_int($source) ? '' : $source;
             $parents = $source ? array_merge($parents, array($source)) : $parents;
+            $fully = $this->shouldMinifyFully($source);
+
+            if ($fully) {
+                $css = $this->replace($css);
+
+                $css = $this->stripWhitespace($css);
+                $css = $this->shortenHex($css);
+                $css = $this->shortenZeroes($css);
+                $css = $this->shortenFontWeights($css);
+                $css = $this->stripEmptyTags($css);
+
+                // restore the string we've extracted earlier
+                $css = $this->restoreExtractedData($css);
+            }
+
             $css = $this->combineImports($source, $css, $parents);
             $css = $this->importFiles($source, $css);
 
@@ -454,8 +458,9 @@ class CSS extends Minify
              * @see https://github.com/matthiasmullie/minify/issues/193
              */
             $url = trim($url);
+
             if (preg_match('/[\s\)\'"#\x{7f}-\x{9f}]/u', $url)) {
-                $url = $match['quotes'] . $url . $match['quotes'];
+                $url = $match['quotes'].$url.$match['quotes'];
             }
 
             // build replacement
@@ -666,7 +671,7 @@ class CSS extends Minify
     /**
      * Find all `calc()` occurrences.
      *
-     * @param string $content The CSS content to find `calc()`s in.
+     * @param string $content The CSS content to find `calc()`s in
      *
      * @return string[]
      */
@@ -680,11 +685,11 @@ class CSS extends Minify
             $expr = '';
             $opened = 0;
 
-            for ($i = 0; $i < $length; $i++) {
+            for ($i = 0; $i < $length; ++$i) {
                 $char = $match[1][$i];
                 $expr .= $char;
                 if ($char === '(') {
-                    $opened++;
+                    ++$opened;
                 } elseif ($char === ')' && --$opened === 0) {
                     break;
                 }
