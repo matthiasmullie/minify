@@ -83,7 +83,7 @@ class CSSTest extends PHPUnit_Framework_TestCase
      *
      * @test
      *
-     * @expectedException MatthiasMullie\Minify\Exceptions\FileImportException
+     * @expectedException \MatthiasMullie\Minify\Exceptions\FileImportException
      */
     public function fileImportLoop()
     {
@@ -590,55 +590,58 @@ body{
 
         // https://github.com/matthiasmullie/minify/issues/183
         $tests[] = array(
-            ".mce-container,
+            '.mce-container,
 .mce-container *,
 .mce-widget,
 .mce-widget *,
 .mce-reset {
     color: red;
-}",
-            ".mce-container,.mce-container *,.mce-widget,.mce-widget *,.mce-reset{color:red}",
+}',
+            '.mce-container,.mce-container *,.mce-widget,.mce-widget *,.mce-reset{color:red}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/184
         $tests[] = array(
-            ".soliloquy-container, .soliloquy-container * {color:red}",
-            ".soliloquy-container,.soliloquy-container *{color:red}",
+            '.soliloquy-container, .soliloquy-container * {color:red}',
+            '.soliloquy-container,.soliloquy-container *{color:red}',
         );
         $tests[] = array(
-            "p{background: transparent url(images/preloader.gif) no-repeat scroll 50% 50%;}",
-            "p{background:transparent url(images/preloader.gif) no-repeat scroll 50% 50%}",
+            'p{background: transparent url(images/preloader.gif) no-repeat scroll 50% 50%;}',
+            'p{background:transparent url(images/preloader.gif) no-repeat scroll 50% 50%}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/191
         $tests[] = array(
-            "some .weird- selector{display:none}",
-            "some .weird- selector{display:none}",
+            'some .weird- selector{display:none}',
+            'some .weird- selector{display:none}',
         );
         $tests[] = array(
-            "p:nth-child( - n + 3 ){display:none}",
-            "p:nth-child(-n+3){display:none}",
+            'p:nth-child( - n + 3 ){display:none}',
+            'p:nth-child(-n+3){display:none}',
         );
         $tests[] = array(
-            "p:nth-child( + 3 ){display:none}",
-            "p:nth-child(+3){display:none}",
+            'p:nth-child( + 3 ){display:none}',
+            'p:nth-child(+3){display:none}',
         );
         $tests[] = array(
-            "p:nth-child( n + 3 ){display:none}",
-            "p:nth-child(n+3){display:none}",
+            'p:nth-child( n + 3 ){display:none}',
+            'p:nth-child(n+3){display:none}',
         );
         $tests[] = array(
-            "p:nth-child( odd ){display:none}",
-            "p:nth-child(odd){display:none}",
+            'p:nth-child( odd ){display:none}',
+            'p:nth-child(odd){display:none}',
         );
         $tests[] = array(
-            "p:nth-child( n ){display:none}",
-            "p:nth-child(n){display:none}",
+            'p:nth-child( n ){display:none}',
+            'p:nth-child(n){display:none}',
         );
         $tests[] = array(
-            "p:nth-child( -n ){display:none}",
-            "p:nth-child(-n){display:none}",
+            'p:nth-child( -n ){display:none}',
+            'p:nth-child(-n){display:none}',
         );
+
+        // skip minification of minified files
+        $tests[] = array(__DIR__.'/sample/minified_sources/file.min.css', 'body { background: yellow; }');
 
         // https://github.com/matthiasmullie/minify/issues/193
         $tests[] = array(
@@ -711,6 +714,9 @@ body{
 }',
             '#site-header.medium-header .top-col.logo-col{-webkit-flex:auto 0 0;flex:auto 0 0}',
         );
+
+        // skip minification of minified files
+        $tests[] = array(__DIR__.'/sample/minified_sources/file.min.css', 'body { background: yellow; }');
 
         return $tests;
     }

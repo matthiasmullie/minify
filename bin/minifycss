@@ -4,8 +4,11 @@ use MatthiasMullie\Minify;
 
 // command line utility to minify CSS
 if (file_exists(__DIR__ . '/../../../autoload.php')) {
-    // if composer install
-    require_once __DIR__ . '/../../../autoload.php';
+	// if composer install
+	require_once __DIR__ . '/../../../autoload.php';
+} else if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    // if standalone composer install
+    require_once __DIR__ . '/../vendor/autoload.php';
 } else {
     require_once __DIR__ . '/../src/Minify.php';
     require_once __DIR__ . '/../src/CSS.php';
