@@ -60,7 +60,6 @@ abstract class Minify
                 $this->options[$key] = $value;
         }
 
-
         return $this;
     }
 
