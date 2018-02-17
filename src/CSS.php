@@ -375,7 +375,7 @@ class CSS extends Minify
     {
 
         // Collect Selectors
-        preg_match_all('/(?ims)([a-z0-9, \s\.\:#_\-@]+)\{([^\}]*)\}/', $content, $selectors);
+        preg_match_all('/(.*?)\{(.*?)\}/s', $content, $selectors);
 
         if (isset($selectors[0]))
 
