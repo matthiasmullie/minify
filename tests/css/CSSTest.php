@@ -712,6 +712,20 @@ body{
             '#site-header.medium-header .top-col.logo-col{-webkit-flex:auto 0 0;flex:auto 0 0}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/240
+        $tests[] = array(
+            'p{color:red}
+@import url("http://minify.dev/?a=1&amp;b=some/*lala*/thing");
+body{font-family:sans-serif}',
+            '@import url(http://minify.dev/?a=1&amp;b=some/*lala*/thing);p{color:red}body{font-family:sans-serif}',
+        );
+        $tests[] = array(
+            'p{color:red}
+@import url("http://minify.dev/?a=1&amp;b=some/*lala*/thing") ;
+body{font-family:sans-serif}',
+            '@import url(http://minify.dev/?a=1&amp;b=some/*lala*/thing);p{color:red}body{font-family:sans-serif}',
+        );
+
         return $tests;
     }
 
