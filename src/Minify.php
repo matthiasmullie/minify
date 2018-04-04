@@ -258,7 +258,7 @@ abstract class Minify
                     // executing it again in later runs on this same content;
                     // ignore this one until we reach end of content
                     unset($matches[$i]);
-                    $positions[$i] = strlen($content);
+                    unset($positions[$i]);
                 }
             }
 
