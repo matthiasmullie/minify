@@ -1268,6 +1268,12 @@ var largeScreen = 2048;',
 var largeScreen=2048',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/242
+        $tests[] = array(
+            "/^\[(x| )\](?=\s)/i // Must follow listRE",
+            "/^\[(x| )\](?=\s)/i",
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');

@@ -264,7 +264,7 @@ class JS extends Minify
         );
         $delimiters = array_fill(0, count($propertiesAndMethods), '/');
         $propertiesAndMethods = array_map('preg_quote', $propertiesAndMethods, $delimiters);
-        $after = '(?=\s*[\.,;\)\}&\|+]|\/\/|$|\.('.implode('|', $propertiesAndMethods).'))';
+        $after = '(?=\s*([\.,;\)\}&\|+]|\/\/|$|\.('.implode('|', $propertiesAndMethods).')))';
         $this->registerPattern('/'.$before.'\K'.$pattern.$after.'/', $callback);
 
         // regular expressions following a `)` are rather annoying to detect...
