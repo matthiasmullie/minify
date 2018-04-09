@@ -241,7 +241,7 @@ abstract class Minify
 
                 // no need to re-run matches that are still in the part of the
                 // content that hasn't been processed
-                if ($positions[$i] >= 0) {
+                if (isset($positions[$i])  &&  $positions[$i] >= 0) {
                     continue;
                 }
 
