@@ -239,6 +239,12 @@ abstract class Minify
             foreach ($this->patterns as $i => $pattern) {
                 list($pattern, $replacement) = $pattern;
 
+                // we can safely ignore patterns for positions we've unset earlier,
+                // because we know these won't show up anymore
+                if (!isset($positions[$i])) {
+                    continue;
+                }
+
                 // no need to re-run matches that are still in the part of the
                 // content that hasn't been processed
                 if ($positions[$i] >= 0) {
@@ -257,8 +263,7 @@ abstract class Minify
                     // if the pattern couldn't be matched, there's no point in
                     // executing it again in later runs on this same content;
                     // ignore this one until we reach end of content
-                    unset($matches[$i]);
-                    unset($positions[$i]);
+                    unset($matches[$i], $positions[$i]);
                 }
             }
 
