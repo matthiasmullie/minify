@@ -217,6 +217,8 @@ class CSS extends Minify
             // grab referenced file & minify it (which may include importing
             // yet other @import statements recursively)
             $minifier = new static($importPath);
+            $minifier->setMaxImportSize($this->maxImportSize);
+            $minifier->setImportExtensions($this->importExtensions);
             $importContent = $minifier->execute($source, $parents);
 
             // check if this is only valid for certain media
