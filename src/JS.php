@@ -195,6 +195,9 @@ class JS extends Minify
      */
     protected function stripComments()
     {
+        // /*DEV*/ style comments
+        $this->registerPattern('/\/\*DEV\*\/.*$/m', '');
+        
         // single-line comments
         $this->registerPattern('/\/\/.*$/m', '');
 
