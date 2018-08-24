@@ -152,6 +152,29 @@ class JSTest extends PHPUnit_Framework_TestCase
             '',
         );
 
+        // preserve important comments
+        $tests[] = array(
+            '/*! This is a JS comment */',
+            '/*! This is a JS comment */',
+        );
+
+        $tests[] = array(
+            '/*!
+              * This is a multi line JS comment
+              */',
+            '/*!*This is a multi line JS comment*/',
+        );
+
+        $tests[] = array(
+            '/* @license This is a JS comment */',
+            '/* @license This is a JS comment */',
+        );
+
+        $tests[] = array(
+            '/* @preserve This is a JS comment */',
+            '/* @preserve This is a JS comment */',
+        );
+
         // make sure no ; is added in places it shouldn't
         $tests[] = array(
             'if(true){}else{}',
@@ -990,11 +1013,12 @@ if(~indexOf(stack,value))value=cycleReplacer.call(this,key,value)',
         // https://github.com/matthiasmullie/minify/issues/186
         $tests[] = array(
             'd/=60;z("/foo/.")
-/*! This comment should be removed by the minify process */
+/*! This comment should be preserved by the minify process */
 
 var str1 = "//this-text-shoudl-remain-intact";
 var str2 = "some other string here";',
             'd/=60;z("/foo/.")
+/*! This comment should be preserved by the minify process */
 var str1="//this-text-shoudl-remain-intact";var str2="some other string here"',
         );
 
