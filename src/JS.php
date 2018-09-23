@@ -190,11 +190,13 @@ class JS extends Minify
                 $js = $this->restoreExtractedData($js);
             }
             if (strlen($js)) {
+                if (!$fully)
+                    $js .= "\n";
                 $content[] = $js;
             }
         }
 
-        return implode(';', $content);
+        return rtrim(implode(';', $content));
     }
 
     /**
