@@ -311,6 +311,7 @@ class CSS extends Minify
 
             $css = $this->stripWhitespace($css);
             $css = $this->shortenHex($css);
+            $css = $this->shortenColorCodesToHex($css);
             $css = $this->shortenZeroes($css);
             $css = $this->shortenFontWeights($css);
             $css = $this->stripEmptyTags($css);
@@ -514,6 +515,29 @@ class CSS extends Minify
             '#FF6347' => 'tomato',
             '#EE82EE' => 'violet',
             '#F5DEB3' => 'wheat',
+        );
+
+        return preg_replace_callback(
+            '/(?<=[: ])('.implode(array_keys($colors), '|').')(?=[; }])/i',
+            function ($match) use ($colors) {
+                return $colors[strtoupper($match[0])];
+            },
+            $content
+        );
+    }
+
+    /**
+     * Shorthand some color codes to hex.
+     * white -> #fff.
+     *
+     * @param string $content The CSS content to shorten the color codes to hex
+     *
+     * @return string
+     */
+    protected function shortenColorCodesToHex($content)
+    {
+        // shorten some color names to their hex code
+        $colors = array(
             'WHITE' => '#fff',
             'BLACK' => '#000',
         );
