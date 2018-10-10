@@ -520,7 +520,7 @@ only screen and (min-device-pixel-ratio: 1.5) {
 body{
      background: white;
 }',
-            '@import "./css1.css";@import url(https://www.google.com/main.css);body{background:white}',
+            '@import "./css1.css";@import url(https://www.google.com/main.css);body{background:#fff}',
         );
 
         // https://github.com/matthiasmullie/minify/commit/3253a81d07cd01afcb651e309900d8ad58a052da#commitcomment-19223603
