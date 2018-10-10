@@ -514,6 +514,8 @@ class CSS extends Minify
             '#FF6347' => 'tomato',
             '#EE82EE' => 'violet',
             '#F5DEB3' => 'wheat',
+            'WHITE' => '#fff',
+            'BLACK' => '#000',
         );
 
         return preg_replace_callback(
