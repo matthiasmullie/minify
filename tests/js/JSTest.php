@@ -57,20 +57,20 @@ class JSTest extends PHPUnit_Framework_TestCase
 
         // adding multiple files
         $tests[] = array(
-            [
+            array(
                 __DIR__.'/sample/source/script1.js',
                 __DIR__.'/sample/source/script2.js',
-            ],
+            ),
             'var test=1;var test=2',
         );
 
         // adding multiple files and string
         $tests[] = array(
-            [
+            array(
                 __DIR__.'/sample/source/script1.js',
                 'console.log(test)',
                 __DIR__.'/sample/source/script2.js',
-            ],
+            ),
             'var test=1;console.log(test);var test=2',
         );
 
@@ -162,7 +162,9 @@ class JSTest extends PHPUnit_Framework_TestCase
             '/*!
               * This is a multi line JS comment
               */',
-            '/*!*This is a multi line JS comment*/',
+            '/*!
+              * This is a multi line JS comment
+              */',
         );
 
         $tests[] = array(
