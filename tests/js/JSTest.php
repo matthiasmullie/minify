@@ -57,20 +57,20 @@ class JSTest extends PHPUnit_Framework_TestCase
 
         // adding multiple files
         $tests[] = array(
-            [
+            array(
                 __DIR__.'/sample/source/script1.js',
                 __DIR__.'/sample/source/script2.js',
-            ],
+            ),
             'var test=1;var test=2',
         );
 
         // adding multiple files and string
         $tests[] = array(
-            [
+            array(
                 __DIR__.'/sample/source/script1.js',
                 'console.log(test)',
                 __DIR__.'/sample/source/script2.js',
-            ],
+            ),
             'var test=1;console.log(test);var test=2',
         );
 
@@ -150,6 +150,31 @@ class JSTest extends PHPUnit_Framework_TestCase
         $tests[] = array(
             '/* This is a JS comment */',
             '',
+        );
+
+        // preserve important comments
+        $tests[] = array(
+            '/*! This is a JS comment */',
+            '/*! This is a JS comment */',
+        );
+
+        $tests[] = array(
+            '/*!
+              * This is a multi line JS comment
+              */',
+            '/*!
+              * This is a multi line JS comment
+              */',
+        );
+
+        $tests[] = array(
+            '/* @license This is a JS comment */',
+            '/* @license This is a JS comment */',
+        );
+
+        $tests[] = array(
+            '/* @preserve This is a JS comment */',
+            '/* @preserve This is a JS comment */',
         );
 
         // make sure no ; is added in places it shouldn't
@@ -990,11 +1015,12 @@ if(~indexOf(stack,value))value=cycleReplacer.call(this,key,value)',
         // https://github.com/matthiasmullie/minify/issues/186
         $tests[] = array(
             'd/=60;z("/foo/.")
-/*! This comment should be removed by the minify process */
+/*! This comment should be preserved by the minify process */
 
 var str1 = "//this-text-shoudl-remain-intact";
 var str2 = "some other string here";',
             'd/=60;z("/foo/.")
+/*! This comment should be preserved by the minify process */
 var str1="//this-text-shoudl-remain-intact";var str2="some other string here"',
         );
 

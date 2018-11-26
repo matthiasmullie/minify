@@ -195,11 +195,21 @@ class JS extends Minify
      */
     protected function stripComments()
     {
+        // PHP only supports $this inside anonymous functions since 5.4
+        $minifier = $this;
+        $callback = function ($match) use ($minifier) {
+            $count = count($minifier->extracted);
+            $placeholder = '/*'.$count.'*/';
+            $minifier->extracted[$placeholder] = $match[0];
+
+            return $placeholder;
+        };
+        // multi-line comments
+        $this->registerPattern('/\n?\/\*(!|.*?@license|.*?@preserve).*?\*\/\n?/s', $callback);
+        $this->registerPattern('/\/\*.*?\*\//s', '');
+
         // single-line comments
         $this->registerPattern('/\/\/.*$/m', '');
-
-        // multi-line comments
-        $this->registerPattern('/\/\*.*?\*\//s', '');
     }
 
     /**
