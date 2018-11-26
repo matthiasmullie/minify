@@ -345,7 +345,9 @@ class JS extends Minify
             array(
                 '/('.implode('|', $operatorsBefore).')\s+/',
                 '/\s+('.implode('|', $operatorsAfter).')/',
-            ), '\\1', $content
+            ),
+            '\\1',
+            $content
         );
 
         // make sure + and - can't be mistaken for, or joined into ++ and --
@@ -353,7 +355,9 @@ class JS extends Minify
             array(
                 '/(?<![\+\-])\s*([\+\-])(?![\+\-])/',
                 '/(?<![\+\-])([\+\-])\s*(?![\+\-])/',
-            ), '\\1', $content
+            ),
+            '\\1',
+            $content
         );
 
         // collapse whitespace around reserved words into single space
