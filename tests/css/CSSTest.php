@@ -745,23 +745,36 @@ body{font-family:sans-serif}',
         // https://github.com/matthiasmullie/minify/issues/259
         $tests[] = array(
             '#layout-newsletter-change .unsubscribe :checked + label .circle, #layout-newsletter-change .pause : checked + label .circle { color: white }',
-            '#layout-newsletter-change .unsubscribe :checked+label .circle,#layout-newsletter-change .pause :checked+label .circle{color:white}',
+            '#layout-newsletter-change .unsubscribe :checked+label .circle,#layout-newsletter-change .pause :checked+label .circle{color:#fff}',
         );
         $tests[] = array(
             'input + label{color:white}',
-            'input+label{color:white}',
+            'input+label{color:#fff}',
         );
         $tests[] = array(
             'input +label{color:white}',
-            'input+label{color:white}',
+            'input+label{color:#fff}',
         );
         $tests[] = array(
             'input+ label{color:white}',
-            'input+label{color:white}',
+            'input+label{color:#fff}',
         );
         $tests[] = array(
             'div{width:calc(100px + 100px)}',
             'div{width:calc(100px + 100px)}',
+        );
+
+        $tests[] = array(
+            'p{color:#ffff0033}',
+            'p{color:#ff03}',
+        );
+        $tests[] = array(
+            'p{color:#ffff00ff}',
+            'p{color:#ff0}',
+        );
+        $tests[] = array(
+            'p{color:#ff0f}',
+            'p{color:#ff0}',
         );
 
         return $tests;
