@@ -307,6 +307,7 @@ class CSS extends Minify
              */
             $this->extractStrings();
             $this->stripComments();
+            $this->extractCalcs();
             $css = $this->replace($css);
 
             $css = $this->stripWhitespace($css);
@@ -559,11 +560,7 @@ class CSS extends Minify
         // `5px - 0px` is valid, but `5px - 0` is not
         // `10px * 0` is valid (equates to 0), and so is `10 * 0px`, but
         // `10 * 0` is invalid
-        // best to just leave `calc()`s alone, even if they could be optimized
-        // (which is a whole other undertaking, where units & order of
-        // operations all need to be considered...)
-        $calcs = $this->findCalcs($content);
-        $content = str_replace($calcs, array_keys($calcs), $content);
+        // we've extracted calcs earlier, so we don't need to worry about this
 
         // reusable bits of code throughout these regexes:
         // before & after are used to make sure we don't match lose unintended
@@ -599,9 +596,6 @@ class CSS extends Minify
         // @see https://developer.mozilla.org/nl/docs/Web/CSS/flex
         $content = preg_replace('/flex:([0-9]+\s[0-9]+\s)0([;\}])/', 'flex:${1}0%${2}', $content);
         $content = preg_replace('/flex-basis:0([;\}])/', 'flex-basis:0%${1}', $content);
-
-        // restore `calc()` expressions
-        $content = str_replace(array_keys($calcs), $calcs, $content);
 
         return $content;
     }
@@ -648,8 +642,8 @@ class CSS extends Minify
         // remove whitespace around meta characters
         // inspired by stackoverflow.com/questions/15195750/minify-compress-css-with-regex
         $content = preg_replace('/\s*([\*$~^|]?+=|[{};,>~]|!important\b)\s*/', '$1', $content);
-        $content = preg_replace('/([\[(:])\s+/', '$1', $content);
-        $content = preg_replace('/\s+([\]\)])/', '$1', $content);
+        $content = preg_replace('/([\[(:>\+])\s+/', '$1', $content);
+        $content = preg_replace('/\s+([\]\)>\+])/', '$1', $content);
         $content = preg_replace('/\s+(:)(?![^\}]*\{)/', '$1', $content);
 
         // whitespace around + and - can only be stripped inside some pseudo-
@@ -666,18 +660,13 @@ class CSS extends Minify
     }
 
     /**
-     * Find all `calc()` occurrences.
-     *
-     * @param string $content The CSS content to find `calc()`s in.
-     *
-     * @return string[]
+     * Replace all `calc()` occurrences.
      */
-    protected function findCalcs($content)
+    protected function extractCalcs()
     {
-        $results = array();
-        preg_match_all('/calc(\(.+?)(?=$|;|calc\()/', $content, $matches, PREG_SET_ORDER);
-
-        foreach ($matches as $match) {
+        // PHP only supports $this inside anonymous functions since 5.4
+        $minifier = $this;
+        $callback = function ($match) use ($minifier) {
             $length = strlen($match[1]);
             $expr = '';
             $opened = 0;
@@ -691,11 +680,17 @@ class CSS extends Minify
                     break;
                 }
             }
+            $rest = str_replace($expr, '', $match[1]);
+            $expr = trim(substr($expr, 1, -1));
 
-            $results['calc('.count($results).')'] = 'calc'.$expr;
-        }
+            $count = count($minifier->extracted);
+            $placeholder = 'calc('.$count.')';
+            $minifier->extracted[$placeholder] = 'calc('.$expr.')';
 
-        return $results;
+            return $placeholder.$rest;
+        };
+
+        $this->registerPattern('/calc(\(.+?)(?=$|;|calc\()/', $callback);
     }
 
     /**

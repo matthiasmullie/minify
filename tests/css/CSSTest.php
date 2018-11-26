@@ -726,6 +726,28 @@ body{font-family:sans-serif}',
             '@import url(http://minify.dev/?a=1&amp;b=some/*lala*/thing);p{color:red}body{font-family:sans-serif}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/259
+        $tests[] = array(
+            '#layout-newsletter-change .unsubscribe :checked + label .circle, #layout-newsletter-change .pause : checked + label .circle { color: white }',
+            '#layout-newsletter-change .unsubscribe :checked+label .circle,#layout-newsletter-change .pause :checked+label .circle{color:white}',
+        );
+        $tests[] = array(
+            'input + label{color:white}',
+            'input+label{color:white}',
+        );
+        $tests[] = array(
+            'input +label{color:white}',
+            'input+label{color:white}',
+        );
+        $tests[] = array(
+            'input+ label{color:white}',
+            'input+label{color:white}',
+        );
+        $tests[] = array(
+            'div{width:calc(100px + 100px)}',
+            'div{width:calc(100px + 100px)}',
+        );
+
         return $tests;
     }
 
