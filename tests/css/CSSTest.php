@@ -777,6 +777,12 @@ body{font-family:sans-serif}',
             'p{color:#ff0}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/267
+        $tests[] = array(
+            'ul p { padding-left: calc((var(--icon-size) / 2) + var(--horisontal-space)); }',
+            'ul p{padding-left:calc((var(--icon-size) / 2) + var(--horisontal-space))}',
+        );
+
         return $tests;
     }
 
