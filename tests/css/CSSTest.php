@@ -494,6 +494,17 @@ only screen and (min-device-pixel-ratio: 1.5) {
             'p{width:calc(35% + (10% + 0px + 10%))}',
         );
 
+		// https://github.com/matthiasmullie/minify/issues/274
+		$tests[] = array(
+	      	'.cvp-live-filter select {
+  background-position:
+    calc(100% - 20px) calc(1em + 2px),
+    calc(100% - 15px) calc(1em + 2px),
+    calc(100% - 2.5em) 0.5em;
+}',
+	      	'.cvp-live-filter select{background-position:calc(100% - 20px) calc(1em + 2px),calc(100% - 15px) calc(1em + 2px),calc(100% - 2.5em) .5em}',    
+        );
+
         // https://github.com/matthiasmullie/minify/issues/139
         $tests[] = array(
             __DIR__.'/sample/line_endings/lf/parent.css',
