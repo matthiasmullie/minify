@@ -35,6 +35,30 @@ class JSTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test minifier on files that doesn't exist.
+     *
+     * @expectedException MatthiasMullie\Minify\Exceptions\IOException
+     */
+    public function testAddFileException()
+    {
+        $this->minifier->addFile('/sample/source/nothing');
+    }
+
+    /**
+     * Test minifier addFile method.
+     *
+     * @test
+     */
+    public function testAddFile()
+    {
+        $this->minifier->addFile(__DIR__.'/sample/source/script1.js');
+
+        $result = $this->minifier->minify();
+
+        $this->assertEquals('var test=1', $result);
+    }
+
+    /**
      * Test JS minifier rules, provided by dataProvider.
      *
      * @test
