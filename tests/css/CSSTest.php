@@ -505,6 +505,12 @@ only screen and (min-device-pixel-ratio: 1.5) {
 	      	'.cvp-live-filter select{background-position:calc(100% - 20px) calc(1em + 2px),calc(100% - 15px) calc(1em + 2px),calc(100% - 2.5em) .5em}',    
         );
 
+        // https://github.com/matthiasmullie/minify/issues/301
+        $tests[] = array(
+            '.e-gallery-masonry .e-gallery-item{--percent-height: 0;position:absolute;width:calc(100% / var(--columns) - (var(--hgap) * (var(--columns) - 1) / var(--columns)));left:calc((100% / var(--columns) - (var(--hgap) * (var(--columns) - 1) / var(--columns))) * var(--column) + (var(--hgap) * var(--column)));top:calc(var(--percent-height) + (var(--row) * var(--vgap)))}.e-gallery-masonry .e-gallery-image{padding-bottom:var(--item-height)}',
+            '.e-gallery-masonry .e-gallery-item{--percent-height:0;position:absolute;width:calc(100% / var(--columns) - (var(--hgap) * (var(--columns) - 1) / var(--columns)));left:calc((100% / var(--columns) - (var(--hgap) * (var(--columns) - 1) / var(--columns))) * var(--column) + (var(--hgap) * var(--column)));top:calc(var(--percent-height) + (var(--row) * var(--vgap)))}.e-gallery-masonry .e-gallery-image{padding-bottom:var(--item-height)}',
+        );
+
         // https://github.com/matthiasmullie/minify/issues/139
         $tests[] = array(
             __DIR__.'/sample/line_endings/lf/parent.css',
