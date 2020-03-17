@@ -201,6 +201,13 @@ class JSTest extends PHPUnit_Framework_TestCase
             '/* @preserve This is a JS comment */',
         );
 
+        $tests[] = array(
+            '/* Do not preserve me */
+            x = 1;
+            /* @preserve This is a JS comment */',
+            'x=1;/* @preserve This is a JS comment */',
+        );
+
         // make sure no ; is added in places it shouldn't
         $tests[] = array(
             'if(true){}else{}',

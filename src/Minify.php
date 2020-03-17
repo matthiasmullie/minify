@@ -105,7 +105,7 @@ abstract class Minify
      * @param string|string[] $data
      *
      * @return static
-     * 
+     *
      * @throws IOException
      */
     public function addFile($data /* $data = null, ... */)
@@ -252,6 +252,49 @@ abstract class Minify
         $pattern .= 'S';
 
         $this->patterns[] = array($pattern, $replacement);
+    }
+
+    /**
+     * Both JS and CSS use the same form of multi-line comment, so putting the common code here.
+     */
+    protected function stripMultilineComments()
+    {
+        // First extract comments we want to keep, so they can be restored later
+        // PHP only supports $this inside anonymous functions since 5.4
+        $minifier = $this;
+        $callback = function ($match) use ($minifier) {
+            $count = count($minifier->extracted);
+            $placeholder = '/*'.$count.'*/';
+            $minifier->extracted[$placeholder] = $match[0];
+
+            return $placeholder;
+        };
+        $this->registerPattern('/
+            # optional newline
+            \n?
+
+            # start comment
+            \/\*
+
+            # comment content
+            (?:
+                # either starts with an !
+                !
+            |
+                # or, after some number of characters which do not end the comment
+                (?:(?!\*\/).)*?
+
+                # there is either a @license or @preserve tag
+                @(?:license|preserve)
+            )
+
+            # then match to the end of the comment
+            .*?\*\/\n?
+
+            /ixs', $callback);
+
+        // Then strip all other comments
+        $this->registerPattern('/\/\*.*?\*\//s', '');
     }
 
     /**
