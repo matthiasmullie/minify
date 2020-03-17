@@ -627,6 +627,7 @@ class CSS extends Minify
      */
     protected function stripComments()
     {
+        // First extract comments we want to keep, so they can be restored later
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
@@ -636,8 +637,31 @@ class CSS extends Minify
 
             return $placeholder;
         };
-        $this->registerPattern('/\n?\/\*(!|.*?@license|.*?@preserve).*?\*\/\n?/s', $callback);
+        $this->registerPattern('/
+            # optional newline
+            \n?
 
+            # start comment
+            \/\*
+
+            # comment content
+            (?:
+                # either starts with an !
+                !
+            |
+                # or, after some number of characters which do not end the comment
+                (?:(?!\*\/).)*?
+
+                # there is either a @license or @preserve tag
+                @(?:license|preserve)
+            )
+
+            # then match to the end of the comment
+            .*?\*\/\n?
+
+            /ixs', $callback);
+
+        // Then strip all other comments
         $this->registerPattern('/\/\*.*?\*\//s', '');
     }
 

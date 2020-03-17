@@ -192,6 +192,13 @@ class CSSTest extends PHPUnit_Framework_TestCase
             '/* @preserve This is a CSS comment */',
         );
 
+        $tests[] = array(
+            '/* Do not preserve me */
+            body { color: red; }
+            /* @preserve This is a CSS comment */',
+            'body{color:red}/* @preserve This is a CSS comment */',
+        );
+
         // strip whitespace
         $tests[] = array(
             'body { color: red; }',
