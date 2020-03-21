@@ -146,8 +146,6 @@ class JS extends Minify
      */
     public function execute($path = null)
     {
-        $content = '';
-
         /*
          * Let's first take out strings, comments and regular expressions.
          * All of these can contain JS code-like characters, and we should make
@@ -163,23 +161,56 @@ class JS extends Minify
         $this->stripComments();
         $this->extractRegex();
 
+        $preservecommentpattern = '/(
+             # optional newline
+            \n?
+            # start comment
+            \/\*
+            # comment content
+            (?:
+                # either starts with an !
+                !
+            |
+                # or, after some number of characters which do not end the comment
+                (?:(?!\*\/).)*?
+                # there is either a @license or @preserve tag
+                @(?:license|preserve)
+            )
+            # then match to the end of the comment
+            .*?\*\/\n?
+            )/ixs';
         // loop files
         foreach ($this->data as $source => $js) {
-            // take out strings, comments & regex (for which we've registered
-            // the regexes just a few lines earlier)
-            $js = $this->replace($js);
 
-            $js = $this->propertyNotation($js);
-            $js = $this->shortenBools($js);
-            $js = $this->stripWhitespace($js);
+            // Split JS on special comments.
+            $chunks = preg_split($preservecommentpattern, $js, -1, PREG_SPLIT_DELIM_CAPTURE );
+            $processed = [];
+            for ($i = 0; $i < count($chunks); $i += 2) {
+                $code = $chunks[$i];
+                $comment = '';
+                if (isset($chunks[$i + 1])) {
+                    $comment = $chunks[$i + 1];
+                }
 
-            // combine js: separating the scripts by a ;
-            $content .= $js.";";
+                // take out strings, other comments & regex (for which we've registered
+                // the regexes just a few lines earlier)
+                $code = $this->replace($code);
+
+                $code = $this->propertyNotation($code);
+                $code = $this->shortenBools($code);
+                $code = $this->stripWhitespace($code);
+
+                $processed[] = $code;
+                $processed[] = $comment;
+            }
+            $file = implode($processed);
+            $file = preg_replace('/;$/s', '', $file);
+
+            $files[] = $file;
         }
-
+        $content = implode(';', $files);
         // clean up leftover `;`s from the combination of multiple scripts
         $content = ltrim($content, ';');
-        $content = (string) substr($content, 0, -1);
 
         /*
          * Earlier, we extracted strings & regular expressions and replaced them
@@ -195,17 +226,7 @@ class JS extends Minify
      */
     protected function stripComments()
     {
-        // PHP only supports $this inside anonymous functions since 5.4
-        $minifier = $this;
-        $callback = function ($match) use ($minifier) {
-            $count = count($minifier->extracted);
-            $placeholder = '/*'.$count.'*/';
-            $minifier->extracted[$placeholder] = $match[0];
-
-            return $placeholder;
-        };
         // multi-line comments
-        $this->registerPattern('/\n?\/\*(!|.*?@license|.*?@preserve).*?\*\/\n?/s', $callback);
         $this->registerPattern('/\/\*.*?\*\//s', '');
 
         // single-line comments
@@ -432,7 +453,7 @@ class JS extends Minify
          * script: ASI will kick in here & we're all about minifying.
          * Semicolons at beginning of the file don't make any sense either.
          */
-        $content = preg_replace('/;(\}|$)/s', '\\1', $content);
+        $content = preg_replace('/;(\})/s', '\\1', $content);
         $content = ltrim($content, ';');
 
         // get rid of remaining whitespace af beginning/end
