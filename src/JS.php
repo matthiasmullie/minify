@@ -204,6 +204,7 @@ class JS extends Minify
                 $processed[] = $comment;
             }
             $file = implode($processed);
+            // ASI at end of file, will be added back if concatenated later.
             $file = preg_replace('/;$/s', '', $file);
 
             $files[] = $file;
