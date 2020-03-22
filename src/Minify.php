@@ -105,7 +105,7 @@ abstract class Minify
      * @param string|string[] $data
      *
      * @return static
-     * 
+     *
      * @throws IOException
      */
     public function addFile($data /* $data = null, ... */)
@@ -268,7 +268,7 @@ abstract class Minify
      */
     protected function replace($content)
     {
-        $processed = '';
+        $processed = [];
         $positions = array_fill(0, count($this->patterns), -1);
         $matches = array();
 
@@ -307,7 +307,7 @@ abstract class Minify
 
             // no more matches to find: everything's been processed, break out
             if (!$matches) {
-                $processed .= $content;
+                $processed[] = $content;
                 break;
             }
 
@@ -317,6 +317,7 @@ abstract class Minify
             $discardLength = min($positions);
             $firstPattern = array_search($discardLength, $positions);
             $match = $matches[$firstPattern][0][0];
+            $matchlen = strlen($match);
 
             // execute the pattern that matches earliest in the content string
             list($pattern, $replacement) = $this->patterns[$firstPattern];
@@ -325,22 +326,22 @@ abstract class Minify
             // figure out which part of the string was unmatched; that's the
             // part we'll execute the patterns on again next
             $content = (string) substr($content, $discardLength);
-            $unmatched = (string) substr($content, strpos($content, $match) + strlen($match));
+            $unmatched = (string) substr($content, strpos($content, $match) + $matchlen);
 
             // move the replaced part to $processed and prepare $content to
             // again match batch of patterns against
-            $processed .= substr($replacement, 0, strlen($replacement) - strlen($unmatched));
+            $processed[] = substr($replacement, 0, strlen($replacement) - strlen($unmatched));
             $content = $unmatched;
 
             // first match has been replaced & that content is to be left alone,
             // the next matches will start after this replacement, so we should
             // fix their offsets
             foreach ($positions as $i => $position) {
-                $positions[$i] -= $discardLength + strlen($match);
+                $positions[$i] -= $discardLength + $matchlen;
             }
         }
 
-        return $processed;
+        return implode($processed);
     }
 
     /**

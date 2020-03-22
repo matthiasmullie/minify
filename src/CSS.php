@@ -295,30 +295,60 @@ class CSS extends Minify
      */
     public function execute($path = null, $parents = array())
     {
-        $content = '';
+        $preservecommentpattern = '/(
+            # optional newline
+            \n?
+            # start comment
+            \/\*
+            # comment content
+            (?:
+                # either starts with an !
+                !
+            |
+                # or, after some number of characters which do not end the comment
+                (?:(?!\*\/).)*?
+                # there is either a @license or @preserve tag
+                @(?:license|preserve)
+            )
+            # then match to the end of the comment
+            .*?\*\/\n?
+            )/ixs';
 
         // loop CSS data (raw data and files)
         foreach ($this->data as $source => $css) {
-            /*
-             * Let's first take out strings & comments, since we can't just
-             * remove whitespace anywhere. If whitespace occurs inside a string,
-             * we should leave it alone. E.g.:
-             * p { content: "a   test" }
-             */
-            $this->extractStrings();
-            $this->stripComments();
-            $this->extractCalcs();
-            $css = $this->replace($css);
+            // Split JS on special comments.
+            $chunks = preg_split($preservecommentpattern, $css, -1, PREG_SPLIT_DELIM_CAPTURE );
+            $processed = [];
+            for ($i = 0; $i < count($chunks); $i += 2) {
+                $code = $chunks[$i];
+                $comment = '';
+                if (isset($chunks[$i + 1])) {
+                    $comment = $chunks[$i + 1];
+                }
+                /*
+                * Let's first take out strings & other comments, since we can't just
+                * remove whitespace anywhere. If whitespace occurs inside a string,
+                * we should leave it alone. E.g.:
+                * p { content: "a   test" }
+                */
+                $this->extractStrings();
+                $this->stripComments();
+                $this->extractCalcs();
+                $code = $this->replace($code);
 
-            $css = $this->stripWhitespace($css);
-            $css = $this->shortenColors($css);
-            $css = $this->shortenZeroes($css);
-            $css = $this->shortenFontWeights($css);
-            $css = $this->stripEmptyTags($css);
+                $code = $this->stripWhitespace($code);
+                $code = $this->shortenColors($code);
+                $code = $this->shortenZeroes($code);
+                $code = $this->shortenFontWeights($code);
+                $code = $this->stripEmptyTags($code);
 
-            // restore the string we've extracted earlier
-            $css = $this->restoreExtractedData($css);
+                // restore the string we've extracted earlier
+                $code = $this->restoreExtractedData($code);
 
+                $processed[] = $code;
+                $processed[] = $comment;
+            }
+            $css = implode($processed);
             $source = is_int($source) ? '' : $source;
             $parents = $source ? array_merge($parents, array($source)) : $parents;
             $css = $this->combineImports($source, $css, $parents);
@@ -335,9 +365,9 @@ class CSS extends Minify
             $css = $this->move($converter, $css);
 
             // combine css
-            $content .= $css;
+            $content[] = $css;
         }
-
+        $content = implode($content);
         $content = $this->moveImportsToTop($content);
 
         return $content;
@@ -627,17 +657,6 @@ class CSS extends Minify
      */
     protected function stripComments()
     {
-        // PHP only supports $this inside anonymous functions since 5.4
-        $minifier = $this;
-        $callback = function ($match) use ($minifier) {
-            $count = count($minifier->extracted);
-            $placeholder = '/*'.$count.'*/';
-            $minifier->extracted[$placeholder] = $match[0];
-
-            return $placeholder;
-        };
-        $this->registerPattern('/\n?\/\*(!|.*?@license|.*?@preserve).*?\*\/\n?/s', $callback);
-
         $this->registerPattern('/\/\*.*?\*\//s', '');
     }
 
@@ -708,7 +727,6 @@ class CSS extends Minify
             return $placeholder.$rest;
         };
 
-        $this->registerPattern('/calc(\(.+?)(?=$|;|}|calc\()/', $callback);
         $this->registerPattern('/calc(\(.+?)(?=$|;|}|calc\()/m', $callback);
     }
 
