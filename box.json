@@ -1,0 +1,5 @@
+{
+    "main": "bin/minify",
+    "directories-bin": ["data"],
+    "force-autodiscovery": true
+}

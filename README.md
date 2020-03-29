@@ -143,6 +143,8 @@ composer require matthiasmullie/minify
 
 Although it's recommended to use Composer, you can actually [include these files](https://github.com/matthiasmullie/minify/issues/83) anyway you want.
 
+It's possible to generate PHAR binary using [box utility](https://github.com/humbug/box).
+
 
 ## Try it
 
