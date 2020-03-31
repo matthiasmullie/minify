@@ -308,6 +308,7 @@ class CSS extends Minify
             $this->extractStrings();
             $this->stripComments();
             $this->extractCalcs();
+            $this->extractVarsZero();
             $css = $this->replace($css);
 
             $css = $this->stripWhitespace($css);
@@ -563,6 +564,9 @@ class CSS extends Minify
      */
     protected function shortenZeroes($content)
     {
+        //we don't want to stip units in vars, for example `--some-var: 0px`
+        //we've extracted the zeroed vars earlier in extractVarsZero, so it's OK.
+
         // we don't want to strip units in `calc()` expressions:
         // `5px - 0px` is valid, but `5px - 0` is not
         // `10px * 0` is valid (equates to 0), and so is `10 * 0px`, but
@@ -710,6 +714,28 @@ class CSS extends Minify
 
         $this->registerPattern('/calc(\(.+?)(?=$|;|}|calc\()/', $callback);
         $this->registerPattern('/calc(\(.+?)(?=$|;|}|calc\()/m', $callback);
+    }
+
+    /**
+     * Replace all `--my-variable: 0px` so they won't have the px removed
+     */
+    protected function extractVarsZero()
+    {
+        // PHP only supports $this inside anonymous functions since 5.4
+        $minifier = $this;
+        $callback = function ($match) use ($minifier) {
+            $expr = '';
+
+            $rest = str_replace($expr, '', $match[1]);
+
+            $count = count($minifier->extracted);
+            $placeholder = '--var-' . $count . ':1px';
+            $minifier->extracted[$placeholder] = $match[1].':0'.$match[2];
+
+            return $placeholder;
+        };
+
+        $this->registerPattern('/(--[_a-zA-Z0-9-]+)\s*:\s*0(em|ex|%|px|cm|mm|in|pt|pc|ch|rem|vh|vw|vmin|vmax|vm)/', $callback);
     }
 
     /**
