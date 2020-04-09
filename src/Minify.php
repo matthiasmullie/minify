@@ -49,6 +49,15 @@ abstract class Minify
     public $extracted = array();
 
     /**
+     * Path from where resources like images, fonts etc. can be imported.
+     * Minify will be default look for resources based on its path defined in CSS,
+     * if your structure of files is different because of different folder structure,
+     * you can specify base directory.
+     * @var string
+     */
+    protected $resourcesBasePath = "";
+
+    /**
      * Init the minify class - optionally, code may be passed along already.
      */
     public function __construct(/* $data = null, ... */)
@@ -105,7 +114,7 @@ abstract class Minify
      * @param string|string[] $data
      *
      * @return static
-     * 
+     *
      * @throws IOException
      */
     public function addFile($data /* $data = null, ... */)
@@ -190,6 +199,18 @@ abstract class Minify
         $item->set($content);
 
         return $item;
+    }
+
+    /**
+     * Path from where resources like images, fonts etc. can be imported.
+     * Minify will be default look for resources based on its path defined in CSS,
+     * if your structure of files is different because of different folder structure,
+     * you can specify base directory.
+     * @var string
+     */
+    public function setResourcesBasePath(string $path)
+    {
+        $this->resourcesBasePath = $path;
     }
 
     /**
