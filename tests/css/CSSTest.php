@@ -759,6 +759,24 @@ body{font-family:sans-serif}',
             '@import url(http://minify.dev/?a=1&amp;b=some/*lala*/thing);p{color:red}body{font-family:sans-serif}',
         );
 
+        // https://github.com/matthiasmullie/minify/pull/258
+        $tests[] = array(
+            'color:white;',
+            'color:#fff;',
+        );
+        $tests[] = array(
+            'color:black;',
+            'color:#000;',
+        );
+        $tests[] = array(
+            'background:white;',
+            'background:#fff;',
+        );
+        $tests[] = array(
+            'background:black;',
+            'background:#000;',
+        );
+
         // https://github.com/matthiasmullie/minify/issues/259
         $tests[] = array(
             '#layout-newsletter-change .unsubscribe :checked + label .circle, #layout-newsletter-change .pause : checked + label .circle { color: white }',
