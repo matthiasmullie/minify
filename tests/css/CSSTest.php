@@ -818,6 +818,32 @@ body{font-family:sans-serif}',
             'ul p{padding-left:calc((var(--icon-size) / 2) + var(--horisontal-space))}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/316
+        $tests[] = array(
+            '@font-face { font-family: "Circular Std Black"; src: url(my_black_font.woff); }',
+            '@font-face{font-family:"Circular Std Black";src:url(my_black_font.woff)}',
+        );
+        $tests[] = array(
+            '@font-face { font-family: \'Circular Std White\'; src: url(my_white_font.woff); }',
+            '@font-face{font-family:\'Circular Std White\';src:url(my_white_font.woff)}',
+        );
+        $tests[] = array(
+            '@font-face { font-family: Circular Std Black; src: url(my_black_font.woff); }',
+            '@font-face{font-family:Circular Std Black;src:url(my_black_font.woff)}',
+        );
+        $tests[] = array(
+            '@font-face { font-family: Circular Std White; src: url(my_white_font.woff); }',
+            '@font-face{font-family:Circular Std White;src:url(my_white_font.woff)}',
+        );
+        $tests[] = array(
+            '@font-face { font-family: Black; src: url(my_black_font.woff); }',
+            '@font-face{font-family:Black;src:url(my_black_font.woff)}',
+        );
+        $tests[] = array(
+            '@font-face { font-family: White; src: url(my_white_font.woff); }',
+            '@font-face{font-family:White;src:url(my_white_font.woff)}',
+        );
+
         return $tests;
     }
 
