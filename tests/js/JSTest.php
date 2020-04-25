@@ -1324,6 +1324,24 @@ var largeScreen=2048',
             '/^\[(x| )\](?=\s)/i',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/323
+        $tests[] = array(
+            'a = {
+                device: [
+                    [/android.+(transfo[prime\s]{4,10}\s\w+|eeepc|slider\s\w+|nexus 7)/i],
+                    [/(sony)\s(tablet\s[ps])\sbuild\//i, /(sony)?(?:sgp.+)\sbuild\//i],
+                    [/(?:sony)?(?:(?:(?:c|d)\d{4})|(?:so[-l].+))\sbuild\//i]
+                ]
+            }',
+            'a={device:[[/android.+(transfo[prime\s]{4,10}\s\w+|eeepc|slider\s\w+|nexus 7)/i],[/(sony)\s(tablet\s[ps])\sbuild\//i,/(sony)?(?:sgp.+)\sbuild\//i],[/(?:sony)?(?:(?:(?:c|d)\d{4})|(?:so[-l].+))\sbuild\//i]]}'
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/329
+        $tests[] = array(
+            'test: [/\sedg\//i],',
+            'test:[/\sedg\//i],',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
