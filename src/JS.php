@@ -432,7 +432,7 @@ class JS extends Minify
          * script: ASI will kick in here & we're all about minifying.
          * Semicolons at beginning of the file don't make any sense either.
          */
-        $content = preg_replace('/;(\}|$)/s', '\\1', $content);
+        $content = preg_replace('/(?<!\));(\}|$)/s', '\\1', $content);
         $content = ltrim($content, ';');
 
         // get rid of remaining whitespace af beginning/end
