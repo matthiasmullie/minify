@@ -248,7 +248,7 @@ class CSS extends Minify
      */
     protected function importFiles($source, $content)
     {
-        $regex = '/url\((["\']?)(.+?)\\1\)/i';
+        $regex = '/url\((["\']?)([^")]+?\\1\)/i';
         if ($this->importExtensions && preg_match_all($regex, $content, $matches, PREG_SET_ORDER)) {
             $search = array();
             $replace = array();
