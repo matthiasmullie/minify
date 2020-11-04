@@ -806,8 +806,9 @@ body{
 }
 
 .classWithEmptyProperties {
-    color: ;
+    color::hover: ;
     font-size: ;
+    font-weight::hover:not(#id.class): ;
 }
 
 @media(max-width: 576px) {
@@ -822,7 +823,6 @@ body{
 @media(max-width: 850px) {
     .emptyClassWithEmptyProperties {
         color: ;
-        font-size: ;
     }
 
     #emptyId {
