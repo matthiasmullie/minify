@@ -502,7 +502,7 @@ only screen and (min-device-pixel-ratio: 1.5) {
     calc(100% - 15px) calc(1em + 2px),
     calc(100% - 2.5em) 0.5em;
 }',
-	      	'.cvp-live-filter select{background-position:calc(100% - 20px) calc(1em + 2px),calc(100% - 15px) calc(1em + 2px),calc(100% - 2.5em) .5em}',    
+	      	'.cvp-live-filter select{background-position:calc(100% - 20px) calc(1em + 2px),calc(100% - 15px) calc(1em + 2px),calc(100% - 2.5em) .5em}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/301
@@ -798,6 +798,42 @@ body{font-family:sans-serif}',
         $tests[] = array(
             'ul p { padding-left: calc((var(--icon-size) / 2) + var(--horisontal-space)); }',
             'ul p{padding-left:calc((var(--icon-size) / 2) + var(--horisontal-space))}',
+        );
+
+        $tests[] = array('
+body{
+     background: white;
+}
+
+.classWithEmptyProperties {
+    color: ;
+    font-size: ;
+}
+
+@media(max-width: 576px) {
+    .emptyClass {
+    }
+
+    .nonEmptyClass {
+        display: flex;
+    }
+}
+
+@media(max-width: 850px) {
+    .emptyClassWithEmptyProperties {
+        color: ;
+        font-size: ;
+    }
+
+    #emptyId {
+    }
+}
+
+@media(max-width: 1580px) {
+    #emptyId {
+    }
+}
+', 'body{background:#fff}@media(max-width:576px){.nonEmptyClass{display:flex}}',
         );
 
         return $tests;
