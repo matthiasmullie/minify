@@ -617,10 +617,11 @@ class CSS extends Minify
      */
     protected function stripEmptyTags($content)
     {
+        // Remove empty tags/selectors at the start of the file
         $content = preg_replace('/(?<=^)[^\{\};]+\{\s*\}/', '', $content);
-        // Remove empty tags/selectors
+        // Remove empty tags/selectors (classes, ids and so on)
         $content = preg_replace('/(?<=(\}|;|\{))[^\{\};]+\{\s*\}/', '', $content);
-        // Run it again to remove empty media queries that had the empty selectors before
+        // Run it again to remove any empty media queries that had the empty selectors before
         $content = preg_replace('/(?<=(\}|;|\{))[^\{\};]+\{\s*\}/', '', $content);
 
         return $content;
