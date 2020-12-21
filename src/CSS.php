@@ -307,7 +307,7 @@ class CSS extends Minify
              */
             $this->extractStrings();
             $this->stripComments();
-            $this->extractCalcs();
+            $this->extractMath();
             $css = $this->replace($css);
 
             $css = $this->stripWhitespace($css);
@@ -678,19 +678,21 @@ class CSS extends Minify
     }
 
     /**
-     * Replace all `calc()` occurrences.
+     * Replace all occurrences of functions that may contain math, where
+     * whitespace around operators needs to be preserved (e.g. calc, clamp)
      */
-    protected function extractCalcs()
+    protected function extractMath()
     {
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
-            $length = strlen($match[1]);
+            $function = $match[1];
+            $length = strlen($match[2]);
             $expr = '';
             $opened = 0;
 
             for ($i = 0; $i < $length; $i++) {
-                $char = $match[1][$i];
+                $char = $match[2][$i];
                 $expr .= $char;
                 if ($char === '(') {
                     $opened++;
@@ -698,18 +700,25 @@ class CSS extends Minify
                     break;
                 }
             }
-            $rest = str_replace($expr, '', $match[1]);
+            $rest = str_replace($expr, '', $match[2]);
             $expr = trim(substr($expr, 1, -1));
 
             $count = count($minifier->extracted);
-            $placeholder = 'calc('.$count.')';
-            $minifier->extracted[$placeholder] = 'calc('.$expr.')';
+            $placeholder = 'math('.$count.')';
+            $minifier->extracted[$placeholder] = $function.'('.$expr.')';
 
             return $placeholder.$rest;
         };
 
-        $this->registerPattern('/calc(\(.+?)(?=$|;|}|calc\()/', $callback);
-        $this->registerPattern('/calc(\(.+?)(?=$|;|}|calc\()/m', $callback);
+        $functions = array('calc', 'clamp', 'min', 'max');
+        $this->registerPattern(
+            '/('. implode($functions, '|') .')(\(.+?)(?=$|;|}|('. implode($functions, '|') .')\()/',
+            $callback
+        );
+        $this->registerPattern(
+            '/('. implode($functions, '|') .')(\(.+?)(?=$|;|}|('. implode($functions, '|') .')\()/m',
+            $callback
+        );
     }
 
     /**

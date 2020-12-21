@@ -494,15 +494,15 @@ only screen and (min-device-pixel-ratio: 1.5) {
             'p{width:calc(35% + (10% + 0px + 10%))}',
         );
 
-		// https://github.com/matthiasmullie/minify/issues/274
-		$tests[] = array(
-	      	'.cvp-live-filter select {
+        // https://github.com/matthiasmullie/minify/issues/274
+        $tests[] = array(
+              '.cvp-live-filter select {
   background-position:
     calc(100% - 20px) calc(1em + 2px),
     calc(100% - 15px) calc(1em + 2px),
     calc(100% - 2.5em) 0.5em;
 }',
-	      	'.cvp-live-filter select{background-position:calc(100% - 20px) calc(1em + 2px),calc(100% - 15px) calc(1em + 2px),calc(100% - 2.5em) .5em}',    
+              '.cvp-live-filter select{background-position:calc(100% - 20px) calc(1em + 2px),calc(100% - 15px) calc(1em + 2px),calc(100% - 2.5em) .5em}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/301
@@ -798,6 +798,12 @@ body{font-family:sans-serif}',
         $tests[] = array(
             'ul p { padding-left: calc((var(--icon-size) / 2) + var(--horisontal-space)); }',
             'ul p{padding-left:calc((var(--icon-size) / 2) + var(--horisontal-space))}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/351
+        $tests[] = array(
+            'clamp(2.5rem, 1rem + 4vw, 4rem)',
+            'clamp(2.5rem, 1rem + 4vw, 4rem)',
         );
 
         return $tests;
