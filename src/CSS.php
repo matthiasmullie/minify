@@ -308,6 +308,7 @@ class CSS extends Minify
             $this->extractStrings();
             $this->stripComments();
             $this->extractMath();
+            $this->extractCustomProperties();
             $css = $this->replace($css);
 
             $css = $this->stripWhitespace($css);
@@ -718,6 +719,25 @@ class CSS extends Minify
         $this->registerPattern(
             '/('. implode($functions, '|') .')(\(.+?)(?=$|;|}|('. implode($functions, '|') .')\()/m',
             $callback
+        );
+    }
+
+    /**
+     * Replace custom properties, whose values may be used in scenarios where
+     * we wouldn't want them to be minified (e.g. inside calc)
+     */
+    protected function extractCustomProperties()
+    {
+        // PHP only supports $this inside anonymous functions since 5.4
+        $minifier = $this;
+        $this->registerPattern(
+            '/(?<=^|[;}])(--[^:;{}"\'\s]+)\s*:([^;{}]+)/m',
+            function ($match) use ($minifier) {
+                $placeholder = '--custom-'. count($minifier->extracted) . ':0';
+                $minifier->extracted[$placeholder] = $match[1] .':'. trim($match[2]);
+                return $placeholder;
+
+            }
         );
     }
 

@@ -806,6 +806,13 @@ body{font-family:sans-serif}',
             'clamp(2.5rem, 1rem + 4vw, 4rem)',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/342
+        $tests[] = array(
+            '--headlineFontSize: 16px + var(--multiplicator);
+font-size: calc(var(--headlineFontSize));',
+            '--headlineFontSize:16px + var(--multiplicator);font-size:calc(var(--headlineFontSize));',
+        );
+
         return $tests;
     }
 
