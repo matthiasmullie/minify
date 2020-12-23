@@ -1,4 +1,4 @@
-# Minify - [minifier.org](https://www.minifier.org)
+# Minify
 
 [![Build status](https://api.travis-ci.org/matthiasmullie/minify.svg?branch=master)](https://travis-ci.org/matthiasmullie/minify)
 [![Code coverage](http://img.shields.io/codecov/c/github/matthiasmullie/minify.svg)](https://codecov.io/github/matthiasmullie/minify)
@@ -142,11 +142,6 @@ composer require matthiasmullie/minify
 ```
 
 Although it's recommended to use Composer, you can actually [include these files](https://github.com/matthiasmullie/minify/issues/83) anyway you want.
-
-
-## Try it
-
-Simply try it out online at <https://www.minifier.org>.
 
 
 ## License
