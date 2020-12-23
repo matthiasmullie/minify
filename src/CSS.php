@@ -684,14 +684,22 @@ class CSS extends Minify
      */
     protected function extractMath()
     {
+        $functions = array('calc', 'clamp', 'min', 'max');
+        $pattern = '/('. implode($functions, '|') .')(\(.+?)(?=$|;|})/m';
+
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
-        $callback = function ($match) use ($minifier) {
+        $callback = function ($match) use ($minifier, $pattern, &$callback) {
             $function = $match[1];
             $length = strlen($match[2]);
             $expr = '';
             $opened = 0;
 
+            // the regular expression for extracting math has 1 significant problem:
+            // it can't determine the correct closing parenthesis...
+            // instead, it'll match a larger portion of code to where it's certain that
+            // the calc() musts have ended, and we'll figure out which is the correct
+            // closing parenthesis here, by counting how many have opened
             for ($i = 0; $i < $length; $i++) {
                 $char = $match[2][$i];
                 $expr .= $char;
@@ -701,25 +709,22 @@ class CSS extends Minify
                     break;
                 }
             }
-            $rest = str_replace($expr, '', $match[2]);
-            $expr = trim(substr($expr, 1, -1));
 
+            // now that we've figured out where the calc() starts and ends, extract it
             $count = count($minifier->extracted);
             $placeholder = 'math('.$count.')';
-            $minifier->extracted[$placeholder] = $function.'('.$expr.')';
+            $minifier->extracted[$placeholder] = $function.'('.trim(substr($expr, 1, -1)).')';
+
+            // and since we've captured more code than required, we may have some leftover
+            // calc() in here too - go recursive on the remaining but of code to go figure
+            // that out and extract what is needed
+            $rest = str_replace($function.$expr, '', $match[0]);
+            $rest = preg_replace_callback($pattern, $callback, $rest);
 
             return $placeholder.$rest;
         };
 
-        $functions = array('calc', 'clamp', 'min', 'max');
-        $this->registerPattern(
-            '/('. implode($functions, '|') .')(\(.+?)(?=$|;|}|('. implode($functions, '|') .')\()/',
-            $callback
-        );
-        $this->registerPattern(
-            '/('. implode($functions, '|') .')(\(.+?)(?=$|;|}|('. implode($functions, '|') .')\()/m',
-            $callback
-        );
+        $this->registerPattern($pattern, $callback);
     }
 
     /**

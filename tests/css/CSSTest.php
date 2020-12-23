@@ -813,6 +813,16 @@ font-size: calc(var(--headlineFontSize));',
             '--headlineFontSize:16px + var(--multiplicator);font-size:calc(var(--headlineFontSize));',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/312
+        $tests[] = array(
+            '.alignfull { width: calc(100% + calc(2 * var(--central-padding))); }',
+            '.alignfull{width:calc(100% + calc(2 * var(--central-padding)))}',
+        );
+        $tests[] = array(
+            '*{margin-left: calc(0.5rem * calc(1 - var(--space-x-reverse)));}',
+            '*{margin-left:calc(0.5rem * calc(1 - var(--space-x-reverse)))}',
+        );
+
         return $tests;
     }
 
