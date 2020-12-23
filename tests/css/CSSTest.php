@@ -823,6 +823,16 @@ font-size: calc(var(--headlineFontSize));',
             '*{margin-left:calc(0.5rem * calc(1 - var(--space-x-reverse)))}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/349
+        $tests[] = array(
+            '.space-x-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(1rem * var(--tw-space-x-reverse));
+  margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+}',
+            '.space-x-4>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}',
+        );
+
         return $tests;
     }
 
