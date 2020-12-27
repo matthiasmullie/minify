@@ -18,6 +18,7 @@ before_install:
   # need at least version 17.05, for ARG support in FROM
   - sudo apt-get update
   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 install:
   - make up PHP=$(phpenv version-name)
