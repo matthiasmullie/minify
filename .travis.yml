@@ -31,3 +31,8 @@ after_success:
 
 after_script:
   - make down PHP=$(phpenv version-name)
+
+matrix:
+  allow_failures:
+    - php: 7.4
+    - php: 8.0
