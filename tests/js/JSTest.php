@@ -1,59 +1,42 @@
 <?php
 
-use MatthiasMullie\Minify;
+namespace MatthiasMullie\Minify\Test;
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * JS minifier test case.
  */
-class JSTest extends PHPUnit_Framework_TestCase
+class JSTest extends TestCase
 {
-    /**
-     * @var Minify\JS
-     */
-    private $minifier;
-
-    /**
-     * Prepares the environment before running a test.
-     */
-    protected function setUp()
+    protected function mockMinifier()
     {
-        parent::setUp();
-
         // override save method, there's no point in writing the result out here
-        $this->minifier = $this->getMockBuilder('\MatthiasMullie\Minify\JS')
+        return $this->getMockBuilder('\MatthiasMullie\Minify\JS')
             ->setMethods(array('save'))
             ->getMock();
     }
 
     /**
-     * Cleans up the environment after running a test.
-     */
-    protected function tearDown()
-    {
-        $this->minifier = null;
-        parent::tearDown();
-    }
-
-    /**
      * Test minifier on files that doesn't exist.
-     *
-     * @expectedException MatthiasMullie\Minify\Exceptions\IOException
      */
     public function testAddFileException()
     {
-        $this->minifier->addFile('/sample/source/nothing');
+        $this->expectException('MatthiasMullie\Minify\Exceptions\IOException');
+
+        $minifier = $this->mockMinifier();
+        $minifier->addFile('/sample/source/nothing');
     }
 
     /**
      * Test minifier addFile method.
-     *
-     * @test
      */
     public function testAddFile()
     {
-        $this->minifier->addFile(__DIR__.'/sample/source/script1.js');
+        $minifier = $this->mockMinifier();
+        $minifier->addFile(__DIR__.'/sample/source/script1.js');
 
-        $result = $this->minifier->minify();
+        $result = $minifier->minify();
 
         $this->assertEquals('var test=1', $result);
     }
@@ -61,13 +44,13 @@ class JSTest extends PHPUnit_Framework_TestCase
     /**
      * Test JS minifier rules, provided by dataProvider.
      *
-     * @test
      * @dataProvider dataProvider
      */
-    public function minify($input, $expected)
+    public function testMinify($input, $expected)
     {
-        $this->minifier->add($input);
-        $result = $this->minifier->minify();
+        $minifier = $this->mockMinifier();
+        $minifier->add($input);
+        $result = $minifier->minify();
 
         $this->assertEquals($expected, $result);
     }
