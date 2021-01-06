@@ -833,6 +833,12 @@ font-size: calc(var(--headlineFontSize));',
             '.space-x-4>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/356
+        $tests[] = array(
+            '.testclass{ grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); }',
+            '.testclass{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)}',
+        );
+
         return $tests;
     }
 
