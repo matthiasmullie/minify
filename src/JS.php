@@ -198,15 +198,25 @@ class JS extends Minify
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
-            $count = count($minifier->extracted);
-            $placeholder = '/*'.$count.'*/';
-            $minifier->extracted[$placeholder] = $match[0];
+            if (
+                substr($match[1], 0, 1) === '!' ||
+                strpos($match[1], '@license') !== false ||
+                strpos($match[1], '@preserve') !== false
+            ) {
+                // preserve multi-line comments that start with /*!
+                // or contain @license or @preserve annotations
+                $count = count($minifier->extracted);
+                $placeholder = '/*'.$count.'*/';
+                $minifier->extracted[$placeholder] = $match[0];
 
-            return $placeholder;
+                return $placeholder;
+            }
+
+            return '';
         };
+
         // multi-line comments
-        $this->registerPattern('/\n?\/\*(!|.*?@license|.*?@preserve).*?\*\/\n?/s', $callback);
-        $this->registerPattern('/\/\*.*?\*\//s', '');
+        $this->registerPattern('/\n?\/\*(.*?)\*\/\n?/s', $callback);
 
         // single-line comments
         $this->registerPattern('/\/\/.*$/m', '');
