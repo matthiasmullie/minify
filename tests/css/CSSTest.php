@@ -821,6 +821,17 @@ font-size: calc(var(--headlineFontSize));',
             '.testclass{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/298
+        $tests[] = array(
+            ':root {
+--some-var: 0px;
+}
+.some-class {
+margin-left: calc(20px + var(--some-var));
+}',
+            ':root{--some-var:0px}.some-class{margin-left:calc(20px + var(--some-var))}',
+        );
+
         return $tests;
     }
 
