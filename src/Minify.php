@@ -137,7 +137,17 @@ abstract class Minify
         return $this;
     }
 
-    /**
+	/**
+	 * Add data with path and content without doing any check.
+	 *
+	 * @param string $path    File path to be minified.
+	 * @param string $content Content to be minified.
+	 */
+	public function addData( $path, $content ) {
+		$this->data[ $path ] = $content;
+	}
+
+	/**
      * Minify the data & (optionally) saves it to a file.
      *
      * @param string[optional] $path Path to write the data to
