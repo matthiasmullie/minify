@@ -142,9 +142,13 @@ abstract class Minify
 	 *
 	 * @param string $path    File path to be minified.
 	 * @param string $content Content to be minified.
+	 *
+	 * @return static
 	 */
 	public function addData( $path, $content ) {
 		$this->data[ $path ] = $content;
+
+		return $this;
 	}
 
 	/**
