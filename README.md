@@ -121,7 +121,7 @@ The CSS minifier will automatically embed referenced files (like images, fonts, 
 
 This methods allows the type of files to be specified, along with their data:mime type.
 
-The default embedded file types are gif, png, jpg, jpeg, svg & woff.
+The default embedded file types are gif, png, jpg, jpeg, svg, apng, avif, webp, woff and woff2.
 
 ```php
 $extensions = array(
