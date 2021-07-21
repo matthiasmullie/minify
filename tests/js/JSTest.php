@@ -1307,6 +1307,31 @@ var largeScreen=2048',
             '/^\[(x| )\](?=\s)/i',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/323
+        $tests[] = array(
+            'a = {
+                device: [
+                    [/android.+(transfo[prime\s]{4,10}\s\w+|eeepc|slider\s\w+|nexus 7)/i],
+                    [/(sony)\s(tablet\s[ps])\sbuild\//i, /(sony)?(?:sgp.+)\sbuild\//i],
+                    [/(?:sony)?(?:(?:(?:c|d)\d{4})|(?:so[-l].+))\sbuild\//i]
+                ]
+            }',
+            'a={device:[[/android.+(transfo[prime\s]{4,10}\s\w+|eeepc|slider\s\w+|nexus 7)/i],[/(sony)\s(tablet\s[ps])\sbuild\//i,/(sony)?(?:sgp.+)\sbuild\//i],[/(?:sony)?(?:(?:(?:c|d)\d{4})|(?:so[-l].+))\sbuild\//i]]}'
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/329
+        $tests[] = array(
+            'test: [/\sedg\//i],',
+            'test:[/\sedg\//i],',
+        );
+
+        // https://github.com/wp-media/wp-rocket/issues/2974
+        $tests[] = array(
+            'if(b)return w.IGNORE;var c=B(fb(a,"href"));b=R(fb(a,"hostname"));c=c?/^https?:\/\//.test(c)||/^\/\//.test(c):!1;if(c&&!lc(a)){if(la)return w.TRACK;
+            if(!0===p.aff_domains[b]||H(lb,b))return w.AFFILIATE;if(Ka(b))return w.PRE_AFFILIATED;',
+            'if(b)return w.IGNORE;var c=B(fb(a,"href"));b=R(fb(a,"hostname"));c=c?/^https?:\/\//.test(c)||/^\/\//.test(c):!1;if(c&&!lc(a)){if(la)return w.TRACK;if(!0===p.aff_domains[b]||H(lb,b))return w.AFFILIATE;if(Ka(b))return w.PRE_AFFILIATED'
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');

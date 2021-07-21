@@ -219,7 +219,7 @@ class JS extends Minify
         $this->registerPattern('/\n?\/\*(.*?)\*\/\n?/s', $callback);
 
         // single-line comments
-        $this->registerPattern('/\/\/.*$/m', '');
+        $this->registerPattern('/(\/\/)(?!i)(?!\.).*$/m', '');
     }
 
     /**
