@@ -489,6 +489,7 @@ class CSS extends Minify
      */
     protected function shortenColors($content)
     {
+        // shorten repeating patterns within HEX ..
         $content = preg_replace('/(?<=[: ])#([0-9a-z])\\1([0-9a-z])\\2([0-9a-z])\\3(?:([0-9a-z])\\4)?(?=[; }])/i', '#$1$2$3$4', $content);
 
         // remove alpha channel if it's pointless...
@@ -496,37 +497,59 @@ class CSS extends Minify
         $content = preg_replace('/(?<=[: ])#([0-9a-z]{3})f?(?=[; }])/i', '#$1', $content);
 
         $colors = array(
+            // make these are more readable
+            '#DC143C' => 'crimson',
+            '#8B0000' => 'darkred',
+            '#696969' => 'dimgray',
+            '#FF69B4' => 'hotpink',
+            '#FDF5E6' => 'oldlace',
+            '#87CEEB' => 'skyblue',
+            '#D8BFD8' => 'thistle',
             // we can shorten some even more by replacing them with their color name
             '#F0FFFF' => 'azure',
             '#F5F5DC' => 'beige',
+            '#FFE4C4' => 'bisque',
+            '#0000FF' => 'blue',
+            '#00F'    => 'blue',
             '#A52A2A' => 'brown',
             '#FF7F50' => 'coral',
+            '#00FFFF' => 'cyan',
+            '#0FF'    => 'cyan',
             '#FFD700' => 'gold',
             '#808080' => 'gray',
             '#008000' => 'green',
             '#4B0082' => 'indigo',
             '#FFFFF0' => 'ivory',
             '#F0E68C' => 'khaki',
+            '#00FF00' => 'lime',
+            '#0F0'    => 'lime',
             '#FAF0E6' => 'linen',
             '#800000' => 'maroon',
             '#000080' => 'navy',
             '#808000' => 'olive',
+            '#FFA500' => 'orange',
+            '#DA70D6' => 'orchid',
             '#CD853F' => 'peru',
             '#FFC0CB' => 'pink',
             '#DDA0DD' => 'plum',
             '#800080' => 'purple',
-            '#F00' => 'red',
+            '#FF0000' => 'red',
+            '#F00'    => 'red',
             '#FA8072' => 'salmon',
             '#A0522D' => 'sienna',
             '#C0C0C0' => 'silver',
             '#FFFAFA' => 'snow',
             '#D2B48C' => 'tan',
+            '#008080' => 'teal',
             '#FF6347' => 'tomato',
             '#EE82EE' => 'violet',
             '#F5DEB3' => 'wheat',
             // or the other way around
-            'WHITE' => '#fff',
-            'BLACK' => '#000',
+            'BLACK'   => '#000',
+            'FUCHSIA' => '#f0f',
+            'MAGENTA' => '#f0f',
+            'WHITE'   => '#fff',
+            'YELLOW'  => '#ff0',
         );
 
         return preg_replace_callback(
