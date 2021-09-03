@@ -490,11 +490,11 @@ class CSS extends Minify
     protected function shortenColors($content)
     {
         // shorten repeating patterns within HEX ..
-        $content = preg_replace('/(?<=[: ])#([0-9a-z])\\1([0-9a-z])\\2([0-9a-z])\\3(?:([0-9a-z])\\4)?(?=[; }])/i', '#$1$2$3$4', $content);
+        $content = preg_replace('/(?<=[: ])#([0-9a-f])\\1([0-9a-f])\\2([0-9a-f])\\3(?:([0-9a-f])\\4)?(?=[; }])/i', '#$1$2$3$4', $content);
 
         // remove alpha channel if it's pointless...
-        $content = preg_replace('/(?<=[: ])#([0-9a-z]{6})ff?(?=[; }])/i', '#$1', $content);
-        $content = preg_replace('/(?<=[: ])#([0-9a-z]{3})f?(?=[; }])/i', '#$1', $content);
+        $content = preg_replace('/(?<=[: ])#([0-9a-f]{6})ff?(?=[; }])/i', '#$1', $content);
+        $content = preg_replace('/(?<=[: ])#([0-9a-f]{3})f?(?=[; }])/i', '#$1', $content);
 
         $colors = array(
             // make these are more readable
