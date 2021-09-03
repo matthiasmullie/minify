@@ -491,16 +491,16 @@ class CSS extends Minify
     protected function shortenRGBColors($content)
     {
         // THX @ https://www.regular-expressions.info/numericranges.html
-        $decHEX = '([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])';// ([0-255])
+        $dec = '([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])';// [000-255]
 
         // remove alpha channel if it's pointless ..
-        $content = preg_replace("/rgba\($decHEX,$decHEX,$decHEX,1(?:.*|00%)?\)/i", 'rgb($1,$2,$3)', $content);
+        $content = preg_replace("/rgba?\($dec[,\s]$dec[,\s]$dec[,\/]1(?:[\.\d]*|00%)?\)/i", 'rgb($1,$2,$3)', $content);
 
         // replace `transparent` with shortcut ..
-        $content = preg_replace("/rgba\($decHEX,$decHEX,$decHEX,0(?:[\.0%]*)?\)/i", '#0000', $content);
+        $content = preg_replace("/rgba?\($dec[,\s]$dec[,\s]$dec[,\/]0(?:[\.0%]*)?\)/i", '#0000', $content);
 
         return preg_replace_callback(
-            "/rgb\($decHEX,$decHEX,$decHEX\)/i",
+            "/rgb\($dec,$dec,$dec\)/i",
             function ($match)
             {
                 return sprintf('#%02x%02x%02x', $match[1],$match[2],$match[3]);
@@ -530,7 +530,7 @@ class CSS extends Minify
         $content = preg_replace('/(?<=[: ])#([0-9a-f]{6})00?(?=[; }])/i', '#0000', $content);
 
         $colors = array(
-            // make these are more readable
+            // make these more readable
             '#DC143C' => 'crimson',
             '#8B0000' => 'darkred',
             '#696969' => 'dimgray',
