@@ -316,7 +316,8 @@ class CSS extends Minify
             $css = $this->replace($css);
 
             $css = $this->stripWhitespace($css);
-            $css = $this->shortenColors($css);
+            $css = $this->shortenRGBColors($css);
+            $css = $this->shortenHEXColors($css);
             $css = $this->shortenZeroes($css);
             $css = $this->shortenFontWeights($css);
             $css = $this->stripEmptyTags($css);
@@ -480,21 +481,53 @@ class CSS extends Minify
     }
 
     /**
-     * Shorthand hex color codes.
-     * #FF0000 -> #F00.
+     * Shorthand RGB color codes.
+     * rgb(255,0,0) -> #f00.
      *
-     * @param string $content The CSS content to shorten the hex color codes for
+     * @param string $content The CSS content to shorten the RGB color codes for
      *
      * @return string
      */
-    protected function shortenColors($content)
+    protected function shortenRGBColors($content)
+    {
+        // THX @ https://www.regular-expressions.info/numericranges.html
+        $decHEX = '([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])';// ([0-255])
+
+        // remove alpha channel if it's pointless ..
+        $content = preg_replace("/rgba\($decHEX,$decHEX,$decHEX,1(?:.*|00%)?\)/i", 'rgb($1,$2,$3)', $content);
+
+        // replace `transparent` with shortcut ..
+        $content = preg_replace("/rgba\($decHEX,$decHEX,$decHEX,0(?:[\.0%]*)?\)/i", '#0000', $content);
+
+        return preg_replace_callback(
+            "/rgb\($decHEX,$decHEX,$decHEX\)/i",
+            function ($match)
+            {
+                return sprintf('#%02x%02x%02x', $match[1],$match[2],$match[3]);
+            },
+            $content
+        );
+    }
+
+    /**
+     * Shorthand HEX color codes.
+     * #FF0000 -> #f00.
+     *
+     * @param string $content The CSS content to shorten the HEX color codes for
+     *
+     * @return string
+     */
+    protected function shortenHexColors($content)
     {
         // shorten repeating patterns within HEX ..
         $content = preg_replace('/(?<=[: ])#([0-9a-f])\\1([0-9a-f])\\2([0-9a-f])\\3(?:([0-9a-f])\\4)?(?=[; }])/i', '#$1$2$3$4', $content);
 
-        // remove alpha channel if it's pointless...
+        // remove alpha channel if it's pointless ..
         $content = preg_replace('/(?<=[: ])#([0-9a-f]{6})ff?(?=[; }])/i', '#$1', $content);
         $content = preg_replace('/(?<=[: ])#([0-9a-f]{3})f?(?=[; }])/i', '#$1', $content);
+
+        // replace `transparent` with shortcut ..
+        $content = preg_replace('/(?<=[: ])#([0-9a-f]{6})00?(?=[; }])/i', '#0000', $content);
 
         $colors = array(
             // make these are more readable
@@ -550,6 +583,8 @@ class CSS extends Minify
             'MAGENTA' => '#f0f',
             'WHITE'   => '#fff',
             'YELLOW'  => '#ff0',
+            // and also `transparent`
+            'TRANSPARENT' => '#0000'
         );
 
         return preg_replace_callback(
