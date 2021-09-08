@@ -316,7 +316,7 @@ class CSS extends Minify
             $css = $this->replace($css);
 
             $css = $this->stripWhitespace($css);
-            $css = $this->shortenColors($css);
+            $css = $this->shortenHEXColors($css);
             $css = $this->shortenZeroes($css);
             $css = $this->shortenFontWeights($css);
             $css = $this->stripEmptyTags($css);
@@ -480,59 +480,83 @@ class CSS extends Minify
     }
 
     /**
-     * Shorthand hex color codes.
-     * #FF0000 -> #F00.
+     * Shorthand HEX color codes.
+     * #FF0000 -> #f00 -> red
      *
-     * @param string $content The CSS content to shorten the hex color codes for
+     * @param string $content The CSS content to shorten the HEX color codes for
      *
      * @return string
      */
-    protected function shortenColors($content)
+    protected function shortenHexColors($content)
     {
-        $content = preg_replace('/(?<=[: ])#([0-9a-z])\\1([0-9a-z])\\2([0-9a-z])\\3(?:([0-9a-z])\\4)?(?=[; }])/i', '#$1$2$3$4', $content);
+        // shorten repeating patterns within HEX ..
+        $content = preg_replace('/#([0-9a-f])\\1([0-9a-f])\\2([0-9a-f])\\3(?:([0-9a-f])\\4)?/i', '#$1$2$3$4', $content);
 
-        // remove alpha channel if it's pointless...
-        $content = preg_replace('/(?<=[: ])#([0-9a-z]{6})ff?(?=[; }])/i', '#$1', $content);
-        $content = preg_replace('/(?<=[: ])#([0-9a-z]{3})f?(?=[; }])/i', '#$1', $content);
+        // remove alpha channel if it's pointless ..
+        $content = preg_replace('/#([0-9a-f]{6})ff/i', '#$1', $content);
+        $content = preg_replace('/#([0-9a-f]{3})f/i', '#$1', $content);
+
+        // replace `transparent` with shortcut ..
+        $content = preg_replace('/#[0-9a-f]{6}00/i', '#0000', $content);
 
         $colors = array(
+            // make these more readable
+            '#00f'    => 'blue',
+            '#dc143c' => 'crimson',
+            '#0ff'    => 'cyan',
+            '#8b0000' => 'darkred',
+            '#696969' => 'dimgray',
+            '#ff69b4' => 'hotpink',
+            '#0f0'    => 'lime',
+            '#fdf5e6' => 'oldlace',
+            '#87ceeb' => 'skyblue',
+            '#d8bfd8' => 'thistle',
             // we can shorten some even more by replacing them with their color name
-            '#F0FFFF' => 'azure',
-            '#F5F5DC' => 'beige',
-            '#A52A2A' => 'brown',
-            '#FF7F50' => 'coral',
-            '#FFD700' => 'gold',
+            '#f0ffff' => 'azure',
+            '#f5f5dc' => 'beige',
+            '#ffe4c4' => 'bisque',
+            '#a52a2a' => 'brown',
+            '#ff7f50' => 'coral',
+            '#ffd700' => 'gold',
             '#808080' => 'gray',
             '#008000' => 'green',
-            '#4B0082' => 'indigo',
-            '#FFFFF0' => 'ivory',
-            '#F0E68C' => 'khaki',
-            '#FAF0E6' => 'linen',
+            '#4b0082' => 'indigo',
+            '#fffff0' => 'ivory',
+            '#f0e68c' => 'khaki',
+            '#faf0e6' => 'linen',
             '#800000' => 'maroon',
             '#000080' => 'navy',
             '#808000' => 'olive',
-            '#CD853F' => 'peru',
-            '#FFC0CB' => 'pink',
-            '#DDA0DD' => 'plum',
+            '#ffa500' => 'orange',
+            '#da70d6' => 'orchid',
+            '#cd853f' => 'peru',
+            '#ffc0cb' => 'pink',
+            '#dda0dd' => 'plum',
             '#800080' => 'purple',
-            '#F00' => 'red',
-            '#FA8072' => 'salmon',
-            '#A0522D' => 'sienna',
-            '#C0C0C0' => 'silver',
-            '#FFFAFA' => 'snow',
-            '#D2B48C' => 'tan',
-            '#FF6347' => 'tomato',
-            '#EE82EE' => 'violet',
-            '#F5DEB3' => 'wheat',
+            '#f00'    => 'red',
+            '#fa8072' => 'salmon',
+            '#a0522d' => 'sienna',
+            '#c0c0c0' => 'silver',
+            '#fffafa' => 'snow',
+            '#d2b48c' => 'tan',
+            '#008080' => 'teal',
+            '#ff6347' => 'tomato',
+            '#ee82ee' => 'violet',
+            '#f5deb3' => 'wheat',
             // or the other way around
-            'WHITE' => '#fff',
-            'BLACK' => '#000',
+            'black'   => '#000',
+            'fuchsia' => '#f0f',
+            'magenta' => '#f0f',
+            'white'   => '#fff',
+            'yellow'  => '#ff0',
+            // and also `transparent`
+            #'transparent' => '#0000' CHECK safari
         );
 
         return preg_replace_callback(
-            '/(?<=[: ])('.implode('|', array_keys($colors)).')(?=[; }])/i',
+            '/('.implode('|', array_keys($colors)).')/i',
             function ($match) use ($colors) {
-                return $colors[strtoupper($match[0])];
+                return $colors[strtolower($match[0])];
             },
             $content
         );
