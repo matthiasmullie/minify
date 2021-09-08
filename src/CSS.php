@@ -316,6 +316,7 @@ class CSS extends Minify
             $css = $this->replace($css);
 
             $css = $this->stripWhitespace($css);
+            $css = $this->shortenRGBColors($css);
             $css = $this->shortenHEXColors($css);
             $css = $this->shortenZeroes($css);
             $css = $this->shortenFontWeights($css);
@@ -557,6 +558,38 @@ class CSS extends Minify
             '/('.implode('|', array_keys($colors)).')/i',
             function ($match) use ($colors) {
                 return $colors[strtolower($match[0])];
+            },
+            $content
+        );
+    }
+
+    /**
+     * Shorthand RGB color codes.
+     * rgb(255,0,0) -> #f00.
+     *
+     * @param string $content The CSS content to shorten the RGB color codes for
+     *
+     * @return string
+     */
+    protected function shortenRGBColors($content)
+    {
+        /*
+          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/rgb()
+        */
+        // THX @ https://www.regular-expressions.info/numericranges.html
+        $dec = '([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])';// [000-255]
+
+        // remove alpha channel if it's pointless ..
+        $content = preg_replace("/(rgb)a?\(([^,\s]+)[,\s]([^,\s]+)[,\s]([^,\s]+)\s?[,\/]\s?1(?:[\.\d]*|00%)?\)/i", '$1($2 $3 $4)', $content);
+
+        // replace `transparent` with shortcut ..
+        #$content = preg_replace("/rgba?\([^,\s]+[,\s][^,\s]+[,\s][^,\s]+\s?[,\/]\s?0(?:[\.0%]*)?\)/i", '#0000', $content); CHECK safari
+
+        return preg_replace_callback(
+            "/rgb\($dec[,\s]$dec[,\s]$dec\)/i",
+            function ($match)
+            {
+                return sprintf('#%02x%02x%02x', $match[1],$match[2],$match[3]);
             },
             $content
         );
