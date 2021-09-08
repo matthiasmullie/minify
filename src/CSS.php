@@ -316,6 +316,7 @@ class CSS extends Minify
             $css = $this->replace($css);
 
             $css = $this->stripWhitespace($css);
+            $css = $this->cleanupNEWColors($css);
             $css = $this->shortenRGBColors($css);
             $css = $this->shortenHEXColors($css);
             $css = $this->shortenZeroes($css);
@@ -593,6 +594,49 @@ class CSS extends Minify
             },
             $content
         );
+    }
+
+    /**
+     * Cleanup HSL|HWB|LCH|LAB
+     *
+     * @param string $content The CSS content to cleanup HSL|HWB|LCH|LAB
+     *
+     * @return string
+     */
+    protected function cleanupNEWColors($content)
+    {
+        /*
+          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/hsl()
+        */
+        $hue = '([-+]?(?:(?:[012]?[0-9]?[0-9]|3[0-5][0-9])(\.[0-9]+)|360(?:\.0+))(?:degs|rads|grads|turn)?)';// -/+ [000.*-360] def
+        $pct = '((100(?:\.0+)|0?[0-9]?[0-9])(\.[0-9]+)%)';// [000.*-100] %
+
+        // remove alpha channel if it's pointless ..
+        $content = preg_replace("/(hsl)a?\(([^,\s]+)[,\s]([^,\s]+)[,\s]([^,\s]+)\s?[,\/]\s?1(?:[\.\d]*|00%)?\)/i", '$1($2 $3 $4)', $content);
+
+        // replace `transparent` with shortcut ..
+        #$content = preg_replace("/hsla?\([^,\s]+[,\s][^,\s]+[,\s][^,\s]+\s?[,\/]\s?0(?:[\.0%]*)?\)/i", '#0000', $content); CHECK safari
+
+        # ToRGB ?: https://github.com/mexitek/phpColors/blob/a74808eaf7cd918681aab0cd30f142025556bc8a/src/Mexitek/PHPColors/Color.php#L124
+        #"/(hsl)a?\($hue[,\s]$pct[,\s]$pct[,\/]1(?:[\.\d]*|00%)?\)/i"
+
+        /*
+          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/hwb()
+          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/lch()
+          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/lab()
+          https://drafts.csswg.org/css-color/#color
+        */
+
+        // remove alpha channel if it's pointless ..
+        $content = preg_replace("/(lch|lab|hwba?)\(([^\s]+)\s([^\s]+)\s([^\s]+)\s?\/\s?1(?:[\.\d]*|00%)?\)/i", '$1($2 $3 $4)', $content);
+
+        // replace `transparent` with shortcut ..
+        #$content = preg_replace("/(lch|lab)\([^\s]+\s[^\s]+\s[^\s]+\s?\/\s?0(?:[\.0%]*)?\)/i", '#0000', $content); CHECK safari
+
+        #"/(hwb)a?\($hue\s$pct\s$pct\s?\/\s?1(?:[\.\d]*|00%)?\)/i"
+        #"/(lch|lab)\($pct\s$VAR\s$VAR\s?\/\s?1(?:[\.\d]*|00%)?\)/i"
+
+        return $content;
     }
 
     /**
