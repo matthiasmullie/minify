@@ -637,7 +637,7 @@ class CSS extends Minify
      */
     protected function stripEmptyProperties($content)
     {
-        return preg_replace('/[a-z-:().#]*:\s*;/', '', $content);
+        return preg_replace('/[a-zA-Z-:().#]*:\s*;/', '', $content);
     }
 
     /**
