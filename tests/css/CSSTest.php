@@ -817,12 +817,15 @@ body{
 
     .nonEmptyClass {
         display: flex;
+        --myColorVar: #fff;
+        color: var(--myColorVar);
     }
 }
 
 @media(max-width: 850px) {
     .emptyClassWithEmptyProperties {
         color: ;
+        --myEmptyColor: ;
     }
 
     #emptyId {
@@ -833,7 +836,7 @@ body{
     #emptyId {
     }
 }
-', 'body{background:#fff}@media(max-width:576px){.nonEmptyClass{display:flex}}',
+', 'body{background:#fff}@media(max-width:576px){.nonEmptyClass{display:flex;--myColorVar: #fff;color: var(--myColorVar)}}',
         );
 
         return $tests;
