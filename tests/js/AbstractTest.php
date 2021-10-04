@@ -1,18 +1,19 @@
 <?php
 
+namespace MatthiasMullie\Minify\Test;
+
 use MatthiasMullie\Minify;
 use MatthiasMullie\Scrapbook\Adapters\MemoryStore;
 use MatthiasMullie\Scrapbook\Psr6\Pool;
+use PHPUnit\Framework\TestCase;
+use ReflectionObject;
 
 /**
  * Tests common functions of abstract Minify class by using JS implementation.
  */
-class AbstractTest extends PHPUnit_Framework_TestCase
+class AbstractTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function construct()
+    public function testConstruct()
     {
         $path1 = __DIR__.'/sample/source/script1.js';
         $path2 = __DIR__.'/sample/source/script2.js';
@@ -44,10 +45,7 @@ class AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($content1.';'.$content2, $result);
     }
 
-    /**
-     * @test
-     */
-    public function add()
+    public function testAdd()
     {
         $path1 = __DIR__.'/sample/source/script1.js';
         $path2 = __DIR__.'/sample/source/script2.js';
@@ -106,10 +104,7 @@ class AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($content1.';'.$content2.';'.$content3, $result);
     }
 
-    /**
-     * @test
-     */
-    public function loadBigString()
+    public function testLoadBigString()
     {
         // content greater than PHP_MAXPATHLEN
         // https://github.com/matthiasmullie/minify/issues/90
@@ -120,10 +115,7 @@ class AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($minifier->minify(), $content);
     }
 
-    /**
-     * @test
-     */
-    public function loadOpenBaseDirRestricted()
+    public function testLoadOpenBaseDirRestricted()
     {
         if (!function_exists('pcntl_fork') || defined('HHVM_VERSION')) {
             $this->markTestSkipped("Can't fork, skip open_basedir test");
@@ -166,10 +158,7 @@ class AbstractTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    /**
-     * @test
-     */
-    public function save()
+    public function testSave()
     {
         $path = __DIR__.'/sample/source/script1.js';
         $content = file_get_contents($path);
@@ -181,13 +170,10 @@ class AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(file_get_contents($savePath), $content);
     }
 
-    /**
-     * @test
-     *
-     * @expectedException MatthiasMullie\Minify\Exceptions\IOException
-     */
-    public function checkFileOpenFail()
+    public function testCheckFileOpenFail()
     {
+	    $this->expectException('MatthiasMullie\Minify\Exceptions\IOException');
+
         $minifier = new Minify\JS();
         $wrongPath = '';
 
@@ -198,13 +184,10 @@ class AbstractTest extends PHPUnit_Framework_TestCase
         $method->invokeArgs($minifier, array($wrongPath));
     }
 
-    /**
-     * @test
-     *
-     * @expectedException MatthiasMullie\Minify\Exceptions\IOException
-     */
-    public function checkFileWriteFail()
+    public function testCheckFileWriteFail()
     {
+        $this->expectException('MatthiasMullie\Minify\Exceptions\IOException');
+
         $minifier = new Minify\JS();
         $wrongPath = '';
 
@@ -215,10 +198,7 @@ class AbstractTest extends PHPUnit_Framework_TestCase
         $method->invokeArgs($minifier, array($wrongPath, ''));
     }
 
-    /**
-     * @test
-     */
-    public function gzip()
+    public function testGzip()
     {
         $path = __DIR__.'/sample/source/script1.js';
         $content = file_get_contents($path);
@@ -230,10 +210,7 @@ class AbstractTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(file_get_contents($savePath), gzencode($content, 9, FORCE_GZIP));
     }
 
-    /**
-     * @test
-     */
-    public function cache()
+    public function testCache()
     {
         $path = __DIR__.'/sample/source/script1.js';
         $content = file_get_contents($path);

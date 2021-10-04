@@ -1,118 +1,100 @@
 <?php
 
-use MatthiasMullie\Minify;
+namespace MatthiasMullie\Minify\Test;
+
+use PHPUnit\Framework\TestCase;
+use ReflectionObject;
 
 /**
  * CSS minifier test case.
  */
-class CSSTest extends PHPUnit_Framework_TestCase
+class CSSTest extends TestCase
 {
-    /**
-     * @var Minify\CSS
-     */
-    private $minifier;
-
-    /**
-     * Prepares the environment before running a test.
-     */
-    protected function setUp()
+    protected function mockMinifier()
     {
-        parent::setUp();
-
         // override save method, there's no point in writing the result out here
-        $this->minifier = $this->getMockBuilder('\MatthiasMullie\Minify\CSS')
+        return $this->getMockBuilder('\MatthiasMullie\Minify\CSS')
             ->setMethods(array('save'))
             ->getMock();
     }
 
     /**
-     * Cleans up the environment after running a test.
-     */
-    protected function tearDown()
-    {
-        $this->minifier = null;
-        parent::tearDown();
-    }
-
-    /**
      * Test CSS minifier rules, provided by dataProvider.
      *
-     * @test
      * @dataProvider dataProvider
      */
-    public function minify($input, $expected)
+    public function testMinify($input, $expected)
     {
-        $this->minifier->add($input);
-        $result = $this->minifier->minify();
+        $minifier = $this->mockMinifier();
+        $minifier->add($input);
+        $result = $minifier->minify();
         $this->assertEquals($expected, $result);
     }
 
     /**
      * Test conversion of relative paths, provided by dataProviderPaths.
      *
-     * @test
      * @dataProvider dataProviderPaths
      */
-    public function convertRelativePath($source, $target, $expected)
+    public function testConvertRelativePath($source, $target, $expected)
     {
+        $minifier = $this->mockMinifier();
         $source = (array) $source;
         foreach ($source as $path => $css) {
-            $this->minifier->add($css);
+            $minifier->add($css);
 
             // $source also accepts an array where the key is a bogus path
             if (is_string($path)) {
-                $object = new ReflectionObject($this->minifier);
+                $object = new ReflectionObject($minifier);
                 $property = $object->getProperty('data');
                 $property->setAccessible(true);
-                $data = $property->getValue($this->minifier);
+                $data = $property->getValue($minifier);
 
                 // keep content, but make it appear from the given path
                 $data[$path] = array_pop($data);
-                $property->setValue($this->minifier, $data);
+                $property->setValue($minifier, $data);
                 $property->setAccessible(false);
             }
         }
 
-        $result = $this->minifier->minify($target);
+        $result = $minifier->minify($target);
 
         $this->assertEquals($expected, $result);
     }
 
     /**
      * Test loop while importing file.
-     *
-     * @test
-     *
-     * @expectedException MatthiasMullie\Minify\Exceptions\FileImportException
      */
-    public function fileImportLoop()
+    public function testFileImportLoop()
     {
+        $this->expectException('MatthiasMullie\Minify\Exceptions\FileImportException');
+
         $testFile = __DIR__.'/sample/loop/first.css';
 
-        $this->minifier->add($testFile);
+        $minifier = $this->mockMinifier();
+        $minifier->add($testFile);
 
-        $this->minifier->minify();
+        $minifier->minify();
     }
 
     /**
      * Test minifier import configuration methods.
-     *
-     * @test
      */
-    public function setConfig()
+    public function testSetConfig()
     {
-        $this->minifier->setMaxImportSize(10);
-        $this->minifier->setImportExtensions(array('gif' => 'data:image/gif'));
+        $minifier = $this->mockMinifier();
+        $minifier->setMaxImportSize(10);
+        $minifier->setImportExtensions(array('gif' => 'data:image/gif'));
 
-        $object = new ReflectionObject($this->minifier);
+        $object = new ReflectionObject($minifier);
 
         $property = $object->getProperty('maxImportSize');
         $property->setAccessible(true);
-        $this->assertEquals($property->getValue($this->minifier), 10);
+        $this->assertEquals($property->getValue($minifier), 10);
 
         $property = $object->getProperty('importExtensions');
         $property->setAccessible(true);
-        $this->assertEquals($property->getValue($this->minifier), array('gif' => 'data:image/gif'));
+        $this->assertEquals($property->getValue($minifier), array('gif' => 'data:image/gif'));
     }
 
     /**
@@ -124,11 +106,11 @@ class CSSTest extends PHPUnit_Framework_TestCase
 
         // passing in an array of css inputs
         $tests[] = array(
-            [
+            array(
                 __DIR__.'/sample/combine_imports/index.css',
                 __DIR__.'/sample/bom/bom.css',
                 'p { width: 55px , margin: 0 0 0 0}',
-            ],
+            ),
             'body{color:red}body{color:red}p{width:55px,margin:0 0 0 0}',
         );
 
@@ -494,15 +476,15 @@ only screen and (min-device-pixel-ratio: 1.5) {
             'p{width:calc(35% + (10% + 0px + 10%))}',
         );
 
-		// https://github.com/matthiasmullie/minify/issues/274
-		$tests[] = array(
-	      	'.cvp-live-filter select {
+        // https://github.com/matthiasmullie/minify/issues/274
+        $tests[] = array(
+              '.cvp-live-filter select {
   background-position:
     calc(100% - 20px) calc(1em + 2px),
     calc(100% - 15px) calc(1em + 2px),
     calc(100% - 2.5em) 0.5em;
 }',
-	      	'.cvp-live-filter select{background-position:calc(100% - 20px) calc(1em + 2px),calc(100% - 15px) calc(1em + 2px),calc(100% - 2.5em) .5em}',
+              '.cvp-live-filter select{background-position:calc(100% - 20px) calc(1em + 2px),calc(100% - 15px) calc(1em + 2px),calc(100% - 2.5em) .5em}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/301
@@ -837,6 +819,55 @@ body{
     }
 }
 ', 'body{background:#fff}@media(max-width:576px){.nonEmptyClass{display:flex;--myColorVar: #fff;color: var(--myColorVar)}}',
+
+        // https://github.com/matthiasmullie/minify/issues/351
+        $tests[] = array(
+            'clamp(2.5rem, 1rem + 4vw, 4rem)',
+            'clamp(2.5rem, 1rem + 4vw, 4rem)',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/342
+        $tests[] = array(
+            '--headlineFontSize: 16px + var(--multiplicator);
+font-size: calc(var(--headlineFontSize));',
+            '--headlineFontSize:16px + var(--multiplicator);font-size:calc(var(--headlineFontSize));',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/312
+        $tests[] = array(
+            '.alignfull { width: calc(100% + calc(2 * var(--central-padding))); }',
+            '.alignfull{width:calc(100% + calc(2 * var(--central-padding)))}',
+        );
+        $tests[] = array(
+            '*{margin-left: calc(0.5rem * calc(1 - var(--space-x-reverse)));}',
+            '*{margin-left:calc(0.5rem * calc(1 - var(--space-x-reverse)))}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/349
+        $tests[] = array(
+            '.space-x-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(1rem * var(--tw-space-x-reverse));
+  margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+}',
+            '.space-x-4>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/356
+        $tests[] = array(
+            '.testclass{ grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); }',
+            '.testclass{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/298
+        $tests[] = array(
+            ':root {
+--some-var: 0px;
+}
+.some-class {
+margin-left: calc(20px + var(--some-var));
+}',
+            ':root{--some-var:0px}.some-class{margin-left:calc(20px + var(--some-var))}',
         );
 
         return $tests;

@@ -1,4 +1,4 @@
-# Minify - [minifier.org](https://www.minifier.org)
+# Minify
 
 [![Build status](https://api.travis-ci.org/matthiasmullie/minify.svg?branch=master)](https://travis-ci.org/matthiasmullie/minify)
 [![Code coverage](http://img.shields.io/codecov/c/github/matthiasmullie/minify.svg)](https://codecov.io/github/matthiasmullie/minify)
@@ -121,7 +121,7 @@ The CSS minifier will automatically embed referenced files (like images, fonts, 
 
 This methods allows the type of files to be specified, along with their data:mime type.
 
-The default embedded file types are gif, png, jpg, jpeg, svg & woff.
+The default embedded file types are gif, png, jpg, jpeg, svg, apng, avif, webp, woff and woff2.
 
 ```php
 $extensions = array(
@@ -142,11 +142,6 @@ composer require matthiasmullie/minify
 ```
 
 Although it's recommended to use Composer, you can actually [include these files](https://github.com/matthiasmullie/minify/issues/83) anyway you want.
-
-
-## Try it
-
-Simply try it out online at <https://www.minifier.org>.
 
 
 ## License
