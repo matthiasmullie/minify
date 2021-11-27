@@ -495,11 +495,11 @@ class CSS extends Minify
         $content = preg_replace('/#([0-9a-f])\\1([0-9a-f])\\2([0-9a-f])\\3(?:([0-9a-f])\\4)?/i', '#$1$2$3$4', $content);
 
         // remove alpha channel if it's pointless ..
-        $content = preg_replace('/#([0-9a-f]{6})ff/i',           '#$1', $content);
-        $content = preg_replace('/#([0-9a-f]{3})f(?=[ ;}\)])/i', '#$1', $content);
+        $content = preg_replace('/#([0-9a-f]{6})ff/i',         '#$1', $content);
+        $content = preg_replace('/#([0-9a-f]{3})f(?=[^\w])/i', '#$1', $content);
 
-        // replace `transparent` with shortcut ..
-        $content = preg_replace('/#[0-9a-f]{6}00/i', '#fff0', $content);
+        #// replace `transparent` with shortcut ..
+        #$content = preg_replace('/#[0-9a-f]{6}00/i', '#fff0', $content);
 
         $colors = array(
             // make these more readable
@@ -583,8 +583,8 @@ class CSS extends Minify
         // remove alpha channel if it's pointless ..
         $content = preg_replace('/(rgb)a?\(([^,\s]+)[,\s]([^,\s]+)[,\s]([^,\s]+)\s?[,\/]\s?1(?:[\.\d]*|00%)?\)/i', '$1($2 $3 $4)', $content);
 
-        // replace `transparent` with shortcut ..
-        $content = preg_replace('/rgba?\([^,\s]+[,\s][^,\s]+[,\s][^,\s]+\s?[,\/]\s?0(?:[\.0%]*)?\)/i', '#fff0', $content);
+        #// replace `transparent` with shortcut ..
+        #$content = preg_replace('/rgba?\([^,\s]+[,\s][^,\s]+[,\s][^,\s]+\s?[,\/]\s?0(?:[\.0%]*)?\)/i', '#fff0', $content);
 
         return preg_replace_callback(
             "/rgb\($dec[,\s]$dec[,\s]$dec\)/i",
@@ -614,8 +614,8 @@ class CSS extends Minify
         // remove alpha channel if it's pointless ..
         $content = preg_replace('/(hsl)a?\(([^,\s]+)[,\s]([^,\s]+)[,\s]([^,\s]+)\s?[,\/]\s?1(?:[\.\d]*|00%)?\)/i', '$1($2 $3 $4)', $content);
 
-        // replace `transparent` with shortcut ..
-        $content = preg_replace('/hsla?\([^,\s]+[,\s][^,\s]+[,\s][^,\s]+\s?[,\/]\s?0(?:[\.0%]*)?\)/i', '#fff0', $content);
+        #// replace `transparent` with shortcut ..
+        #$content = preg_replace('/hsla?\([^,\s]+[,\s][^,\s]+[,\s][^,\s]+\s?[,\/]\s?0(?:[\.0%]*)?\)/i', '#fff0', $content);
 
         # ToRGB ?: https://github.com/mexitek/phpColors/blob/a74808eaf7cd918681aab0cd30f142025556bc8a/src/Mexitek/PHPColors/Color.php#L124
         #"/(hsl)a?\($hue[,\s]$pct[,\s]$pct[,\/]1(?:[\.\d]*|00%)?\)/i"
