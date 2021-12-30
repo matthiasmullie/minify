@@ -89,6 +89,8 @@ $cli = parse_argv(
   )
 );
 
+$gzip = in_array('gzip', $cli['flags']);
+
 // Check if script run in a CLI environment
 if ('cli' !== php_sapi_name()) {
     fwrite(STDERR, $cli['command'] . ' must be run in the command line' . PHP_EOL);
@@ -149,13 +151,13 @@ try {
         }
         
         if ($css_output_file) {
-            if (in_array('gzip', $cli['flags'])) {
+            if ($gzip) {
                 $css_minifier->gzip($css_output_file);
             } else {
                 $css_minifier->minify($css_output_file);
             }
         } else {
-            if (in_array('gzip', $cli['flags'])) {
+            if ($gzip) {
                 echo $css_minifier->gzip();
             } else {
                 echo $css_minifier->minify();
@@ -171,13 +173,13 @@ try {
         }
         
         if ($js_output_file) {
-            if (in_array('gzip', $cli['flags'])) {
+            if ($gzip) {
                 $js_minifier->gzip($js_output_file);
             } else {
                 $js_minifier->minify($js_output_file);
             }
         } else {
-            if (in_array('gzip', $cli['flags'])) {
+            if ($gzip) {
                 echo $js_minifier->gzip();
             } else {
                 echo $js_minifier->minify();
