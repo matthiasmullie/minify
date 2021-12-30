@@ -79,18 +79,17 @@ if (!isset($_SERVER['argv']) && !isset($argv)) {
 
 // Parse CLI arguments
 $cli = parse_argv(
-  $argv,
-  array(
-    'g' => 'gzip',
-    'm' => 'max-import-size',
-    'o' => 'output'
-  ),
-  array(
-    'gzip'
-  )
+    $argv,
+    array(
+        'e' => 'import-ext',
+        'g' => 'gzip',
+        'm' => 'max-import-size',
+        'o' => 'output'
+    ),
+    array(
+        'gzip'
+    )
 );
-
-$gzip = in_array('gzip', $cli['flags']);
 
 // Check if script run in a CLI environment
 if ('cli' !== php_sapi_name()) {
@@ -110,6 +109,22 @@ foreach($cli['arguments'] as $source_file) {
       fwrite(STDERR, 'Source file "' . $source_file . '" not found' . PHP_EOL);
       exit(1);
   }
+}
+
+$gzip = in_array('gzip', $cli['flags']);
+
+// Get CSS Import Extensions if any
+$import_exts = null;
+if (isset($cli['options']['import-ext'])) {
+    $import_exts = array();
+
+    foreach((array) $cli['options']['import-ext'] as $ext) {
+        $ext_split = explode('|', $ext);
+        
+        if (count($ext_split) === 2) {
+            $import_exts[$ext_split[0]] = $ext_split[1];
+        }
+    }
 }
 
 // Get CSS files
@@ -149,6 +164,10 @@ try {
 
         if (isset($cli['options']['max-import-size'])) {
             $css_minifier->setMaxImportSize($cli['options']['max-import-size']);
+        }
+
+        if (isset($import_exts)) {
+            $css_minifier->setImportExtensions($import_exts);
         }
 
         foreach($css_files as $css_file) {

@@ -71,6 +71,7 @@ Multiple source files can be passed, both CSS and JS. Define an output file for 
 
 #### Options
 
+  * `--import-ext`/`-e` - Defines an extension that will be imported in CSS (ex. `-e "gif|data:image/gif -e "png|data:image/png"`)
   * `--gzip`/`-g` - `gzencode()`s the minified content
   * `--max-import-size`/`-m` - The maximum import size (in kB) for CSS
   * `--output`/`-o` - The file path to write the minified content to
