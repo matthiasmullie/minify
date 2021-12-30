@@ -1,0 +1,167 @@
+#!/usr/bin/env php
+<?php
+use MatthiasMullie\Minify;
+
+if (file_exists(__DIR__ . '/../../../autoload.php')) {
+    require_once __DIR__ . '/../../../autoload.php';
+} elseif (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+} else {
+    require_once __DIR__ . '/../src/Minify.php';
+    require_once __DIR__ . '/../src/CSS.php';
+    require_once __DIR__ . '/../src/Exception.php';
+}
+
+error_reporting(E_ALL);
+
+function parse_argv($args, $short_opts = array(), $flag_opts = array()) {
+    $command = array_shift($args);
+    $arguments = array();
+    $options = array();
+    $flags = array();
+    $last_opt = null;
+
+    foreach($args as $arg) {
+        $value = null;
+
+        if (substr($arg, 0, 1) !== '-') {
+            if ($last_opt) {
+                $value = $arg;
+                $arg = $last_opt;
+            } else {
+                $arguments[] = $arg;
+                $last_opt = null;
+                continue;
+            }
+        } else {
+            $arg_split = array();
+            preg_match('/^--?([A-Z\d\-_]+)=?(.+)?$/i', $arg, $arg_split);
+            $arg = $arg_split[1];
+
+            if (count($arg_split) > 2) $value = $arg_split[2];
+        }
+
+        if (array_key_exists($arg, $short_opts)) $arg = $short_opts[$arg];
+
+        if (in_array($arg, $flag_opts)) {
+            if (!in_array($arg, $flags)) $flags[] = $arg;
+
+            $last_opt = null;
+        } else {
+            if (array_key_exists($arg, $options)) {
+                if (is_array($options[$arg])) {
+                    $options[$arg][] = $value;
+                } else {
+                    if (is_null($options[$arg])) {
+                        $options[$arg] = $value;
+                    } elseif (!is_null($value)) {
+                        $options[$arg] = array($options[$arg], $value);
+                    }
+                }
+            } else {
+                $options[$arg] = $value;
+            }
+
+            $last_opt = $value ? null : $arg;
+        }
+    }
+    
+    return compact('command', 'arguments', 'options', 'flags');
+}
+
+// Check PHP setup for CLI arguments
+if (!isset($_SERVER['argv']) && !isset($argv)) {
+    fwrite(STDERR, 'Please enable the "register_argc_argv" directive in your php.ini' . PHP_EOL);
+    exit(1);
+} elseif (!isset($argv)) {
+    $argv = $_SERVER['argv'];
+}
+
+// Parse CLI arguments
+$cli = parse_argv($argv, array(
+    'o' => 'output'
+));
+
+// Check if script run in a CLI environment
+if ('cli' !== php_sapi_name()) {
+    fwrite(STDERR, $cli['command'] . ' must be run in the command line' . PHP_EOL);
+    exit(1);
+}
+
+// Check if any files were given
+if (empty($cli['arguments'])) {
+    fwrite(STDERR, 'Argument(s) expected: Path to file(s)' . PHP_EOL);
+    exit(1);
+}
+
+// Check if source files exist
+foreach($cli['arguments'] as $source_file) { 
+  if (!file_exists($source_file)) {
+      fwrite(STDERR, 'Source file "' . $source_file . '" not found' . PHP_EOL);
+      exit(1);
+  }
+}
+
+// Get CSS files
+$css_files = array_filter($cli['arguments'], function($arg) {
+    return substr($arg, -4) === '.css';
+});
+
+// Get JS files
+$js_files = array_filter($cli['arguments'], function($arg) {
+    return substr($arg, -3) === '.js';
+});
+
+// Get output files, if any
+$css_output_file = null;
+$js_output_file = null;
+if (isset($cli['options']['output'])) {
+    $css_output_files = array_values(array_filter((array) $cli['options']['output'], function($out) {
+        return substr($out, -4) === '.css';
+    }));
+    
+    if (!empty($css_output_files)) {
+        $css_output_file = $css_output_files[0];
+    }
+    
+    $js_output_files = array_values(array_filter((array) $cli['options']['output'], function($out) {
+        return substr($out, -3) === '.js';
+    }));
+    
+    if (!empty($js_output_files)) {
+        $js_output_file = $js_output_files[0];
+    }
+}
+
+try {
+    if (!empty($css_files)) {
+        $css_minifier = new Minify\CSS();
+        
+        foreach($css_files as $css_file) {
+            $css_minifier->add($css_file);
+        }
+        
+        if ($css_output_file) {
+            $css_minifier->minify($css_output_file);
+        } else {
+            echo $css_minifier->minify();
+        }
+    }
+
+    if (!empty($js_files)) {
+        $js_minifier = new Minify\JS();
+        
+        foreach($js_files as $js_file) {
+            $js_minifier->add($js_file);
+        }
+        
+        if ($js_output_file) {
+            $js_minifier->minify($js_output_file);
+        } else {
+            echo $js_minifier->minify();
+        }
+    }
+} catch (Exception $e) {
+    fwrite(STDERR, $e->getMessage(), PHP_EOL);
+    exit(1);
+}

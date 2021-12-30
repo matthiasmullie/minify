@@ -61,6 +61,15 @@ echo $minifier->minify();
 ```
 
 
+### CLI
+
+```
+vendor/bin/minify /path/to/source/*.css -o /path/to/minified/css/file.css /path/to/source/*.js -o /path/to/minified/js/file.js
+```
+
+Multiple source files can be passed, both CSS and JS. Define an output file for each file type with the `--output` or `-o` option. If an output file is not defined, the minified contents will be sent to `STDOUT`.
+
+
 ## Methods
 
 Available methods, for both CSS & JS minifier, are:
