@@ -69,6 +69,11 @@ vendor/bin/minify /path/to/source/*.css -o /path/to/minified/css/file.css /path/
 
 Multiple source files can be passed, both CSS and JS. Define an output file for each file type with the `--output` or `-o` option. If an output file is not defined, the minified contents will be sent to `STDOUT`.
 
+#### Options
+
+  * `--gzip`/`-g` - `gzencode()`s the minified content
+  * `--output`/`-o` - The file path to write the minified content to
+
 
 ## Methods
 

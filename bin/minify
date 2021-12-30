@@ -78,9 +78,16 @@ if (!isset($_SERVER['argv']) && !isset($argv)) {
 }
 
 // Parse CLI arguments
-$cli = parse_argv($argv, array(
+$cli = parse_argv(
+  $argv,
+  array(
+    'g' => 'gzip',
     'o' => 'output'
-));
+  ),
+  array(
+    'gzip'
+  )
+);
 
 // Check if script run in a CLI environment
 if ('cli' !== php_sapi_name()) {
@@ -142,9 +149,17 @@ try {
         }
         
         if ($css_output_file) {
-            $css_minifier->minify($css_output_file);
+            if (in_array('gzip', $cli['flags'])) {
+                $css_minifier->gzip($css_output_file);
+            } else {
+                $css_minifier->minify($css_output_file);
+            }
         } else {
-            echo $css_minifier->minify();
+            if (in_array('gzip', $cli['flags'])) {
+                echo $css_minifier->gzip();
+            } else {
+                echo $css_minifier->minify();
+            }
         }
     }
 
@@ -156,9 +171,17 @@ try {
         }
         
         if ($js_output_file) {
-            $js_minifier->minify($js_output_file);
+            if (in_array('gzip', $cli['flags'])) {
+                $js_minifier->gzip($js_output_file);
+            } else {
+                $js_minifier->minify($js_output_file);
+            }
         } else {
-            echo $js_minifier->minify();
+            if (in_array('gzip', $cli['flags'])) {
+                echo $js_minifier->gzip();
+            } else {
+                echo $js_minifier->minify();
+            }
         }
     }
 } catch (Exception $e) {
