@@ -72,6 +72,7 @@ Multiple source files can be passed, both CSS and JS. Define an output file for 
 #### Options
 
   * `--gzip`/`-g` - `gzencode()`s the minified content
+  * `--max-import-size`/`-m` - The maximum import size (in kB) for CSS
   * `--output`/`-o` - The file path to write the minified content to
 
 

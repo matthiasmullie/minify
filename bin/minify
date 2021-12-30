@@ -82,6 +82,7 @@ $cli = parse_argv(
   $argv,
   array(
     'g' => 'gzip',
+    'm' => 'max-import-size',
     'o' => 'output'
   ),
   array(
@@ -145,7 +146,11 @@ if (isset($cli['options']['output'])) {
 try {
     if (!empty($css_files)) {
         $css_minifier = new Minify\CSS();
-        
+
+        if (isset($cli['options']['max-import-size'])) {
+            $css_minifier->setMaxImportSize($cli['options']['max-import-size']);
+        }
+
         foreach($css_files as $css_file) {
             $css_minifier->add($css_file);
         }
