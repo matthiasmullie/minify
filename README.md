@@ -73,10 +73,11 @@ You can also have each input file generate it's own minified file rather than ha
 
 #### Options
 
-  * `--import-ext`/`-e` - Defines an extension that will be imported in CSS (ex. `-e "gif|data:image/gif -e "png|data:image/png"`)
+  * `--import-ext`/`-e` - Defines an extension that will be imported in CSS (ex. `-e "gif|data:image/gif" -e "png|data:image/png"`)
   * `--gzip`/`-g` - `gzencode()`s the minified content
   * `--max-import-size`/`-m` - The maximum import size (in kB) for CSS
   * `--output`/`-o` - The file path to write the minified content to
+  * `--help`/`-h` - Displays information about the CLI tool (you can also pass `help` as the first argument)
 
 
 ## Methods

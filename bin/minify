@@ -83,11 +83,13 @@ $cli = parse_argv(
     array(
         'e' => 'import-ext',
         'g' => 'gzip',
+        'h' => 'help',
         'm' => 'max-import-size',
         'o' => 'output'
     ),
     array(
-        'gzip'
+        'gzip',
+        'help'
     )
 );
 
@@ -101,6 +103,31 @@ if ('cli' !== php_sapi_name()) {
 if (empty($cli['arguments'])) {
     fwrite(STDERR, 'Argument(s) expected: Path to file(s)' . PHP_EOL);
     exit(1);
+}
+
+// Display helpful information about the CLI tool if the first argument is 'help' or the help flag is used
+if (strtolower($cli['arguments'][0]) === 'help' || in_array('help', $cli['flags'])) {
+    echo "
+Minify
+https://github.com/matthiasmullie/minify
+    
+Removes whitespace, strips comments, combines files and optimizes/shortens a few common programming patterns.
+
+Usage:
+    minify <input_file> [additional_input_files...]
+    
+Options:
+    --import-ext <1>, -e <1>        Defines an extension that will be imported in CSS (ex. `-e \"gif|data:image/gif\" -e \"png|data:image/png\"`)
+    
+    --gzip <1>, -g <1>              gzencode()'s the minified content
+    
+    --max-import-size <1>, -m <1>   The maximum import size (in kB) for CSS
+    
+    --output <1>, -o <1>            The file path to write the minified content to
+
+";
+    
+    exit;
 }
 
 // Check if source files exist
