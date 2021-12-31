@@ -69,6 +69,8 @@ vendor/bin/minify /path/to/source/*.css -o /path/to/minified/css/file.css /path/
 
 Multiple source files can be passed, both CSS and JS. Define an output file for each file type with the `--output` or `-o` option. If an output file is not defined, the minified contents will be sent to `STDOUT`.
 
+You can also have each input file generate it's own minified file rather than having them be combined into a single file by defining an output path with an asterisk (`*`) that will be replaced with the input filename (ex. `-o "/path/to/minified/js/*.min.js"`), however you'll want to make sure that you wrap the path in quotes so that your terminal doesn't try to parse the path itself.
+
 #### Options
 
   * `--import-ext`/`-e` - Defines an extension that will be imported in CSS (ex. `-e "gif|data:image/gif -e "png|data:image/png"`)

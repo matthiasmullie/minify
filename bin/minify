@@ -129,84 +129,120 @@ if (isset($cli['options']['import-ext'])) {
 
 // Get CSS files
 $css_files = array_filter($cli['arguments'], function($arg) {
-    return substr($arg, -4) === '.css';
+    return strtolower(substr($arg, -4)) === '.css';
 });
 
 // Get JS files
 $js_files = array_filter($cli['arguments'], function($arg) {
-    return substr($arg, -3) === '.js';
+    return strtolower(substr($arg, -3)) === '.js';
 });
 
 // Get output files, if any
 $css_output_file = null;
 $js_output_file = null;
 if (isset($cli['options']['output'])) {
-    $css_output_files = array_values(array_filter((array) $cli['options']['output'], function($out) {
-        return substr($out, -4) === '.css';
-    }));
+    if (!empty($css_files)) {
+        $css_output_files = array_values(array_filter((array) $cli['options']['output'], function($out) {
+            return strtolower(substr($out, -4)) === '.css';
+        }));
     
-    if (!empty($css_output_files)) {
-        $css_output_file = $css_output_files[0];
+        if (!empty($css_output_files)) {
+            $css_output_file = end($css_output_files);
+        }
     }
-    
-    $js_output_files = array_values(array_filter((array) $cli['options']['output'], function($out) {
-        return substr($out, -3) === '.js';
-    }));
-    
-    if (!empty($js_output_files)) {
-        $js_output_file = $js_output_files[0];
+
+    if (!empty($js_files)) {
+        $js_output_files = array_values(array_filter((array) $cli['options']['output'], function($out) {
+            return strtolower(substr($out, -3)) === '.js';
+        }));
+        
+        if (!empty($js_output_files)) {
+            $js_output_file = end($js_output_files);
+        }
     }
 }
 
 try {
     if (!empty($css_files)) {
-        $css_minifier = new Minify\CSS();
+        $css_compile_count = 1;
+        $css_wildcard_output = false;
 
-        if (isset($cli['options']['max-import-size'])) {
-            $css_minifier->setMaxImportSize($cli['options']['max-import-size']);
+        if ($css_output_file && strpos($css_output_file, '*') !== false) {
+            $css_compile_count = count($css_files);
+            $css_wildcard_output = $css_output_file;
         }
 
-        if (isset($import_exts)) {
-            $css_minifier->setImportExtensions($import_exts);
-        }
+        for ($x = 0; $x <= $css_compile_count - 1; $x++) {
+            $css_minifier = new Minify\CSS();
 
-        foreach($css_files as $css_file) {
-            $css_minifier->add($css_file);
-        }
-        
-        if ($css_output_file) {
-            if ($gzip) {
-                $css_minifier->gzip($css_output_file);
-            } else {
-                $css_minifier->minify($css_output_file);
+            if (isset($cli['options']['max-import-size'])) {
+                $css_minifier->setMaxImportSize($cli['options']['max-import-size']);
             }
-        } else {
-            if ($gzip) {
-                echo $css_minifier->gzip();
+
+            if (isset($import_exts)) {
+                $css_minifier->setImportExtensions($import_exts);
+            }
+
+            if ($css_wildcard_output) {
+                $css_minifier->add($css_files[$x]);
+                $css_input_info = pathinfo($css_files[$x]);
+                $css_output_file = str_replace('*', $css_input_info['filename'], $css_wildcard_output);
             } else {
-                echo $css_minifier->minify();
+                foreach($css_files as $css_file) {
+                    $css_minifier->add($css_file);
+                }
+            }
+
+            if ($css_output_file) {
+                if ($gzip) {
+                    $css_minifier->gzip($css_output_file);
+                } else {
+                    $css_minifier->minify($css_output_file);
+                }
+            } else {
+                if ($gzip) {
+                    echo $css_minifier->gzip();
+                } else {
+                    echo $css_minifier->minify();
+                }
             }
         }
     }
 
     if (!empty($js_files)) {
-        $js_minifier = new Minify\JS();
-        
-        foreach($js_files as $js_file) {
-            $js_minifier->add($js_file);
+        $js_compile_count = 1;
+        $js_wildcard_output = false;
+
+        if ($js_output_file && strpos($js_output_file, '*') !== false) {
+            $js_compile_count = count($js_files);
+            $js_wildcard_output = $js_output_file;
         }
-        
-        if ($js_output_file) {
-            if ($gzip) {
-                $js_minifier->gzip($js_output_file);
+
+        for ($x = 0; $x <= $js_compile_count - 1; $x++) {
+            $js_minifier = new Minify\JS();
+            
+            if ($js_wildcard_output) {
+                $js_minifier->add($js_files[$x]);
+                $js_input_info = pathinfo($js_files[$x]);
+                $js_output_file = str_replace('*', $js_input_info['filename'], $js_wildcard_output);
             } else {
-                $js_minifier->minify($js_output_file);
+                foreach($js_files as $js_file) {
+                    $js_minifier->add($js_file);
+                }
             }
-        } else {
-            if ($gzip) {
-                echo $js_minifier->gzip();
+            
+            if ($js_output_file) {
+                if ($gzip) {
+                    $js_minifier->gzip($js_output_file);
+                } else {
+                    $js_minifier->minify($js_output_file);
+                }
             } else {
-                echo $js_minifier->minify();
+                if ($gzip) {
+                    echo $js_minifier->gzip();
+                } else {
+                    echo $js_minifier->minify();
+                }
             }
         }
     }
