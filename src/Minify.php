@@ -76,7 +76,7 @@ abstract class Minify
 
         // this method can be overloaded
         foreach ($args as $data) {
-            if (is_array($data)) {
+            if (\is_array($data)) {
                 call_user_func_array(array($this, 'add'), $data);
                 continue;
             }
@@ -86,7 +86,7 @@ abstract class Minify
 
             // load data
             $value = $this->load($data);
-            $key = ($data != $value) ? $data : count($this->data);
+            $key = ($data != $value) ? $data : \count($this->data);
 
             // replace CR linefeeds etc.
             // @see https://github.com/matthiasmullie/minify/pull/139
@@ -118,7 +118,7 @@ abstract class Minify
 
         // this method can be overloaded
         foreach ($args as $path) {
-            if (is_array($path)) {
+            if (\is_array($path)) {
                 call_user_func_array(array($this, 'addFile'), $path);
                 continue;
             }
@@ -274,7 +274,7 @@ abstract class Minify
         $contentLength = strlen($content);
         $output = '';
         $processedOffset = 0;
-        $positions = array_fill(0, count($this->patterns), -1);
+        $positions = \array_fill(0, \count($this->patterns), -1);
         $matches = array();
 
         while ($processedOffset < $contentLength) {
@@ -284,7 +284,7 @@ abstract class Minify
 
                 // we can safely ignore patterns for positions we've unset earlier,
                 // because we know these won't show up anymore
-                if (array_key_exists($i, $positions) == false) {
+                if (\array_key_exists($i, $positions) == false) {
                     continue;
                 }
 
@@ -320,8 +320,8 @@ abstract class Minify
             // see which of the patterns actually found the first thing (we'll
             // only want to execute that one, since we're unsure if what the
             // other found was not inside what the first found)
-            $matchOffset = min($positions);
-            $firstPattern = array_search($matchOffset, $positions);
+            $matchOffset = \min($positions);
+            $firstPattern = \array_search($matchOffset, $positions);
             $match = $matches[$firstPattern];
 
             // execute the pattern that matches earliest in the content string
@@ -390,7 +390,7 @@ abstract class Minify
                 return $match[0];
             }
 
-            $count = count($minifier->extracted);
+            $count = \count($minifier->extracted);
             $placeholder = $match[1].$placeholderPrefix.$count.$match[1];
             $minifier->extracted[$placeholder] = $match[1].$match[2].$match[1];
 
@@ -487,7 +487,7 @@ abstract class Minify
     protected function writeToFile($handler, $content, $path = '')
     {
         if (
-            !is_resource($handler) ||
+            !\is_resource($handler) ||
             ($result = @fwrite($handler, $content)) === false ||
             ($result < strlen($content))
         ) {

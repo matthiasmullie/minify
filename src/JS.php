@@ -205,7 +205,7 @@ class JS extends Minify
             ) {
                 // preserve multi-line comments that start with /*!
                 // or contain @license or @preserve annotations
-                $count = count($minifier->extracted);
+                $count = \count($minifier->extracted);
                 $placeholder = '/*'.$count.'*/';
                 $minifier->extracted[$placeholder] = $match[0];
 
@@ -244,7 +244,7 @@ class JS extends Minify
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
-            $count = count($minifier->extracted);
+            $count = \count($minifier->extracted);
             $placeholder = '"'.$count.'"';
             $minifier->extracted[$placeholder] = $match[0];
 
@@ -282,7 +282,7 @@ class JS extends Minify
             'toSource(',
             'toString(',
         );
-        $delimiters = array_fill(0, count($propertiesAndMethods), '/');
+        $delimiters = \array_fill(0, \count($propertiesAndMethods), '/');
         $propertiesAndMethods = array_map('preg_quote', $propertiesAndMethods, $delimiters);
         $after = '(?=\s*([\.,;\)\}&\|+]|\/\/|$|\.('.implode('|', $propertiesAndMethods).')))';
         $this->registerPattern('/'.$before.'\K'.$pattern.$after.'/', $callback);
@@ -380,8 +380,8 @@ class JS extends Minify
          * strip the newlines. However, we can safely strip any non-line feed
          * whitespace that follows them.
          */
-        $operatorsDiffBefore = array_diff($operators, $operatorsBefore);
-        $operatorsDiffAfter = array_diff($operators, $operatorsAfter);
+        $operatorsDiffBefore = \array_diff($operators, $operatorsBefore);
+        $operatorsDiffAfter = \array_diff($operators, $operatorsAfter);
         $content = preg_replace('/('.implode('|', $operatorsDiffBefore).')[^\S\n]+/', '\\1', $content);
         $content = preg_replace('/[^\S\n]+('.implode('|', $operatorsDiffAfter).')/', '\\1', $content);
 
@@ -461,7 +461,7 @@ class JS extends Minify
     protected function getOperatorsForRegex(array $operators, $delimiter = '/')
     {
         // escape operators for use in regex
-        $delimiters = array_fill(0, count($operators), $delimiter);
+        $delimiters = \array_fill(0, \count($operators), $delimiter);
         $escaped = array_map('preg_quote', $operators, $delimiters);
 
         $operators = array_combine($operators, $escaped);
@@ -492,7 +492,7 @@ class JS extends Minify
     protected function getKeywordsForRegex(array $keywords, $delimiter = '/')
     {
         // escape keywords for use in regex
-        $delimiter = array_fill(0, count($keywords), $delimiter);
+        $delimiter = \array_fill(0, \count($keywords), $delimiter);
         $escaped = array_map('preg_quote', $keywords, $delimiter);
 
         // add word boundaries
@@ -525,7 +525,7 @@ class JS extends Minify
              * property of an object literal/array) it shouldn't matter, but IE8
              * freaks out with "Expected identifier".
              */
-            if (in_array($property, $keywords)) {
+            if (\in_array($property, $keywords)) {
                 return $match[0];
             }
 
@@ -596,7 +596,7 @@ class JS extends Minify
         preg_match_all('/\bdo\b/', $content, $dos, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
 
         // go backward to make sure positional offsets aren't altered when $content changes
-        $dos = array_reverse($dos);
+        $dos = \array_reverse($dos);
         foreach ($dos as $do) {
             $offsetDo = $do[0][1];
 

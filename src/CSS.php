@@ -194,7 +194,7 @@ class CSS extends Minify
         $matches = array();
         foreach ($importRegexes as $importRegex) {
             if (preg_match_all($importRegex, $content, $regexMatches, PREG_SET_ORDER)) {
-                $matches = array_merge($matches, $regexMatches);
+                $matches = \array_merge($matches, $regexMatches);
             }
         }
 
@@ -214,7 +214,7 @@ class CSS extends Minify
 
             // check if current file was not imported previously in the same
             // import chain.
-            if (in_array($importPath, $parents)) {
+            if (\in_array($importPath, $parents)) {
                 throw new FileImportException('Failed to import file "'.$importPath.'": circular reference detected.');
             }
 
@@ -260,7 +260,7 @@ class CSS extends Minify
             // loop the matches
             foreach ($matches as $match) {
                 $extension = substr(strrchr($match[2], '.'), 1);
-                if ($extension && !array_key_exists($extension, $this->importExtensions)) {
+                if ($extension && !\array_key_exists($extension, $this->importExtensions)) {
                     continue;
                 }
 
@@ -324,8 +324,8 @@ class CSS extends Minify
             // restore the string we've extracted earlier
             $css = $this->restoreExtractedData($css);
 
-            $source = is_int($source) ? '' : $source;
-            $parents = $source ? array_merge($parents, array($source)) : $parents;
+            $source = \is_int($source) ? '' : $source;
+            $parents = $source ? \array_merge($parents, array($source)) : $parents;
             $css = $this->combineImports($source, $css, $parents);
             $css = $this->importFiles($source, $css);
 
@@ -423,7 +423,7 @@ class CSS extends Minify
         $matches = array();
         foreach ($relativeRegexes as $relativeRegex) {
             if (preg_match_all($relativeRegex, $content, $regexMatches, PREG_SET_ORDER)) {
-                $matches = array_merge($matches, $regexMatches);
+                $matches = \array_merge($matches, $regexMatches);
             }
         }
 
@@ -530,7 +530,7 @@ class CSS extends Minify
         );
 
         return preg_replace_callback(
-            '/(?<=[: ])('.implode('|', array_keys($colors)).')(?=[; }])/i',
+            '/(?<=[: ])('.implode('|', \array_keys($colors)).')(?=[ ;}])/i',
             function ($match) use ($colors) {
                 return $colors[strtoupper($match[0])];
             },
@@ -556,7 +556,7 @@ class CSS extends Minify
             return $match[1].$weights[$match[2]];
         };
 
-        return preg_replace_callback('/(font-weight\s*:\s*)('.implode('|', array_keys($weights)).')(?=[;}])/', $callback, $content);
+        return preg_replace_callback('/(font-weight\s*:\s*)('.implode('|', \array_keys($weights)).')(?=[;}])/', $callback, $content);
     }
 
     /**
@@ -635,7 +635,7 @@ class CSS extends Minify
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
-            $count = count($minifier->extracted);
+            $count = \count($minifier->extracted);
             $placeholder = '/*'.$count.'*/';
             $minifier->extracted[$placeholder] = $match[0];
 
@@ -715,7 +715,7 @@ class CSS extends Minify
             }
 
             // now that we've figured out where the calc() starts and ends, extract it
-            $count = count($minifier->extracted);
+            $count = \count($minifier->extracted);
             $placeholder = 'math('.$count.')';
             $minifier->extracted[$placeholder] = $function.'('.trim(substr($expr, 1, -1)).')';
 
@@ -742,7 +742,7 @@ class CSS extends Minify
         $this->registerPattern(
             '/(?<=^|[;}])(--[^:;{}"\'\s]+)\s*:([^;{}]+)/m',
             function ($match) use ($minifier) {
-                $placeholder = '--custom-'. count($minifier->extracted) . ':0';
+                $placeholder = '--custom-'. \count($minifier->extracted) . ':0';
                 $minifier->extracted[$placeholder] = $match[1] .':'. trim($match[2]);
                 return $placeholder;
 

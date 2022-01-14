@@ -44,7 +44,7 @@ class CSSTest extends TestCase
             $minifier->add($css);
 
             // $source also accepts an array where the key is a bogus path
-            if (is_string($path)) {
+            if (\is_string($path)) {
                 $object = new ReflectionObject($minifier);
                 $property = $object->getProperty('data');
                 $property->setAccessible(true);
