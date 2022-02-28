@@ -8,8 +8,6 @@
 [![License](http://img.shields.io/packagist/l/matthiasmullie/minify.svg)](https://github.com/matthiasmullie/minify/blob/master/LICENSE)
 
 
-**[Donate/Support: ![Support](https://www.mullie.eu/public/donate.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=73CVYMBETDAP4)**
-
 Removes whitespace, strips comments, combines files (incl. `@import` statements and small assets in CSS files), and optimizes/shortens a few common programming patterns, such as:
 
 **JavaScript**
