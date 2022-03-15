@@ -19,5 +19,5 @@ down:
 
 test:
 	[ $(UP) -eq 1 ] && make up || true
-	$(eval cmd='docker-compose run $(PHP) vendor/bin/phpunit')
+	$(eval cmd='docker-compose run $(PHP) env XDEBUG_MODE=coverage vendor/bin/phpunit')
 	eval $(cmd); status=$$?; [ $(DOWN) -eq 1 ] && make down; exit $$status
