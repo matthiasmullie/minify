@@ -9,6 +9,11 @@ services:
       - ./data:/var/www/data
       - ./tests:/var/www/tests
       - ./phpunit.xml.dist:/var/www/phpunit.xml.dist
+  '8.1':
+    extends: php
+    build:
+      args:
+        version: 8.1-cli
   '8.0':
     extends: php
     build:
