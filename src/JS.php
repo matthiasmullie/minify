@@ -415,8 +415,19 @@ class JS extends Minify
          * to be the for-loop's body... Same goes for while loops.
          * I'm going to double that semicolon (if any) so after the next line,
          * which strips semicolons here & there, we're still left with this one.
+         * Note the special recursive construct in the three inner parts of the for:
+         * (\{([^\{\}]*(?-2))*[^\{\}]*\})? - it is intended to match inline
+         * functions bodies, e.g.: i<arr.map(function(e){return e}).length.
+         * Also note that the construct is applied only once and multiplied
+         * for each part of the for, otherwise it risks a catastrophic backtracking.
+         * The limitation is that it will not allow closures in more than one
+         * of the three parts for a specific for() case.
+         * REGEX throwing catastrophic backtracking: $content = preg_replace('/(for\([^;\{]*(\{([^\{\}]*(?-2))*[^\{\}]*\})?[^;\{]*;[^;\{]*(\{([^\{\}]*(?-2))*[^\{\}]*\})?[^;\{]*;[^;\{]*(\{([^\{\}]*(?-2))*[^\{\}]*\})?[^;\{]*\));(\}|$)/s', '\\1;;\\8', $content);
          */
-        $content = preg_replace('/(for\([^;\{]*;[^;\{]*;[^;\{]*\));(\}|$)/s', '\\1;;\\2', $content);
+        $content = preg_replace('/(for\([^;\{]*(\{([^\{\}]*(?-2))*[^\{\}]*\})?[^;\{]*;[^;\{]*;[^;\{]*\));(\}|$)/s', '\\1;;\\4', $content);
+        $content = preg_replace('/(for\([^;\{]*;[^;\{]*(\{([^\{\}]*(?-2))*[^\{\}]*\})?[^;\{]*;[^;\{]*\));(\}|$)/s', '\\1;;\\4', $content);
+        $content = preg_replace('/(for\([^;\{]*;[^;\{]*;[^;\{]*(\{([^\{\}]*(?-2))*[^\{\}]*\})?[^;\{]*\));(\}|$)/s', '\\1;;\\4', $content);
+
         $content = preg_replace('/(for\([^;\{]+\s+in\s+[^;\{]+\));(\}|$)/s', '\\1;;\\2', $content);
         /*
          * Below will also keep `;` after a `do{}while();` along with `while();`

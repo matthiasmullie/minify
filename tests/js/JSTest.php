@@ -1307,6 +1307,20 @@ var largeScreen=2048',
             '/^\[(x| )\](?=\s)/i',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/385
+        $tests[] = array(
+            'if (l !== 3) { for (var V = w.map(function(e) { return e }).length; l < V; V++); } else var C = 3;',
+            'if(l!==3){for(var V=w.map(function(e){return e}).length;l<V;V++);}else var C=3'
+        );
+        $tests[] = array(
+            'if (l !== 3) { for (var V = w.map(function(e) { if(e > 5) { return e-5; } return e; }).length; l < V; V++); } else var C = 3;',
+            'if(l!==3){for(var V=w.map(function(e){if(e>5){return e-5}return e}).length;l<V;V++);}else var C=3'
+        );
+        $tests[] = array(
+            'if (l !== 3) { for (var V = w.length; l < V; V+=w.map(function(e) { if(e > 5) { return e-5; } return e; }).length); } else var C = 3;',
+            'if(l!==3){for(var V=w.length;l<V;V+=w.map(function(e){if(e>5){return e-5}return e}).length);}else var C=3'
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
