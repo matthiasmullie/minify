@@ -832,6 +832,17 @@ margin-left: calc(20px + var(--some-var));
             ':root{--some-var:0px}.some-class{margin-left:calc(20px + var(--some-var))}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/378
+        $tests[] = array(
+            ':root {
+  --some-var: 0px;
+}
+p {
+margin-left: calc(20px + var(--some-var));
+}',
+            ':root{--some-var:0px}p{margin-left:calc(20px + var(--some-var))}'
+        );
+
         return $tests;
     }
 
