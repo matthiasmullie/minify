@@ -1321,6 +1321,16 @@ var largeScreen=2048',
             'if(l!==3){for(var V=w.length;l<V;V+=w.map(function(e){if(e>5){return e-5}return e}).length);}else var C=3'
         );
 
+        // https://github.com/matthiasmullie/minify/issues/394
+        $tests[] = array(
+            'var a = function(){var b; if(b=3);}',
+            'var a=function(){var b;if(b=3);}',
+        );
+        $tests[] = array(
+            'jQuery(document).ready(function(e){  if (jQuery(document.body).on("updated_wc_div", o), jQuery(document.body).on("updated_cart_totals", o));    });',
+            'jQuery(document).ready(function(e){if(jQuery(document.body).on("updated_wc_div",o),jQuery(document.body).on("updated_cart_totals",o));})',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');

@@ -429,6 +429,12 @@ class JS extends Minify
         $content = preg_replace('/(for\([^;\{]*;[^;\{]*;[^;\{]*(\{([^\{\}]*(?-2))*[^\{\}]*\})?[^;\{]*\));(\}|$)/s', '\\1;;\\4', $content);
 
         $content = preg_replace('/(for\([^;\{]+\s+in\s+[^;\{]+\));(\}|$)/s', '\\1;;\\2', $content);
+
+        /*
+         * Do the same for the if's that don't have a body but are followed by ;}
+         */
+        $content = preg_replace('/(\bif\s*\([^{;]*\));\}/s', '\\1;;}', $content);
+
         /*
          * Below will also keep `;` after a `do{}while();` along with `while();`
          * While these could be stripped after do-while, detecting this
