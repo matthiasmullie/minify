@@ -1345,6 +1345,12 @@ var largeScreen=2048',
             }
         }
 
+        //some other files that are minified correctly, ensure they stay like this
+        $source = trim(file_get_contents(__DIR__.'/sample/source/Decrypt.js'));
+        $minified = trim(file_get_contents(__DIR__.'/sample/minified2/Decrypt.min.js'));
+        $tests[] = array($source, $minified);
+
+
         return $tests;
     }
 }
