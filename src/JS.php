@@ -209,14 +209,18 @@ class JS extends Minify
                 $placeholder = '/*'.$count.'*/';
                 $minifier->extracted[$placeholder] = $match[0];
 
-                return $placeholder;
+                return $placeholder . ($match[3] ? $match[2] . $match[3] : '');
+            }
+            // should not remove the \n before a var|let etc. at this stage, because it could be a case like this: var a=1\n/*comment*/\nvar b=2;
+            if($match[3]) {
+                return $match[2] . $match[3];
             }
 
             return '';
         };
 
         // multi-line comments
-        $this->registerPattern('/\n?\/\*(.*?)\*\/\n?/s', $callback);
+        $this->registerPattern('/\n?\/\*(.*?)\*\/(\n?)(var|let|const|enum|function|class|)/s', $callback);
 
         // single-line comments
         $this->registerPattern('/\/\/.*$/m', '');
