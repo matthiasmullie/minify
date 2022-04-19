@@ -1,6 +1,7 @@
 PHP ?= '8.1'
 UP ?= 1
 DOWN ?= 1
+TEST ?=
 
 docs:
 	wget http://apigen.org/apigen.phar
@@ -19,5 +20,5 @@ down:
 
 test:
 	[ $(UP) -eq 1 ] && make up || true
-	$(eval cmd='docker-compose run $(PHP) env XDEBUG_MODE=coverage vendor/bin/phpunit')
+	$(eval cmd='docker-compose run $(PHP) env XDEBUG_MODE=coverage vendor/bin/phpunit $(TEST)')
 	eval $(cmd); status=$$?; [ $(DOWN) -eq 1 ] && make down; exit $$status
