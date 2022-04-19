@@ -199,9 +199,9 @@ class JS extends Minify
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
             if (
-                substr($match[1], 0, 1) === '!' ||
-                strpos($match[1], '@license') !== false ||
-                strpos($match[1], '@preserve') !== false
+                substr($match[2], 0, 1) === '!' ||
+                strpos($match[2], '@license') !== false ||
+                strpos($match[2], '@preserve') !== false
             ) {
                 // preserve multi-line comments that start with /*!
                 // or contain @license or @preserve annotations
@@ -209,18 +209,14 @@ class JS extends Minify
                 $placeholder = '/*'.$count.'*/';
                 $minifier->extracted[$placeholder] = $match[0];
 
-                return $placeholder . ($match[3] ? $match[2] . $match[3] : '');
-            }
-            // should not remove the \n before a var|let etc. at this stage, because it could be a case like this: var a=1\n/*comment*/\nvar b=2;
-            if($match[3]) {
-                return $match[2] . $match[3];
+                return $match[1] . $placeholder . $match[3];
             }
 
-            return '';
+            return $match[1] . $match[3];
         };
 
         // multi-line comments
-        $this->registerPattern('/\n?\/\*(.*?)\*\/(\n?)(var|let|const|enum|function|class|)/s', $callback);
+        $this->registerPattern('/(\n?)\/\*(.*?)\*\/(\n?)/s', $callback);
 
         // single-line comments
         $this->registerPattern('/\/\/.*$/m', '');
