@@ -199,9 +199,9 @@ class JS extends Minify
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
             if (
-                substr($match[1], 0, 1) === '!' ||
-                strpos($match[1], '@license') !== false ||
-                strpos($match[1], '@preserve') !== false
+                substr($match[2], 0, 1) === '!' ||
+                strpos($match[2], '@license') !== false ||
+                strpos($match[2], '@preserve') !== false
             ) {
                 // preserve multi-line comments that start with /*!
                 // or contain @license or @preserve annotations
@@ -209,14 +209,14 @@ class JS extends Minify
                 $placeholder = '/*'.$count.'*/';
                 $minifier->extracted[$placeholder] = $match[0];
 
-                return $placeholder;
+                return $match[1] . $placeholder . $match[3];
             }
 
-            return '';
+            return $match[1] . $match[3];
         };
 
         // multi-line comments
-        $this->registerPattern('/\n?\/\*(.*?)\*\/\n?/s', $callback);
+        $this->registerPattern('/(\n?)\/\*(.*?)\*\/(\n?)/s', $callback);
 
         // single-line comments
         $this->registerPattern('/\/\/.*$/m', '');
@@ -415,9 +415,26 @@ class JS extends Minify
          * to be the for-loop's body... Same goes for while loops.
          * I'm going to double that semicolon (if any) so after the next line,
          * which strips semicolons here & there, we're still left with this one.
+         * Note the special recursive construct in the three inner parts of the for:
+         * (\{([^\{\}]*(?-2))*[^\{\}]*\})? - it is intended to match inline
+         * functions bodies, e.g.: i<arr.map(function(e){return e}).length.
+         * Also note that the construct is applied only once and multiplied
+         * for each part of the for, otherwise it risks a catastrophic backtracking.
+         * The limitation is that it will not allow closures in more than one
+         * of the three parts for a specific for() case.
+         * REGEX throwing catastrophic backtracking: $content = preg_replace('/(for\([^;\{]*(\{([^\{\}]*(?-2))*[^\{\}]*\})?[^;\{]*;[^;\{]*(\{([^\{\}]*(?-2))*[^\{\}]*\})?[^;\{]*;[^;\{]*(\{([^\{\}]*(?-2))*[^\{\}]*\})?[^;\{]*\));(\}|$)/s', '\\1;;\\8', $content);
          */
-        $content = preg_replace('/(for\([^;\{]*;[^;\{]*;[^;\{]*\));(\}|$)/s', '\\1;;\\2', $content);
+        $content = preg_replace('/(for\((?:[^;\{]*|[^;\{]*function[^;\{]*(\{([^\{\}]*(?-2))*[^\{\}]*\})?[^;\{]*);[^;\{]*;[^;\{]*\));(\}|$)/s', '\\1;;\\4', $content);
+        $content = preg_replace('/(for\([^;\{]*;(?:[^;\{]*|[^;\{]*function[^;\{]*(\{([^\{\}]*(?-2))*[^\{\}]*\})?[^;\{]*);[^;\{]*\));(\}|$)/s', '\\1;;\\4', $content);
+        $content = preg_replace('/(for\([^;\{]*;[^;\{]*;(?:[^;\{]*|[^;\{]*function[^;\{]*(\{([^\{\}]*(?-2))*[^\{\}]*\})?[^;\{]*)\));(\}|$)/s', '\\1;;\\4', $content);
+
         $content = preg_replace('/(for\([^;\{]+\s+in\s+[^;\{]+\));(\}|$)/s', '\\1;;\\2', $content);
+
+        /*
+         * Do the same for the if's that don't have a body but are followed by ;}
+         */
+        $content = preg_replace('/(\bif\s*\([^{;]*\));\}/s', '\\1;;}', $content);
+
         /*
          * Below will also keep `;` after a `do{}while();` along with `while();`
          * While these could be stripped after do-while, detecting this

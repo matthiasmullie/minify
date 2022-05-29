@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" bootstrap="tests/bootstrap.php">
-    <testsuites>
-        <testsuite name="Minify test suite">
-            <directory suffix="Test.php">tests/css</directory>
-            <directory suffix="Test.php">tests/js</directory>
-        </testsuite>
-    </testsuites>
-    <logging>
-        <log type="coverage-clover" target="build/logs/clover.xml"/>
-    </logging>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" colors="true" bootstrap="tests/bootstrap.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage>
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+    <report>
+      <clover outputFile="build/logs/clover.xml"/>
+    </report>
+  </coverage>
+  <testsuites>
+    <testsuite name="Minify test suite">
+      <directory suffix="Test.php">tests/css</directory>
+      <directory suffix="Test.php">tests/js</directory>
+    </testsuite>
+  </testsuites>
+  <logging/>
 </phpunit>

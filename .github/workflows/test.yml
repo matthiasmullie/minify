@@ -1,0 +1,37 @@
+name: test-suite
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Test PHP 8.1 & submit codecov
+        run: make test PHP=8.1 UP=1 DOWN=0 && bash <(curl -s https://codecov.io/bash) && make down PHP=8.1
+
+      - name: Test PHP 8.0
+        run: make test PHP=8.0
+
+      - name: Test PHP 7.4
+        run: make test PHP=7.4
+
+      - name: Test PHP 7.3
+        run: make test PHP=7.3
+
+      - name: Test PHP 7.2
+        run: make test PHP=7.2
+
+      - name: Test PHP 7.1
+        run: make test PHP=7.1
+
+      - name: Test PHP 5.6
+        run: make test PHP=5.6

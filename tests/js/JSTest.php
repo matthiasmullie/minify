@@ -1307,6 +1307,59 @@ var largeScreen=2048',
             '/^\[(x| )\](?=\s)/i',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/385
+        $tests[] = array(
+            'if (l !== 3) { for (var V = w.map(function(e) { return e }).length; l < V; V++); } else var C = 3;',
+            'if(l!==3){for(var V=w.map(function(e){return e}).length;l<V;V++);}else var C=3'
+        );
+        $tests[] = array(
+            'if (l !== 3) { for (var V = w.map(function(e) { if(e > 5) { return e-5; } return e; }).length; l < V; V++); } else var C = 3;',
+            'if(l!==3){for(var V=w.map(function(e){if(e>5){return e-5}return e}).length;l<V;V++);}else var C=3'
+        );
+        $tests[] = array(
+            'if(l!==3){for(var V=w.length;V < w.map( function(e) { if(e>5){return e-5; }return e; }).length; l++ );}else var C=3;',
+            'if(l!==3){for(var V=w.length;V<w.map(function(e){if(e>5){return e-5}return e}).length;l++);}else var C=3'
+        );
+
+        $tests[] = array(
+            'if (l !== 3) { for (var V = w.length; l < V; V+=w.map(function(e) { if(e > 5) { return e-5; } return e; }).length); } else var C = 3;',
+            'if(l!==3){for(var V=w.length;l<V;V+=w.map(function(e){if(e>5){return e-5}return e}).length);}else var C=3'
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/394
+        $tests[] = array(
+            'var a = function(){var b; if(b=3);}',
+            'var a=function(){var b;if(b=3);}',
+        );
+        $tests[] = array(
+            'jQuery(document).ready(function(e){  if (jQuery(document.body).on("updated_wc_div", o), jQuery(document.body).on("updated_cart_totals", o));    });',
+            'jQuery(document).ready(function(e){if(jQuery(document.body).on("updated_wc_div",o),jQuery(document.body).on("updated_cart_totals",o));})',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/393
+        $tests[] = array(
+            'var crypt=function() {}
+/* some comment */
+var Sbox = 2',
+            'var crypt=function(){}
+var Sbox=2',
+        );
+        $tests[] = array(
+            'a = function() {}
+/* some comment to be removed */
+b = 2',
+            'a=function(){}
+b=2',
+        );
+        $tests[] = array(
+            'a = function() {}
+/* @preserve some comment to be preserved */
+b = 2',
+            'a=function(){}
+/* @preserve some comment to be preserved */
+b=2',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
@@ -1320,6 +1373,12 @@ var largeScreen=2048',
                 $test[1] = str_replace("\r", '', $test[1]);
             }
         }
+
+        // some other files that are minified correctly, ensure they stay like this
+        // https://github.com/matthiasmullie/minify/issues/393
+        $source = trim(file_get_contents(__DIR__.'/sample/source/Decrypt.js'));
+        $minified = trim(file_get_contents(__DIR__.'/sample/minified2/Decrypt.min.js'));
+        $tests[] = array($source, $minified);
 
         return $tests;
     }
