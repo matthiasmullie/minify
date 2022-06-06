@@ -1360,6 +1360,11 @@ b = 2',
 b=2',
         );
 
+        $tests[] = array(
+            'f=void 0===m?/ +/g:m',
+            'f=void 0===m?/ +/g:m',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__.'/sample/minified/*.js');
