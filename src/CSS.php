@@ -722,7 +722,7 @@ class CSS extends Minify
             // and since we've captured more code than required, we may have some leftover
             // calc() in here too - go recursive on the remaining but of code to go figure
             // that out and extract what is needed
-            $rest = str_replace($function.$expr, '', $match[0]);
+            $rest = $minifier->str_replace_first($function.$expr, '', $match[0]);
             $rest = preg_replace_callback($pattern, $callback, $rest);
 
             return $placeholder.$rest;

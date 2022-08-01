@@ -849,6 +849,12 @@ margin-left: calc(20px + var(--some-var));
             '.stk-block-columns>.stk-block-content{--stk-column-gap:0px;column-gap:var(--stk-column-gap,0)}'
         );
 
+        // https://github.com/matthiasmullie/minify/issues/395
+        $tests[] = array(
+            'background-position: right 0.8em bottom calc(50% - 5px), right 0.8em top calc(50% - 5px);',
+            'background-position:right .8em bottom calc(50% - 5px),right .8em top calc(50% - 5px);'
+        );
+
         return $tests;
     }
 
