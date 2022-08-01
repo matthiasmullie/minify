@@ -843,6 +843,12 @@ margin-left: calc(20px + var(--some-var));
             ':root{--some-var:0px}p{margin-left:calc(20px + var(--some-var))}'
         );
 
+        // https://github.com/matthiasmullie/minify/issues/397
+        $tests[] = array(
+            '.stk-block-columns>.stk-block-content{--stk-column-gap:0px;column-gap:var(--stk-column-gap,0)}',
+            '.stk-block-columns>.stk-block-content{--stk-column-gap:0px;column-gap:var(--stk-column-gap,0)}'
+        );
+
         return $tests;
     }
 
