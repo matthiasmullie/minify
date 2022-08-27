@@ -41,6 +41,19 @@ class JSTest extends TestCase
         $this->assertEquals('var test=1', $result);
     }
 
+	/**
+	 * Test minifier addFile method.
+	 */
+	public function testAddData()
+	{
+		$minifier = $this->mockMinifier();
+		$minifier->addData(__DIR__.'/sample/source/script1.js', 'var test_from_addData=1');
+
+		$result = $minifier->minify();
+
+		$this->assertEquals('var test_from_addData=1', $result);
+	}
+
     /**
      * Test JS minifier rules, provided by dataProvider.
      *
