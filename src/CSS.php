@@ -315,6 +315,7 @@ class CSS extends Minify
             $this->extractCustomProperties();
             $css = $this->replace($css);
 
+            $css = $this->stripEmptyProperties($css);
             $css = $this->stripWhitespace($css);
             $css = $this->shortenColors($css);
             $css = $this->shortenZeroes($css);
@@ -621,10 +622,27 @@ class CSS extends Minify
      */
     protected function stripEmptyTags($content)
     {
+        // Remove empty tags/selectors at the start of the file
         $content = preg_replace('/(?<=^)[^\{\};]+\{\s*\}/', '', $content);
-        $content = preg_replace('/(?<=(\}|;))[^\{\};]+\{\s*\}/', '', $content);
+        // Remove empty tags/selectors (classes, ids and so on)
+        $content = preg_replace('/(?<=(\}|;|\{))[^\{\};]+\{\s*\}/', '', $content);
+        // Run it again to remove any empty media queries that had the empty selectors before
+        $content = preg_replace('/(?<=(\}|;|\{))[^\{\};]+\{\s*\}/', '', $content);
 
         return $content;
+    }
+
+    /**
+     * Strip empty properties from source code.
+     * i.e: 'color: ;'
+     *
+     * @param string $content
+     *
+     * @return string
+     */
+    protected function stripEmptyProperties($content)
+    {
+        return preg_replace('/[a-zA-Z-:().#]*:\s*;/', '', $content);
     }
 
     /**

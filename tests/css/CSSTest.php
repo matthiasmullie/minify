@@ -782,6 +782,44 @@ body{font-family:sans-serif}',
             'ul p{padding-left:calc((var(--icon-size) / 2) + var(--horisontal-space))}',
         );
 
+        $tests[] = array('
+body{
+     background: white;
+}
+
+.classWithEmptyProperties {
+    color::hover: ;
+    font-size: ;
+    font-weight::hover:not(#id.class): ;
+}
+
+@media(max-width: 576px) {
+    .emptyClass {
+    }
+
+    .nonEmptyClass {
+        display: flex;
+        --myColorVar: #fff;
+        color: var(--myColorVar);
+    }
+}
+
+@media(max-width: 850px) {
+    .emptyClassWithEmptyProperties {
+        color: ;
+        --myEmptyColor: ;
+    }
+
+    #emptyId {
+    }
+}
+
+@media(max-width: 1580px) {
+    #emptyId {
+    }
+}
+', 'body{background:#fff}@media(max-width:576px){.nonEmptyClass{display:flex;--myColorVar: #fff;color: var(--myColorVar)}}',
+
         // https://github.com/matthiasmullie/minify/issues/351
         $tests[] = array(
             'clamp(2.5rem, 1rem + 4vw, 4rem)',
