@@ -741,6 +741,24 @@ body{font-family:sans-serif}',
             '@import url(http://minify.dev/?a=1&amp;b=some/*lala*/thing);p{color:red}body{font-family:sans-serif}',
         );
 
+        // https://github.com/matthiasmullie/minify/pull/258
+        $tests[] = array(
+            'color:white;',
+            'color:#fff;',
+        );
+        $tests[] = array(
+            'color:black;',
+            'color:#000;',
+        );
+        $tests[] = array(
+            'background:white;',
+            'background:#fff;',
+        );
+        $tests[] = array(
+            'background:black;',
+            'background:#000;',
+        );
+
         // https://github.com/matthiasmullie/minify/issues/259
         $tests[] = array(
             '#layout-newsletter-change .unsubscribe :checked + label .circle, #layout-newsletter-change .pause : checked + label .circle { color: white }',
@@ -782,6 +800,31 @@ body{font-family:sans-serif}',
             'ul p{padding-left:calc((var(--icon-size) / 2) + var(--horisontal-space))}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/316
+        $tests[] = array(
+            '@font-face { font-family: "Circular Std Black"; src: url(my_black_font.woff); }',
+            '@font-face{font-family:"Circular Std Black";src:url(my_black_font.woff)}',
+        );
+        $tests[] = array(
+            '@font-face { font-family: \'Circular Std White\'; src: url(my_white_font.woff); }',
+            '@font-face{font-family:\'Circular Std White\';src:url(my_white_font.woff)}',
+        );
+        $tests[] = array(
+            '@font-face { font-family: Circular Std Black; src: url(my_black_font.woff); }',
+            '@font-face{font-family:Circular Std Black;src:url(my_black_font.woff)}',
+        );
+        $tests[] = array(
+            '@font-face { font-family: Circular Std White; src: url(my_white_font.woff); }',
+            '@font-face{font-family:Circular Std White;src:url(my_white_font.woff)}',
+        );
+        $tests[] = array(
+            '@font-face { font-family: Black; src: url(my_black_font.woff); }',
+            '@font-face{font-family:Black;src:url(my_black_font.woff)}',
+        );
+        $tests[] = array(
+            '@font-face { font-family: White; src: url(my_white_font.woff); }',
+            '@font-face{font-family:White;src:url(my_white_font.woff)}',
+          
         // https://github.com/matthiasmullie/minify/issues/351
         $tests[] = array(
             'clamp(2.5rem, 1rem + 4vw, 4rem)',
