@@ -266,7 +266,7 @@ class CSS extends Minify
 
                 // get the path for the file that will be imported
                 $path = $match[2];
-                $path = dirname($source).'/'.$path;
+                $path = $this->resourcesBasePath . dirname($source).'/'.$path;
 
                 // only replace the import with the content if we're able to get
                 // the content of the file, and it's relatively small
