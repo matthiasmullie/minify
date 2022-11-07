@@ -2,7 +2,6 @@
 
 [![Build status](https://img.shields.io/github/workflow/status/matthiasmullie/minify/test-suite?style=flat-square)](https://github.com/matthiasmullie/minify/actions/workflows/test.yml)
 [![Code coverage](http://img.shields.io/codecov/c/github/matthiasmullie/minify?style=flat-square)](https://codecov.io/github/matthiasmullie/minify)
-[![Code quality](http://img.shields.io/scrutinizer/g/matthiasmullie/minify?style=flat-square)](https://scrutinizer-ci.com/g/matthiasmullie/minify)
 [![Latest version](http://img.shields.io/packagist/v/matthiasmullie/minify?style=flat-square)](https://packagist.org/packages/matthiasmullie/minify)
 [![Downloads total](http://img.shields.io/packagist/dt/matthiasmullie/minify?style=flat-square)](https://packagist.org/packages/matthiasmullie/minify)
 [![License](http://img.shields.io/packagist/l/matthiasmullie/minify?style=flat-square)](https://github.com/matthiasmullie/minify/blob/master/LICENSE)
