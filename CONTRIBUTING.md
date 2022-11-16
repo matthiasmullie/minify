@@ -35,10 +35,6 @@ GitHub Actions have been [configured](.github/workflows/test.yml) to run support
 PHP versions & adapters. Upon submitting a new pull request, that test suite will
 be run & report back on your pull request. Please make sure the test suite passes.
 
-To run the tests on Windows, run `tests/convert_symlinks_to_windows_style.sh`
-from the command line in order to convert Linux-style test symlinks to
-Windows-style.
-
 
 ### Coding standards
 
