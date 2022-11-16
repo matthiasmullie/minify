@@ -5,5 +5,5 @@
 /.gitignore export-ignore
 /appveyor.yml export-ignore
 /makefile export-ignore
-/phpunit.xml.dist export-ignore
+/phpunit.xml export-ignore
 /README.md export-ignore

@@ -9,7 +9,7 @@ services:
       - ./data:/var/www/data
       - ./tests:/var/www/tests
       - ./build:/var/www/build
-      - ./phpunit.xml.dist:/var/www/phpunit.xml.dist
+      - ./phpunit.xml:/var/www/phpunit.xml
   php-8.1:
     <<: *default-php
     build:
