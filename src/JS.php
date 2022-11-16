@@ -1,6 +1,6 @@
 <?php
 /**
- * JavaScript minifier
+ * JavaScript minifier.
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
@@ -8,14 +8,14 @@
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
  * @license MIT License
  */
+
 namespace MatthiasMullie\Minify;
 
 /**
- * JavaScript Minifier Class
+ * JavaScript Minifier Class.
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
- * @package Minify
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
@@ -174,7 +174,7 @@ class JS extends Minify
             $js = $this->stripWhitespace($js);
 
             // combine js: separating the scripts by a ;
-            $content .= $js.";";
+            $content .= $js.';';
         }
 
         // clean up leftover `;`s from the combination of multiple scripts
@@ -199,9 +199,9 @@ class JS extends Minify
         $minifier = $this;
         $callback = function ($match) use ($minifier) {
             if (
-                substr($match[2], 0, 1) === '!' ||
-                strpos($match[2], '@license') !== false ||
-                strpos($match[2], '@preserve') !== false
+                '!' === substr($match[2], 0, 1) ||
+                false !== strpos($match[2], '@license') ||
+                false !== strpos($match[2], '@preserve')
             ) {
                 // preserve multi-line comments that start with /*!
                 // or contain @license or @preserve annotations
@@ -209,10 +209,10 @@ class JS extends Minify
                 $placeholder = '/*'.$count.'*/';
                 $minifier->extracted[$placeholder] = $match[0];
 
-                return $match[1] . $placeholder . $match[3];
+                return $match[1].$placeholder.$match[3];
             }
 
-            return $match[1] . $match[3];
+            return $match[1].$match[3];
         };
 
         // multi-line comments
@@ -598,11 +598,11 @@ class JS extends Minify
          * character and check if it's a `.`
          */
         $callback = function ($match) {
-            if (trim($match[1]) === '.') {
+            if ('.' === trim($match[1])) {
                 return $match[0];
             }
 
-            return $match[1].($match[2] === 'true' ? '!0' : '!1');
+            return $match[1].('true' === $match[2] ? '!0' : '!1');
         };
         $content = preg_replace_callback('/(^|.\s*)\b(true|false)\b(?!:)/', $callback, $content);
 

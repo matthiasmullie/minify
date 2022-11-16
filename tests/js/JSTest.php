@@ -1179,7 +1179,7 @@ $the_portfolio.data(\'carouseling\',!0);$active_carousel_group.children().each(f
         // https://github.com/matthiasmullie/minify/issues/204
         $tests[] = array(
             'data = data.replace(this.video.reUrlYoutube, iframeStart + \'//www.youtube.com/embed/$1\' + iframeEnd);',
-            'data=data.replace(this.video.reUrlYoutube,iframeStart+\'//www.youtube.com/embed/$1\'+iframeEnd)'
+            'data=data.replace(this.video.reUrlYoutube,iframeStart+\'//www.youtube.com/embed/$1\'+iframeEnd)',
         );
         $tests[] = array(
             'pattern = /(\/)\'/;
@@ -1251,8 +1251,8 @@ a = \'b\';',
             "inside:{'rule':/@[\w-]+/}",
         );
         $tests[] = array(
-            "(1 + 2) / 3 / 4",
-            "(1+2)/3/4",
+            '(1 + 2) / 3 / 4',
+            '(1+2)/3/4',
         );
 
         // https://github.com/matthiasmullie/minify/issues/221
@@ -1310,20 +1310,20 @@ var largeScreen=2048',
         // https://github.com/matthiasmullie/minify/issues/385
         $tests[] = array(
             'if (l !== 3) { for (var V = w.map(function(e) { return e }).length; l < V; V++); } else var C = 3;',
-            'if(l!==3){for(var V=w.map(function(e){return e}).length;l<V;V++);}else var C=3'
+            'if(l!==3){for(var V=w.map(function(e){return e}).length;l<V;V++);}else var C=3',
         );
         $tests[] = array(
             'if (l !== 3) { for (var V = w.map(function(e) { if(e > 5) { return e-5; } return e; }).length; l < V; V++); } else var C = 3;',
-            'if(l!==3){for(var V=w.map(function(e){if(e>5){return e-5}return e}).length;l<V;V++);}else var C=3'
+            'if(l!==3){for(var V=w.map(function(e){if(e>5){return e-5}return e}).length;l<V;V++);}else var C=3',
         );
         $tests[] = array(
             'if(l!==3){for(var V=w.length;V < w.map( function(e) { if(e>5){return e-5; }return e; }).length; l++ );}else var C=3;',
-            'if(l!==3){for(var V=w.length;V<w.map(function(e){if(e>5){return e-5}return e}).length;l++);}else var C=3'
+            'if(l!==3){for(var V=w.length;V<w.map(function(e){if(e>5){return e-5}return e}).length;l++);}else var C=3',
         );
 
         $tests[] = array(
             'if (l !== 3) { for (var V = w.length; l < V; V+=w.map(function(e) { if(e > 5) { return e-5; } return e; }).length); } else var C = 3;',
-            'if(l!==3){for(var V=w.length;l<V;V+=w.map(function(e){if(e>5){return e-5}return e}).length);}else var C=3'
+            'if(l!==3){for(var V=w.length;l<V;V+=w.map(function(e){if(e>5){return e-5}return e}).length);}else var C=3',
         );
 
         // https://github.com/matthiasmullie/minify/issues/394

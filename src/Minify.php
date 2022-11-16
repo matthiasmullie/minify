@@ -1,6 +1,6 @@
 <?php
 /**
- * Abstract minifier class
+ * Abstract minifier class.
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
@@ -8,6 +8,7 @@
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
  * @license MIT License
  */
+
 namespace MatthiasMullie\Minify;
 
 use MatthiasMullie\Minify\Exceptions\IOException;
@@ -18,7 +19,6 @@ use Psr\Cache\CacheItemInterface;
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
- * @package Minify
  * @author Matthias Mullie <minify@mullie.eu>
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
  * @license MIT License
@@ -149,7 +149,7 @@ abstract class Minify
         $content = $this->execute($path);
 
         // save to path
-        if ($path !== null) {
+        if (null !== $path) {
             $this->save($content, $path);
         }
 
@@ -170,7 +170,7 @@ abstract class Minify
         $content = gzencode($content, $level, FORCE_GZIP);
 
         // save to path
-        if ($path !== null) {
+        if (null !== $path) {
             $this->save($content, $path);
         }
 
@@ -215,7 +215,7 @@ abstract class Minify
             $data = file_get_contents($data);
 
             // strip BOM, if any
-            if (substr($data, 0, 3) == "\xef\xbb\xbf") {
+            if ("\xef\xbb\xbf" == substr($data, 0, 3)) {
                 $data = substr($data, 3);
             }
         }
@@ -284,7 +284,7 @@ abstract class Minify
 
                 // we can safely ignore patterns for positions we've unset earlier,
                 // because we know these won't show up anymore
-                if (array_key_exists($i, $positions) == false) {
+                if (false == array_key_exists($i, $positions)) {
                     continue;
                 }
 
@@ -357,6 +357,7 @@ abstract class Minify
         foreach ($match as &$matchItem) {
             $matchItem = $matchItem[0];
         }
+
         return $replacement($match);
     }
 
@@ -380,7 +381,7 @@ abstract class Minify
         $minifier = $this;
         $callback = function ($match) use ($minifier, $placeholderPrefix) {
             // check the second index here, because the first always contains a quote
-            if ($match[2] === '') {
+            if ('' === $match[2]) {
                 /*
                  * Empty strings need no placeholder; they can't be confused for
                  * anything else anyway.
@@ -468,7 +469,7 @@ abstract class Minify
      */
     protected function openFileForWriting($path)
     {
-        if ($path === '' || ($handler = @fopen($path, 'w')) === false) {
+        if ('' === $path || ($handler = @fopen($path, 'w')) === false) {
             throw new IOException('The file "'.$path.'" could not be opened for writing. Check if PHP has enough permissions.');
         }
 
@@ -495,11 +496,13 @@ abstract class Minify
         }
     }
 
-    protected static function str_replace_first($search, $replace, $subject) {
+    protected static function str_replace_first($search, $replace, $subject)
+    {
         $pos = strpos($subject, $search);
-        if ($pos !== false) {
+        if (false !== $pos) {
             return substr_replace($subject, $replace, $pos, strlen($search));
         }
+
         return $subject;
     }
 }

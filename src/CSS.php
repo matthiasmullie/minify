@@ -1,6 +1,6 @@
 <?php
 /**
- * CSS Minifier
+ * CSS Minifier.
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
@@ -12,15 +12,14 @@
 namespace MatthiasMullie\Minify;
 
 use MatthiasMullie\Minify\Exceptions\FileImportException;
-use MatthiasMullie\PathConverter\ConverterInterface;
 use MatthiasMullie\PathConverter\Converter;
+use MatthiasMullie\PathConverter\ConverterInterface;
 
 /**
- * CSS minifier
+ * CSS minifier.
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
- * @package Minify
  * @author Matthias Mullie <minify@mullie.eu>
  * @author Tijs Verkoyen <minify@verkoyen.eu>
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
@@ -293,7 +292,7 @@ class CSS extends Minify
      * Perform CSS optimizations.
      *
      * @param string[optional] $path    Path to write the data to
-     * @param string[]         $parents Parent paths, for circular reference checks
+     * @param string[] $parents Parent paths, for circular reference checks
      *
      * @return string The minified data
      */
@@ -433,7 +432,7 @@ class CSS extends Minify
         // loop all urls
         foreach ($matches as $match) {
             // determine if it's a url() or an @import match
-            $type = (strpos($match[0], '@import') === 0 ? 'import' : 'url');
+            $type = (0 === strpos($match[0], '@import') ? 'import' : 'url');
 
             $url = $match['path'];
             if ($this->canImportByPath($url)) {
@@ -463,14 +462,14 @@ class CSS extends Minify
              */
             $url = trim($url);
             if (preg_match('/[\s\)\'"#\x{7f}-\x{9f}]/u', $url)) {
-                $url = $match['quotes'] . $url . $match['quotes'];
+                $url = $match['quotes'].$url.$match['quotes'];
             }
 
             // build replacement
             $search[] = $match[0];
-            if ($type === 'url') {
+            if ('url' === $type) {
                 $replace[] = 'url('.$url.')';
-            } elseif ($type === 'import') {
+            } elseif ('import' === $type) {
                 $replace[] = '@import "'.$url.'"';
             }
         }
@@ -684,12 +683,12 @@ class CSS extends Minify
 
     /**
      * Replace all occurrences of functions that may contain math, where
-     * whitespace around operators needs to be preserved (e.g. calc, clamp)
+     * whitespace around operators needs to be preserved (e.g. calc, clamp).
      */
     protected function extractMath()
     {
         $functions = array('calc', 'clamp', 'min', 'max');
-        $pattern = '/\b('. implode('|', $functions) .')(\(.+?)(?=$|;|})/m';
+        $pattern = '/\b('.implode('|', $functions).')(\(.+?)(?=$|;|})/m';
 
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
@@ -704,12 +703,12 @@ class CSS extends Minify
             // instead, it'll match a larger portion of code to where it's certain that
             // the calc() musts have ended, and we'll figure out which is the correct
             // closing parenthesis here, by counting how many have opened
-            for ($i = 0; $i < $length; $i++) {
+            for ($i = 0; $i < $length; ++$i) {
                 $char = $match[2][$i];
                 $expr .= $char;
-                if ($char === '(') {
-                    $opened++;
-                } elseif ($char === ')' && --$opened === 0) {
+                if ('(' === $char) {
+                    ++$opened;
+                } elseif (')' === $char && 0 === --$opened) {
                     break;
                 }
             }
@@ -733,20 +732,19 @@ class CSS extends Minify
 
     /**
      * Replace custom properties, whose values may be used in scenarios where
-     * we wouldn't want them to be minified (e.g. inside calc)
+     * we wouldn't want them to be minified (e.g. inside calc).
      */
     protected function extractCustomProperties()
     {
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
         $this->registerPattern(
-
             '/(?<=^|[;}{])\s*(--[^:;{}"\'\s]+)\s*:([^;{}]+)/m',
             function ($match) use ($minifier) {
-                $placeholder = '--custom-'. count($minifier->extracted) . ':0';
-                $minifier->extracted[$placeholder] = $match[1] .':'. trim($match[2]);
-                return $placeholder;
+                $placeholder = '--custom-'.count($minifier->extracted).':0';
+                $minifier->extracted[$placeholder] = $match[1].':'.trim($match[2]);
 
+                return $placeholder;
             }
         );
     }
@@ -772,7 +770,7 @@ class CSS extends Minify
      */
     protected function canImportByPath($path)
     {
-        return preg_match('/^(data:|https?:|\\/)/', $path) === 0;
+        return 0 === preg_match('/^(data:|https?:|\\/)/', $path);
     }
 
     /**

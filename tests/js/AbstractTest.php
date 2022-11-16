@@ -6,7 +6,6 @@ use MatthiasMullie\Minify;
 use MatthiasMullie\Minify\Tests\CompatTestCase;
 use MatthiasMullie\Scrapbook\Adapters\MemoryStore;
 use MatthiasMullie\Scrapbook\Psr6\Pool;
-use ReflectionObject;
 
 /**
  * Tests common functions of abstract Minify class by using JS implementation.
@@ -129,9 +128,9 @@ class AbstractTest extends CompatTestCase
          */
 
         $pid = pcntl_fork();
-        if ($pid === -1) {
+        if (-1 === $pid) {
             // can't fork, ignore this test...
-        } elseif ($pid === 0) {
+        } elseif (0 === $pid) {
             // https://github.com/matthiasmullie/minify/issues/111
             ini_set('open_basedir', __DIR__.'/../..');
 
@@ -177,7 +176,7 @@ class AbstractTest extends CompatTestCase
         $minifier = new Minify\JS();
         $wrongPath = '';
 
-        $object = new ReflectionObject($minifier);
+        $object = new \ReflectionObject($minifier);
         $method = $object->getMethod('openFileForWriting');
         $method->setAccessible(true);
 
@@ -191,7 +190,7 @@ class AbstractTest extends CompatTestCase
         $minifier = new Minify\JS();
         $wrongPath = '';
 
-        $object = new ReflectionObject($minifier);
+        $object = new \ReflectionObject($minifier);
         $method = $object->getMethod('writeToFile');
         $method->setAccessible(true);
 

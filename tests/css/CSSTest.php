@@ -3,7 +3,6 @@
 namespace MatthiasMullie\Minify\Tests\CSS;
 
 use MatthiasMullie\Minify\Tests\CompatTestCase;
-use ReflectionObject;
 
 /**
  * CSS minifier test case.
@@ -45,7 +44,7 @@ class CSSTest extends CompatTestCase
 
             // $source also accepts an array where the key is a bogus path
             if (is_string($path)) {
-                $object = new ReflectionObject($minifier);
+                $object = new \ReflectionObject($minifier);
                 $property = $object->getProperty('data');
                 $property->setAccessible(true);
                 $data = $property->getValue($minifier);
@@ -86,7 +85,7 @@ class CSSTest extends CompatTestCase
         $minifier->setMaxImportSize(10);
         $minifier->setImportExtensions(array('gif' => 'data:image/gif'));
 
-        $object = new ReflectionObject($minifier);
+        $object = new \ReflectionObject($minifier);
 
         $property = $object->getProperty('maxImportSize');
         $property->setAccessible(true);
@@ -605,54 +604,54 @@ body{
 
         // https://github.com/matthiasmullie/minify/issues/183
         $tests[] = array(
-            ".mce-container,
+            '.mce-container,
 .mce-container *,
 .mce-widget,
 .mce-widget *,
 .mce-reset {
     color: red;
-}",
-            ".mce-container,.mce-container *,.mce-widget,.mce-widget *,.mce-reset{color:red}",
+}',
+            '.mce-container,.mce-container *,.mce-widget,.mce-widget *,.mce-reset{color:red}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/184
         $tests[] = array(
-            ".soliloquy-container, .soliloquy-container * {color:red}",
-            ".soliloquy-container,.soliloquy-container *{color:red}",
+            '.soliloquy-container, .soliloquy-container * {color:red}',
+            '.soliloquy-container,.soliloquy-container *{color:red}',
         );
         $tests[] = array(
-            "p{background: transparent url(images/preloader.gif) no-repeat scroll 50% 50%;}",
-            "p{background:transparent url(images/preloader.gif) no-repeat scroll 50% 50%}",
+            'p{background: transparent url(images/preloader.gif) no-repeat scroll 50% 50%;}',
+            'p{background:transparent url(images/preloader.gif) no-repeat scroll 50% 50%}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/191
         $tests[] = array(
-            "some .weird- selector{display:none}",
-            "some .weird- selector{display:none}",
+            'some .weird- selector{display:none}',
+            'some .weird- selector{display:none}',
         );
         $tests[] = array(
-            "p:nth-child( - n + 3 ){display:none}",
-            "p:nth-child(-n+3){display:none}",
+            'p:nth-child( - n + 3 ){display:none}',
+            'p:nth-child(-n+3){display:none}',
         );
         $tests[] = array(
-            "p:nth-child( + 3 ){display:none}",
-            "p:nth-child(+3){display:none}",
+            'p:nth-child( + 3 ){display:none}',
+            'p:nth-child(+3){display:none}',
         );
         $tests[] = array(
-            "p:nth-child( n + 3 ){display:none}",
-            "p:nth-child(n+3){display:none}",
+            'p:nth-child( n + 3 ){display:none}',
+            'p:nth-child(n+3){display:none}',
         );
         $tests[] = array(
-            "p:nth-child( odd ){display:none}",
-            "p:nth-child(odd){display:none}",
+            'p:nth-child( odd ){display:none}',
+            'p:nth-child(odd){display:none}',
         );
         $tests[] = array(
-            "p:nth-child( n ){display:none}",
-            "p:nth-child(n){display:none}",
+            'p:nth-child( n ){display:none}',
+            'p:nth-child(n){display:none}',
         );
         $tests[] = array(
-            "p:nth-child( -n ){display:none}",
-            "p:nth-child(-n){display:none}",
+            'p:nth-child( -n ){display:none}',
+            'p:nth-child(-n){display:none}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/193
@@ -840,19 +839,19 @@ margin-left: calc(20px + var(--some-var));
 p {
 margin-left: calc(20px + var(--some-var));
 }',
-            ':root{--some-var:0px}p{margin-left:calc(20px + var(--some-var))}'
+            ':root{--some-var:0px}p{margin-left:calc(20px + var(--some-var))}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/397
         $tests[] = array(
             '.stk-block-columns>.stk-block-content{--stk-column-gap:0px;column-gap:var(--stk-column-gap,0)}',
-            '.stk-block-columns>.stk-block-content{--stk-column-gap:0px;column-gap:var(--stk-column-gap,0)}'
+            '.stk-block-columns>.stk-block-content{--stk-column-gap:0px;column-gap:var(--stk-column-gap,0)}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/395
         $tests[] = array(
             'background-position: right 0.8em bottom calc(50% - 5px), right 0.8em top calc(50% - 5px);',
-            'background-position:right .8em bottom calc(50% - 5px),right .8em top calc(50% - 5px);'
+            'background-position:right .8em bottom calc(50% - 5px),right .8em top calc(50% - 5px);',
         );
 
         return $tests;
