@@ -25,3 +25,7 @@ jobs:
         run: make test PHP=7.1
       - name: Test PHP 5.6
         run: make test PHP=5.6
+      - name: Test PHP 5.5
+        run: make test PHP=5.5
+      - name: Test PHP 5.4
+        run: make test PHP=5.4

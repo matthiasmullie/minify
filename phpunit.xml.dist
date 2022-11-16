@@ -9,9 +9,8 @@
     </report>
   </coverage>
   <testsuites>
-    <testsuite name="Minify test suite">
-      <directory suffix="Test.php">tests/css</directory>
-      <directory suffix="Test.php">tests/js</directory>
+    <testsuite name="minify">
+      <directory suffix="Test.php">tests</directory>
     </testsuite>
   </testsuites>
   <logging/>

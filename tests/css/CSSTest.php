@@ -1,14 +1,14 @@
 <?php
 
-namespace MatthiasMullie\Minify\Test;
+namespace MatthiasMullie\Minify\Tests\CSS;
 
-use PHPUnit\Framework\TestCase;
+use MatthiasMullie\Minify\Tests\CompatTestCase;
 use ReflectionObject;
 
 /**
  * CSS minifier test case.
  */
-class CSSTest extends TestCase
+class CSSTest extends CompatTestCase
 {
     protected function mockMinifier()
     {
@@ -952,8 +952,8 @@ margin-left: calc(20px + var(--some-var));
             '@import url(../source/some-file.css?some=param);',
         );
 
-        $sourceRelative = 'tests/css/sample/convert_relative_path/source';
-        $targetRelative = 'tests/css/sample/convert_relative_path/target';
+        $sourceRelative = 'tests/CSS/sample/convert_relative_path/source';
+        $targetRelative = 'tests/CSS/sample/convert_relative_path/target';
 
         // from and/or to are relative links
         $tests[] = array(
@@ -976,8 +976,8 @@ margin-left: calc(20px + var(--some-var));
 
         $source = __DIR__.'/sample/symlink';
         $target = __DIR__.'/sample/symlink/target';
-        $sourceRelative = 'tests/css/sample/symlink';
-        $targetRelative = 'tests/css/sample/symlink/target';
+        $sourceRelative = 'tests/CSS/sample/symlink';
+        $targetRelative = 'tests/CSS/sample/symlink/target';
 
         // import symlinked files: relative, absolute & mix
         $tests[] = array(

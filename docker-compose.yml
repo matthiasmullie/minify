@@ -58,3 +58,15 @@ services:
       <<: *default-php-build
       args:
         version: 5.6-cli
+  php-5.5:
+    <<: *default-php
+    build:
+      <<: *default-php-build
+      args:
+        version: 5.5-cli
+  php-5.4:
+    <<: *default-php
+    build:
+      <<: *default-php-build
+      args:
+        version: 5.4-cli

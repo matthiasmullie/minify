@@ -1,17 +1,17 @@
 <?php
 
-namespace MatthiasMullie\Minify\Test;
+namespace MatthiasMullie\Minify\Tests\JS;
 
 use MatthiasMullie\Minify;
+use MatthiasMullie\Minify\Tests\CompatTestCase;
 use MatthiasMullie\Scrapbook\Adapters\MemoryStore;
 use MatthiasMullie\Scrapbook\Psr6\Pool;
-use PHPUnit\Framework\TestCase;
 use ReflectionObject;
 
 /**
  * Tests common functions of abstract Minify class by using JS implementation.
  */
-class AbstractTest extends TestCase
+class AbstractTest extends CompatTestCase
 {
     public function testConstruct()
     {
@@ -172,7 +172,7 @@ class AbstractTest extends TestCase
 
     public function testCheckFileOpenFail()
     {
-	    $this->expectException('MatthiasMullie\Minify\Exceptions\IOException');
+        $this->expectException('MatthiasMullie\Minify\Exceptions\IOException');
 
         $minifier = new Minify\JS();
         $wrongPath = '';

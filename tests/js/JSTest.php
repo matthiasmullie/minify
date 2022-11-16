@@ -1,13 +1,13 @@
 <?php
 
-namespace MatthiasMullie\Minify\Test;
+namespace MatthiasMullie\Minify\Tests\JS;
 
-use PHPUnit\Framework\TestCase;
+use MatthiasMullie\Minify\Tests\CompatTestCase;
 
 /**
  * JS minifier test case.
  */
-class JSTest extends TestCase
+class JSTest extends CompatTestCase
 {
     protected function mockMinifier()
     {
