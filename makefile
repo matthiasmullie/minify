@@ -13,12 +13,12 @@ image:
 	docker build -t matthiasmullie/minify .
 
 up:
-	docker-compose up -d $(PHP)
+	docker-compose up -d php-$(PHP)
 
 down:
-	docker-compose stop -t0 $(PHP)
+	docker-compose stop -t0 php-$(PHP)
 
 test:
 	[ $(UP) -eq 1 ] && make up || true
-	$(eval cmd='docker-compose run $(PHP) env XDEBUG_MODE=coverage vendor/bin/phpunit $(TEST)')
+	$(eval cmd='docker-compose run php-$(PHP) env XDEBUG_MODE=coverage vendor/bin/phpunit $(TEST)')
 	eval $(cmd); status=$$?; [ $(DOWN) -eq 1 ] && make down; exit $$status

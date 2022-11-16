@@ -1,7 +1,7 @@
-version: '2.1'
+version: '3.8'
 services:
-  php:
-    build:
+  php: &default-php
+    build: &default-php-build
       context: .
       dockerfile: Dockerfile
     volumes:
@@ -10,43 +10,51 @@ services:
       - ./tests:/var/www/tests
       - ./build:/var/www/build
       - ./phpunit.xml.dist:/var/www/phpunit.xml.dist
-  '8.1':
-    extends: php
+  php-8.1:
+    <<: *default-php
     build:
+      <<: *default-php-build
       args:
         version: 8.1-cli
-  '8.0':
-    extends: php
+  php-8.0:
+    <<: *default-php
     build:
+      <<: *default-php-build
       args:
         version: 8.0-cli
-  '7.4':
-    extends: php
+  php-7.4:
+    <<: *default-php
     build:
+      <<: *default-php-build
       args:
         version: 7.4-cli
-  '7.3':
-    extends: php
+  php-7.3:
+    <<: *default-php
     build:
+      <<: *default-php-build
       args:
         version: 7.3-cli
-  '7.2':
-    extends: php
+  php-7.2:
+    <<: *default-php
     build:
+      <<: *default-php-build
       args:
         version: 7.2-cli
-  '7.1':
-    extends: php
+  php-7.1:
+    <<: *default-php
     build:
+      <<: *default-php-build
       args:
         version: 7.1-cli
-  '7.0':
-    extends: php
+  php-7.0:
+    <<: *default-php
     build:
+      <<: *default-php-build
       args:
         version: 7.0-cli
-  '5.6':
-    extends: php
+  php-5.6:
+    <<: *default-php
     build:
+      <<: *default-php-build
       args:
         version: 5.6-cli
