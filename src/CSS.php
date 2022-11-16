@@ -105,8 +105,8 @@ class CSS extends Minify
     /**
      * Combine CSS from import statements.
      *
-     * @import's will be loaded and their content merged into the original file,
-     * to save HTTP requests.
+     * Import statements will be loaded and their content merged into the original
+     * file, to save HTTP requests.
      *
      * @param string   $source  The file to combine imports for
      * @param string   $content The CSS content to combine imports for

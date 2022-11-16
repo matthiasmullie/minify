@@ -44,6 +44,7 @@ abstract class Minify
      * been extracted from the JS source code, so we can reliably match "code",
      * without having to worry about potential "code-like" characters inside.
      *
+     * @internal
      * @var string[]
      */
     public $extracted = array();
