@@ -41,8 +41,7 @@ to run php-cs-fixer before submitting the code, it'll take care of the
 formatting for you:
 
 ```sh
-vendor/bin/php-cs-fixer fix src
-vendor/bin/php-cs-fixer fix tests
+make php-cs-fixer
 ```
 
 Document the code thoroughly!

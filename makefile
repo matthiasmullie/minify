@@ -1,4 +1,4 @@
-PHP ?= 8.1
+PHP ?=
 TEST ?=
 
 docs:
@@ -7,7 +7,12 @@ docs:
 		php phpDocumentor.phar --directory=src --target=docs --visibility=public --defaultpackagename=Minify --title=Minify;"
 
 test:
-	docker build -t matthiasmullie/minify:$(PHP) . --build-arg VERSION=$(PHP)-cli
-	docker run -v $$(pwd)/build:/var/www/build matthiasmullie/minify:$(PHP) env XDEBUG_MODE=coverage vendor/bin/phpunit $(TEST) --coverage-clover build/coverage-$(PHP)-$(TEST).clover
+	VERSION=$$(echo "$(PHP)-cli" | sed "s/^-//");\
+	test $$(docker images -q matthiasmullie/minify:$$VERSION) || docker build -t matthiasmullie/minify:$$VERSION . --build-arg VERSION=$$VERSION;\
+	docker run -v $$(pwd)/src:/var/www/src -v $$(pwd)/tests:/var/www/tests -v $$(pwd)/build:/var/www/build matthiasmullie/minify:$$VERSION env XDEBUG_MODE=coverage vendor/bin/phpunit $(TEST) --coverage-clover build/coverage-$(PHP)-$(TEST).clover
+
+php-cs-fixer:
+	test $$(docker images -q matthiasmullie/minify:cli) || docker build -t matthiasmullie/minify:cli .
+	docker run -v $$(pwd)/src:/var/www/src -v $$(pwd)/tests:/var/www/tests matthiasmullie/minify:cli vendor/bin/php-cs-fixer fix
 
 .PHONY: docs

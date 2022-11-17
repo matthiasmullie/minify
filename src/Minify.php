@@ -45,6 +45,7 @@ abstract class Minify
      * without having to worry about potential "code-like" characters inside.
      *
      * @internal
+     *
      * @var string[]
      */
     public $extracted = array();
