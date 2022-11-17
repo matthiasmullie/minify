@@ -10,9 +10,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Test PHP 8.1 & submit codecov
-        run: make test PHP=8.1 UP=1 DOWN=0 && bash <(curl -s https://codecov.io/bash) && make down PHP=8.1
+      - uses: actions/checkout@v3
+      - name: Test PHP 8.1
+        run: make test PHP=8.1
       - name: Test PHP 8.0
         run: make test PHP=8.0
       - name: Test PHP 7.4
@@ -29,3 +29,6 @@ jobs:
         run: make test PHP=5.5
       - name: Test PHP 5.4
         run: make test PHP=5.4
+      - uses: codecov/codecov-action@v3
+        with:
+          directory: build

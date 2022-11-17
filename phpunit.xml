@@ -5,7 +5,7 @@
       <directory suffix=".php">src</directory>
     </include>
     <report>
-      <clover outputFile="build/logs/clover.xml"/>
+      <clover outputFile="build/coverage.clover"/>
     </report>
   </coverage>
   <testsuites>

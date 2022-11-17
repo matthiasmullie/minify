@@ -1,6 +1,4 @@
-PHP ?= '8.1'
-UP ?= 1
-DOWN ?= 1
+PHP ?= 8.1
 TEST ?=
 
 docs:
@@ -8,18 +6,8 @@ docs:
 		curl -s -L -O https://phpdoc.org/phpDocumentor.phar;\
 		php phpDocumentor.phar --directory=src --target=docs --visibility=public --defaultpackagename=Minify --title=Minify;"
 
-image:
-	docker build -t matthiasmullie/minify .
-
-up:
-	docker-compose up -d php-$(PHP)
-
-down:
-	docker-compose stop -t0 php-$(PHP)
-
 test:
-	[ $(UP) -eq 1 ] && make up || true
-	$(eval cmd='docker-compose run php-$(PHP) env XDEBUG_MODE=coverage vendor/bin/phpunit $(TEST)')
-	eval $(cmd); status=$$?; [ $(DOWN) -eq 1 ] && make down; exit $$status
+	docker build -t matthiasmullie/minify:$(PHP) . --build-arg VERSION=$(PHP)-cli
+	docker run -v $$(pwd)/build:/var/www/build matthiasmullie/minify:$(PHP) env XDEBUG_MODE=coverage vendor/bin/phpunit $(TEST) --coverage-clover build/coverage-$(PHP)-$(TEST).clover
 
 .PHONY: docs
