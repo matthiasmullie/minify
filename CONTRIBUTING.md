@@ -26,17 +26,17 @@ Please include tests for every change or addition to the code.
 To run the complete test suite:
 
 ```sh
-vendor/bin/phpunit
+make test
 ```
 
 GitHub Actions have been [configured](.github/workflows/test.yml) to run supported
-PHP versions & adapters. Upon submitting a new pull request, that test suite will
-be run & report back on your pull request. Please make sure the test suite passes.
+PHP versions. Upon submitting a new pull request, that test suite will be run &
+report back on your pull request. Please make sure the test suite passes.
 
 
 ### Coding standards
 
-All code must follow [PSR-2](http://www.php-fig.org/psr/psr-2/). Just make sure
+All code must follow [PSR-12](http://www.php-fig.org/psr/psr-12/). Just make sure
 to run php-cs-fixer before submitting the code, it'll take care of the
 formatting for you:
 
