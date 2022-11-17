@@ -19,8 +19,6 @@ you'd rather not risk wasting your time implementing a new feature only to see
 it turned down, please start the discussion by
 [opening an issue](https://github.com/matthiasmullie/minify/issues/new).
 
-Don't forget to add your changes to the [changelog](CHANGELOG.md).
-
 
 ### Testing
 
