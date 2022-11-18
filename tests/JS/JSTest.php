@@ -34,7 +34,7 @@ class JSTest extends CompatTestCase
     public function testAddFile()
     {
         $minifier = $this->mockMinifier();
-        $minifier->addFile(__DIR__.'/sample/source/script1.js');
+        $minifier->addFile(__DIR__ . '/sample/source/script1.js');
 
         $result = $minifier->minify();
 
@@ -65,8 +65,8 @@ class JSTest extends CompatTestCase
         // adding multiple files
         $tests[] = array(
             array(
-                __DIR__.'/sample/source/script1.js',
-                __DIR__.'/sample/source/script2.js',
+                __DIR__ . '/sample/source/script1.js',
+                __DIR__ . '/sample/source/script2.js',
             ),
             'var test=1;var test=2',
         );
@@ -74,9 +74,9 @@ class JSTest extends CompatTestCase
         // adding multiple files and string
         $tests[] = array(
             array(
-                __DIR__.'/sample/source/script1.js',
+                __DIR__ . '/sample/source/script1.js',
                 'console.log(test)',
-                __DIR__.'/sample/source/script2.js',
+                __DIR__ . '/sample/source/script2.js',
             ),
             'var test=1;console.log(test);var test=2',
         );
@@ -869,15 +869,15 @@ String(dateString).match(/^[0-9]*$/);',
 
         // https://github.com/matthiasmullie/minify/issues/139
         $tests[] = array(
-            __DIR__.'/sample/line_endings/lf/script.js',
+            __DIR__ . '/sample/line_endings/lf/script.js',
             'var a=1',
         );
         $tests[] = array(
-            __DIR__.'/sample/line_endings/cr/script.js',
+            __DIR__ . '/sample/line_endings/cr/script.js',
             'var a=1',
         );
         $tests[] = array(
-            __DIR__.'/sample/line_endings/crlf/script.js',
+            __DIR__ . '/sample/line_endings/crlf/script.js',
             'var a=1',
         );
 
@@ -1267,14 +1267,14 @@ a = \'b\';',
 
         // https://github.com/matthiasmullie/minify/issues/227
         $tests[] = array(
-            __DIR__.'/sample/bugs/227/original.js',
-            file_get_contents(__DIR__.'/sample/bugs/227/minified.js'),
+            __DIR__ . '/sample/bugs/227/original.js',
+            file_get_contents(__DIR__ . '/sample/bugs/227/minified.js'),
         );
 
         // https://github.com/matthiasmullie/minify/issues/229
         $tests[] = array(
-            __DIR__.'/sample/bugs/229/original.js',
-            file_get_contents(__DIR__.'/sample/bugs/229/minified.js'),
+            __DIR__ . '/sample/bugs/229/original.js',
+            file_get_contents(__DIR__ . '/sample/bugs/229/minified.js'),
         );
 
         // https://github.com/matthiasmullie/minify/issues/231
@@ -1367,7 +1367,7 @@ b=2',
 
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
-        $files = glob(__DIR__.'/sample/minified/*.js');
+        $files = glob(__DIR__ . '/sample/minified/*.js');
         foreach ($files as $file) {
             $content = trim(file_get_contents($file));
             $tests[] = array($content, $content);
@@ -1381,8 +1381,8 @@ b=2',
 
         // some other files that are minified correctly, ensure they stay like this
         // https://github.com/matthiasmullie/minify/issues/393
-        $source = trim(file_get_contents(__DIR__.'/sample/source/Decrypt.js'));
-        $minified = trim(file_get_contents(__DIR__.'/sample/minified2/Decrypt.min.js'));
+        $source = trim(file_get_contents(__DIR__ . '/sample/source/Decrypt.js'));
+        $minified = trim(file_get_contents(__DIR__ . '/sample/minified2/Decrypt.min.js'));
         $tests[] = array($source, $minified);
 
         return $tests;

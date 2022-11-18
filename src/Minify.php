@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Abstract minifier class.
  *
@@ -130,7 +131,7 @@ abstract class Minify
 
             // check if we can read the file
             if (!$this->canImportFile($path)) {
-                throw new IOException('The file "'.$path.'" could not be opened for reading. Check if PHP has enough permissions.');
+                throw new IOException('The file "' . $path . '" could not be opened for reading. Check if PHP has enough permissions.');
             }
 
             $this->add($path);
@@ -151,7 +152,7 @@ abstract class Minify
         $content = $this->execute($path);
 
         // save to path
-        if (null !== $path) {
+        if ($path !== null) {
             $this->save($content, $path);
         }
 
@@ -172,7 +173,7 @@ abstract class Minify
         $content = gzencode($content, $level, FORCE_GZIP);
 
         // save to path
-        if (null !== $path) {
+        if ($path !== null) {
             $this->save($content, $path);
         }
 
@@ -217,7 +218,7 @@ abstract class Minify
             $data = file_get_contents($data);
 
             // strip BOM, if any
-            if ("\xef\xbb\xbf" == substr($data, 0, 3)) {
+            if (substr($data, 0, 3) == "\xef\xbb\xbf") {
                 $data = substr($data, 3);
             }
         }
@@ -286,7 +287,7 @@ abstract class Minify
 
                 // we can safely ignore patterns for positions we've unset earlier,
                 // because we know these won't show up anymore
-                if (false == array_key_exists($i, $positions)) {
+                if (array_key_exists($i, $positions) == false) {
                     continue;
                 }
 
@@ -383,7 +384,7 @@ abstract class Minify
         $minifier = $this;
         $callback = function ($match) use ($minifier, $placeholderPrefix) {
             // check the second index here, because the first always contains a quote
-            if ('' === $match[2]) {
+            if ($match[2] === '') {
                 /*
                  * Empty strings need no placeholder; they can't be confused for
                  * anything else anyway.
@@ -394,8 +395,8 @@ abstract class Minify
             }
 
             $count = count($minifier->extracted);
-            $placeholder = $match[1].$placeholderPrefix.$count.$match[1];
-            $minifier->extracted[$placeholder] = $match[1].$match[2].$match[1];
+            $placeholder = $match[1] . $placeholderPrefix . $count . $match[1];
+            $minifier->extracted[$placeholder] = $match[1] . $match[2] . $match[1];
 
             return $placeholder;
         };
@@ -412,7 +413,7 @@ abstract class Minify
          * considered as escape-char (times 2) and to get it in the regex,
          * escaped (times 2)
          */
-        $this->registerPattern('/(['.$chars.'])(.*?(?<!\\\\)(\\\\\\\\)*+)\\1/s', $callback);
+        $this->registerPattern('/([' . $chars . '])(.*?(?<!\\\\)(\\\\\\\\)*+)\\1/s', $callback);
     }
 
     /**
@@ -471,8 +472,8 @@ abstract class Minify
      */
     protected function openFileForWriting($path)
     {
-        if ('' === $path || ($handler = @fopen($path, 'w')) === false) {
-            throw new IOException('The file "'.$path.'" could not be opened for writing. Check if PHP has enough permissions.');
+        if ($path === '' || ($handler = @fopen($path, 'w')) === false) {
+            throw new IOException('The file "' . $path . '" could not be opened for writing. Check if PHP has enough permissions.');
         }
 
         return $handler;
@@ -494,14 +495,14 @@ abstract class Minify
             ($result = @fwrite($handler, $content)) === false ||
             ($result < strlen($content))
         ) {
-            throw new IOException('The file "'.$path.'" could not be written to. Check your disk space and file permissions.');
+            throw new IOException('The file "' . $path . '" could not be written to. Check your disk space and file permissions.');
         }
     }
 
     protected static function str_replace_first($search, $replace, $subject)
     {
         $pos = strpos($subject, $search);
-        if (false !== $pos) {
+        if ($pos !== false) {
             return substr_replace($subject, $replace, $pos, strlen($search));
         }
 
