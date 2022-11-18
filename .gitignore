@@ -2,4 +2,4 @@
 /build
 /docs
 /vendor
-composer.lock
+/composer.lock
