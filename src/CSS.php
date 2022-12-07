@@ -73,10 +73,8 @@ class CSS extends Minify
         $this->maxImportSize = $size;
     }
 
-
     /**
-     * Permit the adjustment of the relative import paths (on by default)
-     *
+     * Permit the adjustment of the relative import paths (on by default).
      *
      * @param bool $size Size in kB
      */
@@ -353,7 +351,7 @@ class CSS extends Minify
              * conversion happens (because we still want it to go through most
              * of the move code, which also addresses url() & @import syntax...)
              */
-            if ( $this->modifyImportPath ) {
+            if ($this->modifyImportPath) {
                 $converter = $this->getPathConverter($source, $path ?: $source);
                 $css = $this->move($converter, $css);
             }
