@@ -34,6 +34,11 @@ class CSS extends Minify
     protected $maxImportSize = 5;
 
     /**
+     * @var bool Allow the modification of the import relative paths
+     */
+    protected $modifyImportPath = true;
+
+    /**
      * @var string[] valid import extensions
      */
     protected $importExtensions = array(
@@ -66,6 +71,18 @@ class CSS extends Minify
     public function setMaxImportSize($size)
     {
         $this->maxImportSize = $size;
+    }
+
+
+    /**
+     * Permit the adjustment of the relative import paths (on by default)
+     *
+     *
+     * @param bool $size Size in kB
+     */
+    public function setModifyImportPath($allow)
+    {
+        $this->modifyImportPath = $allow;
     }
 
     /**
@@ -336,8 +353,10 @@ class CSS extends Minify
              * conversion happens (because we still want it to go through most
              * of the move code, which also addresses url() & @import syntax...)
              */
-            $converter = $this->getPathConverter($source, $path ?: $source);
-            $css = $this->move($converter, $css);
+            if ( $this->modifyImportPath ) {
+                $converter = $this->getPathConverter($source, $path ?: $source);
+                $css = $this->move($converter, $css);
+            }
 
             // combine css
             $content .= $css;
