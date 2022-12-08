@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Test PHP 8.2
+        run: make test PHP=8.2
       - name: Test PHP 8.1
         run: make test PHP=8.1
       - name: Test PHP 8.0
