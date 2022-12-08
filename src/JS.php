@@ -127,7 +127,10 @@ class JS extends Minify
      */
     public function __construct()
     {
-        parent::__construct(func_get_args());
+        // Can't just call parent::__construct()
+        if (func_num_args()) {
+            parent::__construct(func_get_args());
+        }
 
         $dataDir = __DIR__ . '/../data/js/';
         $options = FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES;
@@ -182,7 +185,7 @@ class JS extends Minify
 
         // clean up leftover `;`s from the combination of multiple scripts
         $content = ltrim($content, ';');
-        $content = (string) substr($content, 0, -1);
+        $content = (string)substr($content, 0, -1);
 
         /*
          * Earlier, we extracted strings & regular expressions and replaced them
@@ -266,7 +269,7 @@ class JS extends Minify
         // a regular expression can only be followed by a few operators or some
         // of the RegExp methods (a `\` followed by a variable or value is
         // likely part of a division, not a regex)
-        $keywords = array('do', 'in', 'new', 'else', 'throw', 'yield', 'delete', 'return',  'typeof');
+        $keywords = array('do', 'in', 'new', 'else', 'throw', 'yield', 'delete', 'return', 'typeof');
         $before = '(^|[=:,;\+\-\*\?\/\}\(\{\[&\|!]|' . implode('|', $keywords) . ')\s*';
         $propertiesAndMethods = array(
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp#Properties_2
@@ -474,7 +477,7 @@ class JS extends Minify
      * This will prepare the given array by escaping all characters.
      *
      * @param string[] $operators
-     * @param string   $delimiter
+     * @param string $delimiter
      *
      * @return string[]
      */
@@ -505,7 +508,7 @@ class JS extends Minify
      * This will prepare the given array by escaping all characters.
      *
      * @param string[] $keywords
-     * @param string   $delimiter
+     * @param string $delimiter
      *
      * @return string[]
      */
