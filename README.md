@@ -1,6 +1,6 @@
 # Minify
 
-[![Build status](https://img.shields.io/github/workflow/status/matthiasmullie/minify/test-suite?style=flat-square)](https://github.com/matthiasmullie/minify/actions/workflows/test.yml)
+[![Build status](https://img.shields.io/github/actions/workflow/status/matthiasmullie/minify/test.yml?branch=master&style=flat-square)](https://github.com/matthiasmullie/minify/actions/workflows/test.yml)
 [![Code coverage](http://img.shields.io/codecov/c/gh/matthiasmullie/minify?style=flat-square)](https://codecov.io/gh/matthiasmullie/minify)
 [![Latest version](http://img.shields.io/packagist/v/matthiasmullie/minify?style=flat-square)](https://packagist.org/packages/matthiasmullie/minify)
 [![Downloads total](http://img.shields.io/packagist/dt/matthiasmullie/minify?style=flat-square)](https://packagist.org/packages/matthiasmullie/minify)
