@@ -13,6 +13,6 @@ test:
 
 format:
 	test $$(docker images -q matthiasmullie/minify:cli) || docker build -t matthiasmullie/minify:cli .
-	docker run -v $$(pwd)/src:/var/www/src -v $$(pwd)/tests:/var/www/tests matthiasmullie/minify:cli sh -c "vendor/bin/php-cs-fixer fix && vendor/bin/phpcbf --standard=ruleset.xml"
+	docker run -v $$(pwd)/src:/var/www/src -v $$(pwd)/tests:/var/www/tests matthiasmullie/minify:cli sh -c "PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix && vendor/bin/phpcbf --standard=ruleset.xml"
 
 .PHONY: docs
