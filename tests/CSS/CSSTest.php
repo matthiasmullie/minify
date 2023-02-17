@@ -9,12 +9,11 @@ use MatthiasMullie\Minify\Tests\CompatTestCase;
  */
 class CSSTest extends CompatTestCase
 {
-    protected function mockMinifier()
+    protected function getMinifier()
     {
-        // override save method, there's no point in writing the result out here
-        return $this->getMockBuilder('\MatthiasMullie\Minify\CSS')
-            ->setMethods(array('save'))
-            ->getMock();
+        // use custom class where `save` has been turned into a no-op;
+        // there's no point in writing the result out here
+        return new NoSaveCSS();
     }
 
     /**
@@ -24,7 +23,7 @@ class CSSTest extends CompatTestCase
      */
     public function testMinify($input, $expected)
     {
-        $minifier = $this->mockMinifier();
+        $minifier = $this->getMinifier();
         $minifier->add($input);
         $result = $minifier->minify();
         $this->assertEquals($expected, $result);
@@ -37,7 +36,7 @@ class CSSTest extends CompatTestCase
      */
     public function testConvertRelativePath($source, $target, $expected)
     {
-        $minifier = $this->mockMinifier();
+        $minifier = $this->getMinifier();
         $source = (array) $source;
         foreach ($source as $path => $css) {
             $minifier->add($css);
@@ -70,7 +69,7 @@ class CSSTest extends CompatTestCase
 
         $testFile = __DIR__ . '/sample/loop/first.css';
 
-        $minifier = $this->mockMinifier();
+        $minifier = $this->getMinifier();
         $minifier->add($testFile);
 
         $minifier->minify();
@@ -81,7 +80,7 @@ class CSSTest extends CompatTestCase
      */
     public function testSetConfig()
     {
-        $minifier = $this->mockMinifier();
+        $minifier = $this->getMinifier();
         $minifier->setMaxImportSize(10);
         $minifier->setImportExtensions(array('gif' => 'data:image/gif'));
 
@@ -99,7 +98,7 @@ class CSSTest extends CompatTestCase
     /**
      * @return array [input, expected result]
      */
-    public function dataProvider()
+    public static function dataProvider()
     {
         $tests = array();
 
@@ -860,7 +859,7 @@ margin-left: calc(20px + var(--some-var));
     /**
      * @return array [input, expected result]
      */
-    public function dataProviderPaths()
+    public static function dataProviderPaths()
     {
         $tests = array();
 

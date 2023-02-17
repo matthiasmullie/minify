@@ -9,12 +9,11 @@ use MatthiasMullie\Minify\Tests\CompatTestCase;
  */
 class JSTest extends CompatTestCase
 {
-    protected function mockMinifier()
+    protected function getMinifier()
     {
-        // override save method, there's no point in writing the result out here
-        return $this->getMockBuilder('\MatthiasMullie\Minify\JS')
-            ->setMethods(array('save'))
-            ->getMock();
+        // use custom class where `save` has been turned into a no-op;
+        // there's no point in writing the result out here
+        return new NoSaveJS();
     }
 
     /**
@@ -24,7 +23,7 @@ class JSTest extends CompatTestCase
     {
         $this->expectException('MatthiasMullie\Minify\Exceptions\IOException');
 
-        $minifier = $this->mockMinifier();
+        $minifier = $this->getMinifier();
         $minifier->addFile('/sample/source/nothing');
     }
 
@@ -33,7 +32,7 @@ class JSTest extends CompatTestCase
      */
     public function testAddFile()
     {
-        $minifier = $this->mockMinifier();
+        $minifier = $this->getMinifier();
         $minifier->addFile(__DIR__ . '/sample/source/script1.js');
 
         $result = $minifier->minify();
@@ -48,7 +47,7 @@ class JSTest extends CompatTestCase
      */
     public function testMinify($input, $expected)
     {
-        $minifier = $this->mockMinifier();
+        $minifier = $this->getMinifier();
         $minifier->add($input);
         $result = $minifier->minify();
 
@@ -58,7 +57,7 @@ class JSTest extends CompatTestCase
     /**
      * @return array [input, expected result]
      */
-    public function dataProvider()
+    public static function dataProvider()
     {
         $tests = array();
 
