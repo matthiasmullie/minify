@@ -489,12 +489,6 @@ class CSS extends Minify
      */
     protected function shortenColors($content)
     {
-        $content = preg_replace('/(?<=[: ])#([0-9a-z])\\1([0-9a-z])\\2([0-9a-z])\\3(?:([0-9a-z])\\4)?(?=[; }])/i', '#$1$2$3$4', $content);
-
-        // remove alpha channel if it's pointless...
-        $content = preg_replace('/(?<=[: ])#([0-9a-z]{6})ff?(?=[; }])/i', '#$1', $content);
-        $content = preg_replace('/(?<=[: ])#([0-9a-z]{3})f?(?=[; }])/i', '#$1', $content);
-
         $colors = array(
             // we can shorten some even more by replacing them with their color name
             '#F0FFFF' => 'azure',
@@ -530,9 +524,21 @@ class CSS extends Minify
         );
 
         return preg_replace_callback(
-            '/(?<=[: ])(' . implode('|', array_keys($colors)) . ')(?=[; }])/i',
+            '/#[0-9A-Fa-f]{3,8}/',
             function ($match) use ($colors) {
-                return $colors[strtoupper($match[0])];
+                $color = strtoupper($match[0]);
+                if (isset($colors[$color]))
+                    $color = $colors[$color];
+                elseif (isset($color[8]) && $color[1] == $color[2] && $color[3] == $color[4] && $color[5] == $color[6] && $color[7] == $color[8])
+                    $color = '#'.$color[1].$color[3].$color[5].$color[7];
+                elseif (isset($color[6]) && $color[1] == $color[2] && $color[3] == $color[4] && $color[5] == $color[6])
+                    $color = '#'.$color[1].$color[3].$color[5];
+
+                // remove alpha channel if it's pointless...
+                if (strlen($color) == 5 && $color[4] == 'F')
+                    $color = substr($color, -1);
+
+                return $color;
             },
             $content
         );
