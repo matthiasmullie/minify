@@ -1,21 +1,19 @@
 <?php
 
-namespace MatthiasMullie\Minify\Test;
+namespace MatthiasMullie\Minify\Tests\CSS;
 
-use PHPUnit\Framework\TestCase;
-use ReflectionObject;
+use MatthiasMullie\Minify\Tests\CompatTestCase;
 
 /**
  * CSS minifier test case.
  */
-class CSSTest extends TestCase
+class CSSTest extends CompatTestCase
 {
-    protected function mockMinifier()
+    protected function getMinifier()
     {
-        // override save method, there's no point in writing the result out here
-        return $this->getMockBuilder('\MatthiasMullie\Minify\CSS')
-            ->setMethods(array('save'))
-            ->getMock();
+        // use custom class where `save` has been turned into a no-op;
+        // there's no point in writing the result out here
+        return new NoSaveCSS();
     }
 
     /**
@@ -25,7 +23,7 @@ class CSSTest extends TestCase
      */
     public function testMinify($input, $expected)
     {
-        $minifier = $this->mockMinifier();
+        $minifier = $this->getMinifier();
         $minifier->add($input);
         $result = $minifier->minify();
         $this->assertEquals($expected, $result);
@@ -38,14 +36,14 @@ class CSSTest extends TestCase
      */
     public function testConvertRelativePath($source, $target, $expected)
     {
-        $minifier = $this->mockMinifier();
+        $minifier = $this->getMinifier();
         $source = (array) $source;
         foreach ($source as $path => $css) {
             $minifier->add($css);
 
             // $source also accepts an array where the key is a bogus path
             if (is_string($path)) {
-                $object = new ReflectionObject($minifier);
+                $object = new \ReflectionObject($minifier);
                 $property = $object->getProperty('data');
                 $property->setAccessible(true);
                 $data = $property->getValue($minifier);
@@ -69,9 +67,9 @@ class CSSTest extends TestCase
     {
         $this->expectException('MatthiasMullie\Minify\Exceptions\FileImportException');
 
-        $testFile = __DIR__.'/sample/loop/first.css';
+        $testFile = __DIR__ . '/sample/loop/first.css';
 
-        $minifier = $this->mockMinifier();
+        $minifier = $this->getMinifier();
         $minifier->add($testFile);
 
         $minifier->minify();
@@ -82,11 +80,11 @@ class CSSTest extends TestCase
      */
     public function testSetConfig()
     {
-        $minifier = $this->mockMinifier();
+        $minifier = $this->getMinifier();
         $minifier->setMaxImportSize(10);
         $minifier->setImportExtensions(array('gif' => 'data:image/gif'));
 
-        $object = new ReflectionObject($minifier);
+        $object = new \ReflectionObject($minifier);
 
         $property = $object->getProperty('maxImportSize');
         $property->setAccessible(true);
@@ -100,15 +98,15 @@ class CSSTest extends TestCase
     /**
      * @return array [input, expected result]
      */
-    public function dataProvider()
+    public static function dataProvider()
     {
         $tests = array();
 
         // passing in an array of css inputs
         $tests[] = array(
             array(
-                __DIR__.'/sample/combine_imports/index.css',
-                __DIR__.'/sample/bom/bom.css',
+                __DIR__ . '/sample/combine_imports/index.css',
+                __DIR__ . '/sample/bom/bom.css',
                 'p { width: 55px , margin: 0 0 0 0}',
             ),
             'body{color:red}body{color:red}p{width:55px,margin:0 0 0 0}',
@@ -116,27 +114,27 @@ class CSSTest extends TestCase
 
         // try importing, with both @import syntax types & media queries
         $tests[] = array(
-            __DIR__.'/sample/combine_imports/index.css',
+            __DIR__ . '/sample/combine_imports/index.css',
             'body{color:red}',
         );
         $tests[] = array(
-            __DIR__.'/sample/combine_imports/index2.css',
+            __DIR__ . '/sample/combine_imports/index2.css',
             'body{color:red}',
         );
         $tests[] = array(
-            __DIR__.'/sample/combine_imports/index3.css',
+            __DIR__ . '/sample/combine_imports/index3.css',
             'body{color:red}body{color:red}',
         );
         $tests[] = array(
-            __DIR__.'/sample/combine_imports/index4.css',
+            __DIR__ . '/sample/combine_imports/index4.css',
             '@media only screen{body{color:red}}@media only screen{body{color:red}}',
         );
         $tests[] = array(
-            __DIR__.'/sample/combine_imports/index5.css',
+            __DIR__ . '/sample/combine_imports/index5.css',
             'body{color:red}body{color:red}',
         );
         $tests[] = array(
-            __DIR__.'/sample/combine_imports/index6a.css',
+            __DIR__ . '/sample/combine_imports/index6a.css',
             'body{color:red}',
         );
 
@@ -148,8 +146,8 @@ class CSSTest extends TestCase
 
         // import files
         $tests[] = array(
-            __DIR__.'/sample/import_files/index.css',
-            'body{background:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/file.png')).')}',
+            __DIR__ . '/sample/import_files/index.css',
+            'body{background:url(data:image/png;base64,' . base64_encode(file_get_contents(__DIR__ . '/sample/import_files/file.png')) . ')}',
         );
 
         // strip comments
@@ -174,6 +172,13 @@ class CSSTest extends TestCase
             '/* @preserve This is a CSS comment */',
         );
 
+        $tests[] = array(
+            '/* Do not preserve me */
+            body { color: red; }
+            /* @preserve This is a CSS comment */',
+            'body{color:red}/* @preserve This is a CSS comment */',
+        );
+
         // strip whitespace
         $tests[] = array(
             'body { color: red; }',
@@ -195,7 +200,7 @@ class CSSTest extends TestCase
         );
 
         $tests[] = array(
-<<<'JS'
+        <<<'JS'
 p * i ,  html
 /* remove spaces */
 
@@ -232,7 +237,7 @@ JS
 
         // strip BOM
         $tests[] = array(
-            __DIR__.'/sample/bom/bom.css',
+            __DIR__ . '/sample/bom/bom.css',
             'body{color:red}',
         );
 
@@ -338,15 +343,15 @@ margin-left: -0.3125rem;
 
         // https://github.com/matthiasmullie/minify/issues/49
         $tests[] = array(
-            __DIR__.'/sample/import_files/issue49.css',
-            '.social-btn a[href*="facebook"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/facebook.png')).')}'.
-            '.social-btn a[href*="vimeo"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/vimeo.png')).')}'.
-            '.social-btn a[href*="instagram"]{background-image:url(data:image/png;base64,'.base64_encode(file_get_contents(__DIR__.'/sample/import_files/instagram.png')).')}',
+            __DIR__ . '/sample/import_files/issue49.css',
+            '.social-btn a[href*="facebook"]{background-image:url(data:image/png;base64,' . base64_encode(file_get_contents(__DIR__ . '/sample/import_files/facebook.png')) . ')}' .
+            '.social-btn a[href*="vimeo"]{background-image:url(data:image/png;base64,' . base64_encode(file_get_contents(__DIR__ . '/sample/import_files/vimeo.png')) . ')}' .
+            '.social-btn a[href*="instagram"]{background-image:url(data:image/png;base64,' . base64_encode(file_get_contents(__DIR__ . '/sample/import_files/instagram.png')) . ')}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/68
         $tests[] = array(
-            __DIR__.'/sample/external_imports/issue68.css',
+            __DIR__ . '/sample/external_imports/issue68.css',
             '@import url(http://localhost/file.css);body{background:green}',
         );
 
@@ -495,15 +500,15 @@ only screen and (min-device-pixel-ratio: 1.5) {
 
         // https://github.com/matthiasmullie/minify/issues/139
         $tests[] = array(
-            __DIR__.'/sample/line_endings/lf/parent.css',
+            __DIR__ . '/sample/line_endings/lf/parent.css',
             'p{color:green}body{color:red}',
         );
         $tests[] = array(
-            __DIR__.'/sample/line_endings/cr/parent.css',
+            __DIR__ . '/sample/line_endings/cr/parent.css',
             'p{color:green}body{color:red}',
         );
         $tests[] = array(
-            __DIR__.'/sample/line_endings/crlf/parent.css',
+            __DIR__ . '/sample/line_endings/crlf/parent.css',
             'p{color:green}body{color:red}',
         );
 
@@ -605,54 +610,54 @@ body{
 
         // https://github.com/matthiasmullie/minify/issues/183
         $tests[] = array(
-            ".mce-container,
+            '.mce-container,
 .mce-container *,
 .mce-widget,
 .mce-widget *,
 .mce-reset {
     color: red;
-}",
-            ".mce-container,.mce-container *,.mce-widget,.mce-widget *,.mce-reset{color:red}",
+}',
+            '.mce-container,.mce-container *,.mce-widget,.mce-widget *,.mce-reset{color:red}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/184
         $tests[] = array(
-            ".soliloquy-container, .soliloquy-container * {color:red}",
-            ".soliloquy-container,.soliloquy-container *{color:red}",
+            '.soliloquy-container, .soliloquy-container * {color:red}',
+            '.soliloquy-container,.soliloquy-container *{color:red}',
         );
         $tests[] = array(
-            "p{background: transparent url(images/preloader.gif) no-repeat scroll 50% 50%;}",
-            "p{background:transparent url(images/preloader.gif) no-repeat scroll 50% 50%}",
+            'p{background: transparent url(images/preloader.gif) no-repeat scroll 50% 50%;}',
+            'p{background:transparent url(images/preloader.gif) no-repeat scroll 50% 50%}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/191
         $tests[] = array(
-            "some .weird- selector{display:none}",
-            "some .weird- selector{display:none}",
+            'some .weird- selector{display:none}',
+            'some .weird- selector{display:none}',
         );
         $tests[] = array(
-            "p:nth-child( - n + 3 ){display:none}",
-            "p:nth-child(-n+3){display:none}",
+            'p:nth-child( - n + 3 ){display:none}',
+            'p:nth-child(-n+3){display:none}',
         );
         $tests[] = array(
-            "p:nth-child( + 3 ){display:none}",
-            "p:nth-child(+3){display:none}",
+            'p:nth-child( + 3 ){display:none}',
+            'p:nth-child(+3){display:none}',
         );
         $tests[] = array(
-            "p:nth-child( n + 3 ){display:none}",
-            "p:nth-child(n+3){display:none}",
+            'p:nth-child( n + 3 ){display:none}',
+            'p:nth-child(n+3){display:none}',
         );
         $tests[] = array(
-            "p:nth-child( odd ){display:none}",
-            "p:nth-child(odd){display:none}",
+            'p:nth-child( odd ){display:none}',
+            'p:nth-child(odd){display:none}',
         );
         $tests[] = array(
-            "p:nth-child( n ){display:none}",
-            "p:nth-child(n){display:none}",
+            'p:nth-child( n ){display:none}',
+            'p:nth-child(n){display:none}',
         );
         $tests[] = array(
-            "p:nth-child( -n ){display:none}",
-            "p:nth-child(-n){display:none}",
+            'p:nth-child( -n ){display:none}',
+            'p:nth-child(-n){display:none}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/193
@@ -840,7 +845,19 @@ margin-left: calc(20px + var(--some-var));
 p {
 margin-left: calc(20px + var(--some-var));
 }',
-            ':root{--some-var:0px}p{margin-left:calc(20px + var(--some-var))}'
+            ':root{--some-var:0px}p{margin-left:calc(20px + var(--some-var))}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/397
+        $tests[] = array(
+            '.stk-block-columns>.stk-block-content{--stk-column-gap:0px;column-gap:var(--stk-column-gap,0)}',
+            '.stk-block-columns>.stk-block-content{--stk-column-gap:0px;column-gap:var(--stk-column-gap,0)}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/395
+        $tests[] = array(
+            'background-position: right 0.8em bottom calc(50% - 5px), right 0.8em top calc(50% - 5px);',
+            'background-position:right .8em bottom calc(50% - 5px),right .8em top calc(50% - 5px);',
         );
 
         return $tests;
@@ -849,77 +866,77 @@ margin-left: calc(20px + var(--some-var));
     /**
      * @return array [input, expected result]
      */
-    public function dataProviderPaths()
+    public static function dataProviderPaths()
     {
         $tests = array();
 
-        $source = __DIR__.'/sample/convert_relative_path/source';
-        $target = __DIR__.'/sample/convert_relative_path/target';
+        $source = __DIR__ . '/sample/convert_relative_path/source';
+        $target = __DIR__ . '/sample/convert_relative_path/target';
 
         // external link
         $tests[] = array(
-            $source.'/external.css',
-            $target.'/external.css',
-            file_get_contents($source.'/external.css'),
+            $source . '/external.css',
+            $target . '/external.css',
+            file_get_contents($source . '/external.css'),
         );
 
         // absolute path
         $tests[] = array(
-            $source.'/absolute.css',
-            $target.'/absolute.css',
-            file_get_contents($source.'/absolute.css'),
+            $source . '/absolute.css',
+            $target . '/absolute.css',
+            file_get_contents($source . '/absolute.css'),
         );
 
         // relative paths
         $tests[] = array(
-            $source.'/relative.css',
-            $target.'/relative.css',
+            $source . '/relative.css',
+            $target . '/relative.css',
             '@import url(stylesheet.css);',
         );
         $tests[] = array(
-            $source.'/../source/relative.css',
-            $target.'/target/relative.css',
+            $source . '/../source/relative.css',
+            $target . '/target/relative.css',
             '@import url(../stylesheet.css);',
         );
 
         // https://github.com/matthiasmullie/minify/issues/29
         $tests[] = array(
-            $source.'/issue29.css',
-            $target.'/issue29.css',
+            $source . '/issue29.css',
+            $target . '/issue29.css',
             '@import url(http://myurl.de);',
         );
 
         // https://github.com/matthiasmullie/minify/issues/38
         $tests[] = array(
-            $source.'/relative.css',
+            $source . '/relative.css',
             null, // no output file
-            file_get_contents($source.'/relative.css'),
+            file_get_contents($source . '/relative.css'),
         );
 
         // https://github.com/matthiasmullie/minify/issues/39
         $tests[] = array(
-            $source.'/issue39.css',
+            $source . '/issue39.css',
             null, // no output file
             // relative paths should remain untouched
             "@font-face{font-family:'blackcat';src:url(../webfont/blackcat.eot);src:url('../webfont/blackcat.eot?#iefix') format('embedded-opentype'),url('../webfont/blackcat.svg#blackcat') format('svg'),url(../webfont/blackcat.woff) format('woff'),url(../webfont/blackcat.ttf) format('truetype');font-weight:400;font-style:normal}",
         );
         $tests[] = array(
-            $source.'/issue39.css',
-            $target.'/issue39.css',
+            $source . '/issue39.css',
+            $target . '/issue39.css',
             // relative paths should remain untouched
             "@font-face{font-family:'blackcat';src:url(../webfont/blackcat.eot);src:url('../webfont/blackcat.eot?#iefix') format('embedded-opentype'),url('../webfont/blackcat.svg#blackcat') format('svg'),url(../webfont/blackcat.woff) format('woff'),url(../webfont/blackcat.ttf) format('truetype');font-weight:400;font-style:normal}",
         );
         $tests[] = array(
-            $source.'/issue39.css',
-            $target.'/target/issue39.css',
+            $source . '/issue39.css',
+            $target . '/target/issue39.css',
             // relative paths should have changed
             "@font-face{font-family:'blackcat';src:url(../../webfont/blackcat.eot);src:url('../../webfont/blackcat.eot?#iefix') format('embedded-opentype'),url('../../webfont/blackcat.svg#blackcat') format('svg'),url(../../webfont/blackcat.woff) format('woff'),url(../../webfont/blackcat.ttf) format('truetype');font-weight:400;font-style:normal}",
         );
 
         // https://github.com/forkcms/forkcms/issues/1121
         $tests[] = array(
-            $source.'/nested/nested.css',
-            $target.'/nested.css',
+            $source . '/nested/nested.css',
+            $target . '/nested.css',
             '@import url(stylesheet.css);',
         );
 
@@ -935,123 +952,123 @@ margin-left: calc(20px + var(--some-var));
 
         // https://github.com/matthiasmullie/minify/issues/77#issuecomment-172844822
         $tests[] = array(
-            $source.'/get-params.css',
-            $target.'/get-params.css',
+            $source . '/get-params.css',
+            $target . '/get-params.css',
             '@import url(../source/some-file.css?some=param);',
         );
 
-        $sourceRelative = 'tests/css/sample/convert_relative_path/source';
-        $targetRelative = 'tests/css/sample/convert_relative_path/target';
+        $sourceRelative = 'tests/CSS/sample/convert_relative_path/source';
+        $targetRelative = 'tests/CSS/sample/convert_relative_path/target';
 
         // from and/or to are relative links
         $tests[] = array(
-            $sourceRelative.'/relative.css',
-            $target.'/relative.css',
+            $sourceRelative . '/relative.css',
+            $target . '/relative.css',
             '@import url(stylesheet.css);',
         );
         // note: relative target only works if the file already exists: it has
         // to be able to realpath()
         $tests[] = array(
-            $source.'/relative.css',
-            $targetRelative.'/relative.css',
+            $source . '/relative.css',
+            $targetRelative . '/relative.css',
             '@import url(stylesheet.css);',
         );
         $tests[] = array(
-            $sourceRelative.'/relative.css',
-            $targetRelative.'/relative.css',
+            $sourceRelative . '/relative.css',
+            $targetRelative . '/relative.css',
             '@import url(stylesheet.css);',
         );
 
-        $source = __DIR__.'/sample/symlink';
-        $target = __DIR__.'/sample/symlink/target';
-        $sourceRelative = 'tests/css/sample/symlink';
-        $targetRelative = 'tests/css/sample/symlink/target';
+        $source = __DIR__ . '/sample/symlink';
+        $target = __DIR__ . '/sample/symlink/target';
+        $sourceRelative = 'tests/CSS/sample/symlink';
+        $targetRelative = 'tests/CSS/sample/symlink/target';
 
         // import symlinked files: relative, absolute & mix
         $tests[] = array(
-            $source.'/import_symlinked_file.css',
-            $target.'/import_symlinked_file.css',
+            $source . '/import_symlinked_file.css',
+            $target . '/import_symlinked_file.css',
             '',
         );
         $tests[] = array(
-            $sourceRelative.'/import_symlinked_file.css',
-            $targetRelative.'/import_symlinked_file.css',
+            $sourceRelative . '/import_symlinked_file.css',
+            $targetRelative . '/import_symlinked_file.css',
             '',
         );
         $tests[] = array(
-            $source.'/import_symlinked_file.css',
-            $targetRelative.'/import_symlinked_file.css',
+            $source . '/import_symlinked_file.css',
+            $targetRelative . '/import_symlinked_file.css',
             '',
         );
         $tests[] = array(
-            $sourceRelative.'/import_symlinked_file.css',
-            $target.'/import_symlinked_file.css',
+            $sourceRelative . '/import_symlinked_file.css',
+            $target . '/import_symlinked_file.css',
             '',
         );
 
         // move symlinked files: relative, absolute & mix
         $tests[] = array(
-            $source.'/move_symlinked_file.css',
-            $target.'/move_symlinked_file.css',
+            $source . '/move_symlinked_file.css',
+            $target . '/move_symlinked_file.css',
             'body{background-url:url(../assets/symlink.bmp)}',
         );
         $tests[] = array(
-            $sourceRelative.'/move_symlinked_file.css',
-            $targetRelative.'/move_symlinked_file.css',
+            $sourceRelative . '/move_symlinked_file.css',
+            $targetRelative . '/move_symlinked_file.css',
             'body{background-url:url(../assets/symlink.bmp)}',
         );
         $tests[] = array(
-            $source.'/move_symlinked_file.css',
-            $targetRelative.'/move_symlinked_file.css',
+            $source . '/move_symlinked_file.css',
+            $targetRelative . '/move_symlinked_file.css',
             'body{background-url:url(../assets/symlink.bmp)}',
         );
         $tests[] = array(
-            $source.'/move_symlinked_file.css',
-            $targetRelative.'/move_symlinked_file.css',
+            $source . '/move_symlinked_file.css',
+            $targetRelative . '/move_symlinked_file.css',
             'body{background-url:url(../assets/symlink.bmp)}',
         );
 
         // import symlinked folders: relative, absolute & mix
         $tests[] = array(
-            $source.'/import_symlinked_folder.css',
-            $target.'/import_symlinked_folder.css',
+            $source . '/import_symlinked_folder.css',
+            $target . '/import_symlinked_folder.css',
             '',
         );
         $tests[] = array(
-            $sourceRelative.'/import_symlinked_folder.css',
-            $targetRelative.'/import_symlinked_folder.css',
+            $sourceRelative . '/import_symlinked_folder.css',
+            $targetRelative . '/import_symlinked_folder.css',
             '',
         );
         $tests[] = array(
-            $source.'/import_symlinked_folder.css',
-            $targetRelative.'/import_symlinked_folder.css',
+            $source . '/import_symlinked_folder.css',
+            $targetRelative . '/import_symlinked_folder.css',
             '',
         );
         $tests[] = array(
-            $sourceRelative.'/import_symlinked_folder.css',
-            $target.'/import_symlinked_folder.css',
+            $sourceRelative . '/import_symlinked_folder.css',
+            $target . '/import_symlinked_folder.css',
             '',
         );
 
         // move symlinked folders: relative, absolute & mix
         $tests[] = array(
-            $source.'/move_symlinked_folder.css',
-            $target.'/move_symlinked_folder.css',
+            $source . '/move_symlinked_folder.css',
+            $target . '/move_symlinked_folder.css',
             'body{background-url:url(../assets_symlink/asset.bmp)}',
         );
         $tests[] = array(
-            $sourceRelative.'/move_symlinked_folder.css',
-            $targetRelative.'/move_symlinked_folder.css',
+            $sourceRelative . '/move_symlinked_folder.css',
+            $targetRelative . '/move_symlinked_folder.css',
             'body{background-url:url(../assets_symlink/asset.bmp)}',
         );
         $tests[] = array(
-            $source.'/move_symlinked_folder.css',
-            $targetRelative.'/move_symlinked_folder.css',
+            $source . '/move_symlinked_folder.css',
+            $targetRelative . '/move_symlinked_folder.css',
             'body{background-url:url(../assets_symlink/asset.bmp)}',
         );
         $tests[] = array(
-            $sourceRelative.'/move_symlinked_folder.css',
-            $target.'/move_symlinked_folder.css',
+            $sourceRelative . '/move_symlinked_folder.css',
+            $target . '/move_symlinked_folder.css',
             'body{background-url:url(../assets_symlink/asset.bmp)}',
         );
 

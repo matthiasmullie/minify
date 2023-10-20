@@ -1,20 +1,19 @@
 <?php
 
-namespace MatthiasMullie\Minify\Test;
+namespace MatthiasMullie\Minify\Tests\JS;
 
-use PHPUnit\Framework\TestCase;
+use MatthiasMullie\Minify\Tests\CompatTestCase;
 
 /**
  * JS minifier test case.
  */
-class JSTest extends TestCase
+class JSTest extends CompatTestCase
 {
-    protected function mockMinifier()
+    protected function getMinifier()
     {
-        // override save method, there's no point in writing the result out here
-        return $this->getMockBuilder('\MatthiasMullie\Minify\JS')
-            ->setMethods(array('save'))
-            ->getMock();
+        // use custom class where `save` has been turned into a no-op;
+        // there's no point in writing the result out here
+        return new NoSaveJS();
     }
 
     /**
@@ -24,7 +23,7 @@ class JSTest extends TestCase
     {
         $this->expectException('MatthiasMullie\Minify\Exceptions\IOException');
 
-        $minifier = $this->mockMinifier();
+        $minifier = $this->getMinifier();
         $minifier->addFile('/sample/source/nothing');
     }
 
@@ -33,8 +32,8 @@ class JSTest extends TestCase
      */
     public function testAddFile()
     {
-        $minifier = $this->mockMinifier();
-        $minifier->addFile(__DIR__.'/sample/source/script1.js');
+        $minifier = $this->getMinifier();
+        $minifier->addFile(__DIR__ . '/sample/source/script1.js');
 
         $result = $minifier->minify();
 
@@ -48,7 +47,7 @@ class JSTest extends TestCase
      */
     public function testMinify($input, $expected)
     {
-        $minifier = $this->mockMinifier();
+        $minifier = $this->getMinifier();
         $minifier->add($input);
         $result = $minifier->minify();
 
@@ -58,15 +57,15 @@ class JSTest extends TestCase
     /**
      * @return array [input, expected result]
      */
-    public function dataProvider()
+    public static function dataProvider()
     {
         $tests = array();
 
         // adding multiple files
         $tests[] = array(
             array(
-                __DIR__.'/sample/source/script1.js',
-                __DIR__.'/sample/source/script2.js',
+                __DIR__ . '/sample/source/script1.js',
+                __DIR__ . '/sample/source/script2.js',
             ),
             'var test=1;var test=2',
         );
@@ -74,9 +73,9 @@ class JSTest extends TestCase
         // adding multiple files and string
         $tests[] = array(
             array(
-                __DIR__.'/sample/source/script1.js',
+                __DIR__ . '/sample/source/script1.js',
                 'console.log(test)',
-                __DIR__.'/sample/source/script2.js',
+                __DIR__ . '/sample/source/script2.js',
             ),
             'var test=1;console.log(test);var test=2',
         );
@@ -182,6 +181,13 @@ class JSTest extends TestCase
         $tests[] = array(
             '/* @preserve This is a JS comment */',
             '/* @preserve This is a JS comment */',
+        );
+
+        $tests[] = array(
+            '/* Do not preserve me */
+            x = 1;
+            /* @preserve This is a JS comment */',
+            'x=1;/* @preserve This is a JS comment */',
         );
 
         // make sure no ; is added in places it shouldn't
@@ -869,15 +875,15 @@ String(dateString).match(/^[0-9]*$/);',
 
         // https://github.com/matthiasmullie/minify/issues/139
         $tests[] = array(
-            __DIR__.'/sample/line_endings/lf/script.js',
+            __DIR__ . '/sample/line_endings/lf/script.js',
             'var a=1',
         );
         $tests[] = array(
-            __DIR__.'/sample/line_endings/cr/script.js',
+            __DIR__ . '/sample/line_endings/cr/script.js',
             'var a=1',
         );
         $tests[] = array(
-            __DIR__.'/sample/line_endings/crlf/script.js',
+            __DIR__ . '/sample/line_endings/crlf/script.js',
             'var a=1',
         );
 
@@ -1179,7 +1185,7 @@ $the_portfolio.data(\'carouseling\',!0);$active_carousel_group.children().each(f
         // https://github.com/matthiasmullie/minify/issues/204
         $tests[] = array(
             'data = data.replace(this.video.reUrlYoutube, iframeStart + \'//www.youtube.com/embed/$1\' + iframeEnd);',
-            'data=data.replace(this.video.reUrlYoutube,iframeStart+\'//www.youtube.com/embed/$1\'+iframeEnd)'
+            'data=data.replace(this.video.reUrlYoutube,iframeStart+\'//www.youtube.com/embed/$1\'+iframeEnd)',
         );
         $tests[] = array(
             'pattern = /(\/)\'/;
@@ -1251,8 +1257,8 @@ a = \'b\';',
             "inside:{'rule':/@[\w-]+/}",
         );
         $tests[] = array(
-            "(1 + 2) / 3 / 4",
-            "(1+2)/3/4",
+            '(1 + 2) / 3 / 4',
+            '(1+2)/3/4',
         );
 
         // https://github.com/matthiasmullie/minify/issues/221
@@ -1267,14 +1273,14 @@ a = \'b\';',
 
         // https://github.com/matthiasmullie/minify/issues/227
         $tests[] = array(
-            __DIR__.'/sample/bugs/227/original.js',
-            file_get_contents(__DIR__.'/sample/bugs/227/minified.js'),
+            __DIR__ . '/sample/bugs/227/original.js',
+            file_get_contents(__DIR__ . '/sample/bugs/227/minified.js'),
         );
 
         // https://github.com/matthiasmullie/minify/issues/229
         $tests[] = array(
-            __DIR__.'/sample/bugs/229/original.js',
-            file_get_contents(__DIR__.'/sample/bugs/229/minified.js'),
+            __DIR__ . '/sample/bugs/229/original.js',
+            file_get_contents(__DIR__ . '/sample/bugs/229/minified.js'),
         );
 
         // https://github.com/matthiasmullie/minify/issues/231
@@ -1310,20 +1316,20 @@ var largeScreen=2048',
         // https://github.com/matthiasmullie/minify/issues/385
         $tests[] = array(
             'if (l !== 3) { for (var V = w.map(function(e) { return e }).length; l < V; V++); } else var C = 3;',
-            'if(l!==3){for(var V=w.map(function(e){return e}).length;l<V;V++);}else var C=3'
+            'if(l!==3){for(var V=w.map(function(e){return e}).length;l<V;V++);}else var C=3',
         );
         $tests[] = array(
             'if (l !== 3) { for (var V = w.map(function(e) { if(e > 5) { return e-5; } return e; }).length; l < V; V++); } else var C = 3;',
-            'if(l!==3){for(var V=w.map(function(e){if(e>5){return e-5}return e}).length;l<V;V++);}else var C=3'
+            'if(l!==3){for(var V=w.map(function(e){if(e>5){return e-5}return e}).length;l<V;V++);}else var C=3',
         );
         $tests[] = array(
             'if(l!==3){for(var V=w.length;V < w.map( function(e) { if(e>5){return e-5; }return e; }).length; l++ );}else var C=3;',
-            'if(l!==3){for(var V=w.length;V<w.map(function(e){if(e>5){return e-5}return e}).length;l++);}else var C=3'
+            'if(l!==3){for(var V=w.length;V<w.map(function(e){if(e>5){return e-5}return e}).length;l++);}else var C=3',
         );
 
         $tests[] = array(
             'if (l !== 3) { for (var V = w.length; l < V; V+=w.map(function(e) { if(e > 5) { return e-5; } return e; }).length); } else var C = 3;',
-            'if(l!==3){for(var V=w.length;l<V;V+=w.map(function(e){if(e>5){return e-5}return e}).length);}else var C=3'
+            'if(l!==3){for(var V=w.length;l<V;V+=w.map(function(e){if(e>5){return e-5}return e}).length);}else var C=3',
         );
 
         // https://github.com/matthiasmullie/minify/issues/394
@@ -1360,9 +1366,14 @@ b = 2',
 b=2',
         );
 
+        $tests[] = array(
+            'f=void 0===m?/ +/g:m',
+            'f=void 0===m?/ +/g:m',
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
-        $files = glob(__DIR__.'/sample/minified/*.js');
+        $files = glob(__DIR__ . '/sample/minified/*.js');
         foreach ($files as $file) {
             $content = trim(file_get_contents($file));
             $tests[] = array($content, $content);
@@ -1376,8 +1387,8 @@ b=2',
 
         // some other files that are minified correctly, ensure they stay like this
         // https://github.com/matthiasmullie/minify/issues/393
-        $source = trim(file_get_contents(__DIR__.'/sample/source/Decrypt.js'));
-        $minified = trim(file_get_contents(__DIR__.'/sample/minified2/Decrypt.min.js'));
+        $source = trim(file_get_contents(__DIR__ . '/sample/source/Decrypt.js'));
+        $minified = trim(file_get_contents(__DIR__ . '/sample/minified2/Decrypt.min.js'));
         $tests[] = array($source, $minified);
 
         return $tests;

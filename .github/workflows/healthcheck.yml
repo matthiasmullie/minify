@@ -1,0 +1,15 @@
+name: healthcheck
+
+on:
+  schedule:
+    - cron: "0 1 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Test (twice, if needed)
+        run: make test || make test
+      - name: Healthcheck ping
+        run: wget https://healthchecks.home.mullie.eu/ping/0ca5c263-bafb-4d7b-b6fc-f7d73991169f -T 10 -t 5 -O /dev/null
