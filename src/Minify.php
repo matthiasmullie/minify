@@ -501,7 +501,13 @@ abstract class Minify
             return false;
         }
 
-        return strlen($path) < PHP_MAXPATHLEN && @is_file($path) && is_readable($path);
+        try {
+            return strlen($path) < PHP_MAXPATHLEN && @is_file($path) && is_readable($path);
+        }
+        // catch openbasedir exceptions which are not caught by @ on is_file()
+        catch(\Exception $e) {
+            return false;
+        }
     }
 
     /**
