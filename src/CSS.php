@@ -316,8 +316,8 @@ class CSS extends Minify
             $css = $this->replace($css);
 
             $css = $this->stripWhitespace($css);
-            $css = $this->cleanupNEWColors($css);
-            $css = $this->shortenRGBColors($css);
+            $css = $this->convertLegacyColors($css);
+            $css = $this->cleanupModernColors($css);
             $css = $this->shortenHEXColors($css);
             $css = $this->shortenZeroes($css);
             $css = $this->shortenFontWeights($css);
@@ -483,7 +483,8 @@ class CSS extends Minify
 
     /**
      * Shorthand HEX color codes.
-     * #FF0000 -> #f00 -> red
+     * #FF0000FF -> #f00 -> red
+     * #FF00FF00 -> transparent
      *
      * @param string $content The CSS content to shorten the HEX color codes for
      *
@@ -492,14 +493,14 @@ class CSS extends Minify
     protected function shortenHexColors($content)
     {
         // shorten repeating patterns within HEX ..
-        $content = preg_replace('/#([0-9a-f])\\1([0-9a-f])\\2([0-9a-f])\\3(?:([0-9a-f])\\4)?/i', '#$1$2$3$4', $content);
+        $content = preg_replace('/(?<=[: ])#([0-9a-f])\\1([0-9a-f])\\2([0-9a-f])\\3(?:([0-9a-f])\\4)?(?=[; }])/i', '#$1$2$3$4', $content);
 
         // remove alpha channel if it's pointless ..
-        $content = preg_replace('/#([0-9a-f]{6})ff/i',         '#$1', $content);
-        $content = preg_replace('/#([0-9a-f]{3})f(?=[^\w])/i', '#$1', $content);
+        $content = preg_replace('/(?<=[: ])#([0-9a-f]{6})ff(?=[; }])/i', '#$1', $content);
+        $content = preg_replace('/(?<=[: ])#([0-9a-f]{3})f(?=[; }])/i', '#$1', $content);
 
-        #// replace `transparent` with shortcut ..
-        #$content = preg_replace('/#[0-9a-f]{6}00/i', '#fff0', $content);
+        // replace `transparent` with shortcut ..
+        $content = preg_replace('/(?<=[: ])#[0-9a-f]{6}00(?=[; }])/i', '#fff0', $content);
 
         $colors = array(
             // make these more readable
@@ -556,7 +557,7 @@ class CSS extends Minify
         );
 
         return preg_replace_callback(
-            '/('.implode('|', array_keys($colors)).')/i',
+            '/(?<=[: ])(' . implode('|', array_keys($colors)) . ')(?=[; }])/i',
             function ($match) use ($colors) {
                 return $colors[strtolower($match[0])];
             },
@@ -565,29 +566,30 @@ class CSS extends Minify
     }
 
     /**
-     * Shorthand RGB color codes.
+     * Convert RGB|HSL color codes.
+     * rgb(255,0,0,.5) -> rgb(255 0 0 / .5).
      * rgb(255,0,0) -> #f00.
      *
      * @param string $content The CSS content to shorten the RGB color codes for
      *
      * @return string
      */
-    protected function shortenRGBColors($content)
+    protected function convertLegacyColors($content)
     {
         /*
-          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/rgb()
+          https://drafts.csswg.org/css-color/#color-syntax-legacy
+          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/rgb
+          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/hsl
         */
-        // THX @ https://www.regular-expressions.info/numericranges.html
-        $dec = '([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])';// [000-255]
 
-        // remove alpha channel if it's pointless ..
-        $content = preg_replace('/(rgb)a?\(([^,\s]+)[,\s]([^,\s]+)[,\s]([^,\s]+)\s?[,\/]\s?1(?:[\.\d]*|00%)?\)/i', '$1($2 $3 $4)', $content);
+        // convert legacy color syntax
+        $content = preg_replace('/(rgb|hsl)a?\(([^,\s]+)\s*,\s*([^,\s]+)\s*,\s*([^,\s]+)\s*,\s*([^\s\)]+)\)/i', '$1($2 $3 $4 / $5)', $content);
+        $content = preg_replace('/(rgb|hsl)a?\(([^,\s]+)\s*,\s*([^,\s]+)\s*,\s*([^,\s]+)\)/i', '$1($2 $3 $4)', $content);
 
-        #// replace `transparent` with shortcut ..
-        #$content = preg_replace('/rgba?\([^,\s]+[,\s][^,\s]+[,\s][^,\s]+\s?[,\/]\s?0(?:[\.0%]*)?\)/i', '#fff0', $content);
-
+        // convert `rgb` to `hex`
+        $dec = '([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])';// [000-255] THX @ https://www.regular-expressions.info/numericranges.html
         return preg_replace_callback(
-            "/rgb\($dec[,\s]$dec[,\s]$dec\)/i",
+            "/rgb\($dec $dec $dec\)/i",
             function ($match)
             {
                 return sprintf('#%02x%02x%02x', $match[1],$match[2],$match[3]);
@@ -597,44 +599,31 @@ class CSS extends Minify
     }
 
     /**
-     * Cleanup HSL|HWB|LCH|LAB
+     * Cleanup RGB|HSL|HWB|LCH|LAB
+     * rgb(255 0 0 / 1) -> rgb(255 0 0).
+     * rgb(255 0 0 / 0) -> transparent.
      *
      * @param string $content The CSS content to cleanup HSL|HWB|LCH|LAB
      *
      * @return string
      */
-    protected function cleanupNEWColors($content)
+    protected function cleanupModernColors($content)
     {
         /*
-          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/hsl()
+          https://drafts.csswg.org/css-color/#color-syntax-modern
+          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/hwb
+          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/lch
+          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/lab
+          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch
+          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklab
         */
-        $hue = '([-+]?(?:(?:[012]?[0-9]?[0-9]|3[0-5][0-9])(\.[0-9]+)|360(?:\.0+))(?:degs|rads|grads|turn)?)';// -/+ [000.*-360] def
-        $pct = '((100(?:\.0+)|0?[0-9]?[0-9])(\.[0-9]+)%)';// [000.*-100] %
+        $tag = '(rgb|hsl|hwb|(?:(?:ok)?(?:lch|lab)))';
 
         // remove alpha channel if it's pointless ..
-        $content = preg_replace('/(hsl)a?\(([^,\s]+)[,\s]([^,\s]+)[,\s]([^,\s]+)\s?[,\/]\s?1(?:[\.\d]*|00%)?\)/i', '$1($2 $3 $4)', $content);
-
-        #// replace `transparent` with shortcut ..
-        #$content = preg_replace('/hsla?\([^,\s]+[,\s][^,\s]+[,\s][^,\s]+\s?[,\/]\s?0(?:[\.0%]*)?\)/i', '#fff0', $content);
-
-        # ToRGB ?: https://github.com/mexitek/phpColors/blob/a74808eaf7cd918681aab0cd30f142025556bc8a/src/Mexitek/PHPColors/Color.php#L124
-        #"/(hsl)a?\($hue[,\s]$pct[,\s]$pct[,\/]1(?:[\.\d]*|00%)?\)/i"
-
-        /*
-          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/hwb()
-          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/lch()
-          https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/lab()
-          https://drafts.csswg.org/css-color/#color
-        */
-
-        // remove alpha channel if it's pointless ..
-        $content = preg_replace('/(lch|lab|hwba?)\(([^\s]+)\s([^\s]+)\s([^\s]+)\s?\/\s?1(?:[\.\d]*|00%)?\)/i', '$1($2 $3 $4)', $content);
+        $content = preg_replace('/'.$tag.'\(([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+\/\s+1(?:[\.\d]*|00%)?\)/i', '$1($2 $3 $4)', $content);
 
         // replace `transparent` with shortcut ..
-        $content = preg_replace('/(lch|lab)\([^\s]+\s[^\s]+\s[^\s]+\s?\/\s?0(?:[\.0%]*)?\)/i', '#fff0', $content);
-
-        #"/(hwb)a?\($hue\s$pct\s$pct\s?\/\s?1(?:[\.\d]*|00%)?\)/i"
-        #"/(lch|lab)\($pct\s$VAR\s$VAR\s?\/\s?1(?:[\.\d]*|00%)?\)/i"
+        $content = preg_replace('/'.$tag.'\([^\s]+\s+[^\s]+\s+[^\s]+\s+\/\s+0(?:[\.0%]*)?\)/i', '#fff0', $content);
 
         return $content;
     }
