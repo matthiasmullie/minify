@@ -627,7 +627,7 @@ body{
         );
         $tests[] = array(
             'p{background: transparent url(images/preloader.gif) no-repeat scroll 50% 50%;}',
-            'p{background:transparent url(images/preloader.gif) no-repeat scroll 50% 50%}',
+            'p{background:#fff0 url(images/preloader.gif) no-repeat scroll 50% 50%}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/191
