@@ -484,7 +484,7 @@ class CSS extends Minify
     /**
      * Shorthand HEX color codes.
      * #FF0000FF -> #f00 -> red
-     * #FF00FF00 -> transparent
+     * #FF00FF00 -> transparent.
      *
      * @param string $content The CSS content to shorten the HEX color codes for
      *
@@ -504,13 +504,13 @@ class CSS extends Minify
 
         $colors = array(
             // make these more readable
-            '#00f'    => 'blue',
+            '#00f' => 'blue',
             '#dc143c' => 'crimson',
-            '#0ff'    => 'cyan',
+            '#0ff' => 'cyan',
             '#8b0000' => 'darkred',
             '#696969' => 'dimgray',
             '#ff69b4' => 'hotpink',
-            '#0f0'    => 'lime',
+            '#0f0' => 'lime',
             '#fdf5e6' => 'oldlace',
             '#87ceeb' => 'skyblue',
             '#d8bfd8' => 'thistle',
@@ -536,7 +536,7 @@ class CSS extends Minify
             '#ffc0cb' => 'pink',
             '#dda0dd' => 'plum',
             '#800080' => 'purple',
-            '#f00'    => 'red',
+            '#f00' => 'red',
             '#fa8072' => 'salmon',
             '#a0522d' => 'sienna',
             '#c0c0c0' => 'silver',
@@ -547,13 +547,13 @@ class CSS extends Minify
             '#ee82ee' => 'violet',
             '#f5deb3' => 'wheat',
             // or the other way around
-            'black'   => '#000',
+            'black' => '#000',
             'fuchsia' => '#f0f',
             'magenta' => '#f0f',
-            'white'   => '#fff',
-            'yellow'  => '#ff0',
+            'white' => '#fff',
+            'yellow' => '#ff0',
             // and also `transparent`
-            'transparent' => '#fff0'
+            'transparent' => '#fff0',
         );
 
         return preg_replace_callback(
@@ -587,12 +587,12 @@ class CSS extends Minify
         $content = preg_replace('/(rgb|hsl)a?\(([^,\s]+)\s*,\s*([^,\s]+)\s*,\s*([^,\s]+)\)/i', '$1($2 $3 $4)', $content);
 
         // convert `rgb` to `hex`
-        $dec = '([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])';// [000-255] THX @ https://www.regular-expressions.info/numericranges.html
+        $dec = '([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])'; // [000-255] THX @ https://www.regular-expressions.info/numericranges.html
+
         return preg_replace_callback(
             "/rgb\($dec $dec $dec\)/i",
-            function ($match)
-            {
-                return sprintf('#%02x%02x%02x', $match[1],$match[2],$match[3]);
+            function ($match) {
+                return sprintf('#%02x%02x%02x', $match[1], $match[2], $match[3]);
             },
             $content
         );
@@ -620,10 +620,10 @@ class CSS extends Minify
         $tag = '(rgb|hsl|hwb|(?:(?:ok)?(?:lch|lab)))';
 
         // remove alpha channel if it's pointless ..
-        $content = preg_replace('/'.$tag.'\(([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+\/\s+1(?:[\.\d]*|00%)?\)/i', '$1($2 $3 $4)', $content);
+        $content = preg_replace('/' . $tag . '\(([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+\/\s+1(?:[\.\d]*|00%)?\)/i', '$1($2 $3 $4)', $content);
 
         // replace `transparent` with shortcut ..
-        $content = preg_replace('/'.$tag.'\([^\s]+\s+[^\s]+\s+[^\s]+\s+\/\s+0(?:[\.0%]*)?\)/i', '#fff0', $content);
+        $content = preg_replace('/' . $tag . '\([^\s]+\s+[^\s]+\s+[^\s]+\s+\/\s+0(?:[\.0%]*)?\)/i', '#fff0', $content);
 
         return $content;
     }

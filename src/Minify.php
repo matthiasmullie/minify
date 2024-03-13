@@ -505,7 +505,7 @@ abstract class Minify
             return strlen($path) < PHP_MAXPATHLEN && @is_file($path) && is_readable($path);
         }
         // catch openbasedir exceptions which are not caught by @ on is_file()
-        catch(\Exception $e) {
+        catch (\Exception $e) {
             return false;
         }
     }
