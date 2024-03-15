@@ -860,6 +860,23 @@ margin-left: calc(20px + var(--some-var));
             'background-position:right .8em bottom calc(50% - 5px),right .8em top calc(50% - 5px);',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/422
+        $tests[] = array(
+            'a {
+                color: rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));
+                text-decoration: none;
+            }
+            a:hover {
+                --bs-link-color-rgb: var(--bs-link-hover-color-rgb);
+            }
+            a:not([href]):not([class]),
+            a:not([href]):not([class]):hover {
+                color: inherit;
+                text-decoration: none;
+            }',
+            'a{color:rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));text-decoration:none}a:hover{--bs-link-color-rgb:var(--bs-link-hover-color-rgb)}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}',
+        );
+
         return $tests;
     }
 

@@ -583,12 +583,13 @@ class CSS extends Minify
         */
 
         // convert legacy color syntax
-        $content = preg_replace('/(rgb|hsl)a?\(([^,\s]+)\s*,\s*([^,\s]+)\s*,\s*([^,\s]+)\s*,\s*([^\s\)]+)\)/i', '$1($2 $3 $4 / $5)', $content);
-        $content = preg_replace('/(rgb|hsl)a?\(([^,\s]+)\s*,\s*([^,\s]+)\s*,\s*([^,\s]+)\)/i', '$1($2 $3 $4)', $content);
+        $content = preg_replace('/(rgb)a?\(\s*([0-9]{1,3}%?)\s*,\s*([0-9]{1,3}%?)\s*,\s*([0-9]{1,3}%?)\s*,\s*([0,1]?(?:\.[0-9]*)?)\s*\)/i', '$1($2 $3 $4 / $5)', $content);
+        $content = preg_replace('/(rgb)a?\(\s*([0-9]{1,3}%?)\s*,\s*([0-9]{1,3}%?)\s*,\s*([0-9]{1,3}%?)\s*\)/i', '$1($2 $3 $4)', $content);
+        $content = preg_replace('/(hsl)a?\(\s*([0-9]+(?:deg|grad|rad|turn)?)\s*,\s*([0-9]{1,3}%)\s*,\s*([0-9]{1,3}%)\s*,\s*([0,1]?(?:\.[0-9]*)?)\s*\)/i', '$1($2 $3 $4 / $5)', $content);
+        $content = preg_replace('/(hsl)a?\(\s*([0-9]+(?:deg|grad|rad|turn)?)\s*,\s*([0-9]{1,3}%)\s*,\s*([0-9]{1,3}%)\s*\)/i', '$1($2 $3 $4)', $content);
 
         // convert `rgb` to `hex`
-        $dec = '([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])'; // [000-255] THX @ https://www.regular-expressions.info/numericranges.html
-
+        $dec = '([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])';
         return preg_replace_callback(
             "/rgb\($dec $dec $dec\)/i",
             function ($match) {
@@ -620,10 +621,10 @@ class CSS extends Minify
         $tag = '(rgb|hsl|hwb|(?:(?:ok)?(?:lch|lab)))';
 
         // remove alpha channel if it's pointless ..
-        $content = preg_replace('/' . $tag . '\(([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+\/\s+1(?:[\.\d]*|00%)?\)/i', '$1($2 $3 $4)', $content);
+        $content = preg_replace('/' . $tag . '\(\s*([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+\/\s+1(?:(?:\.\d?)*|00%)?\s*\)/i', '$1($2 $3 $4)', $content);
 
         // replace `transparent` with shortcut ..
-        $content = preg_replace('/' . $tag . '\([^\s]+\s+[^\s]+\s+[^\s]+\s+\/\s+0(?:[\.0%]*)?\)/i', '#fff0', $content);
+        $content = preg_replace('/' . $tag . '\(\s*[^\s]+\s+[^\s]+\s+[^\s]+\s+\/\s+0(?:[\.0%]*)?\s*\)/i', '#fff0', $content);
 
         return $content;
     }
