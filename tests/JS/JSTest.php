@@ -1283,6 +1283,12 @@ a = \'b\';',
             file_get_contents(__DIR__ . '/sample/bugs/229/minified.js'),
         );
 
+        // https://github.com/matthiasmullie/minify/issues/393
+        $tests[] = array(
+            __DIR__ . '/sample/bugs/393/Decrypt.js',
+            file_get_contents(__DIR__ . '/sample/bugs/393/Decrypt.min.js'),
+        );
+
         // https://github.com/matthiasmullie/minify/issues/231
         $tests[] = array(
             'var x = (2 + 2) / 2; /// =2',
@@ -1384,12 +1390,6 @@ b=2',
                 $test[1] = str_replace("\r", '', $test[1]);
             }
         }
-
-        // some other files that are minified correctly, ensure they stay like this
-        // https://github.com/matthiasmullie/minify/issues/393
-        $source = trim(file_get_contents(__DIR__ . '/sample/source/Decrypt.js'));
-        $minified = trim(file_get_contents(__DIR__ . '/sample/minified2/Decrypt.min.js'));
-        $tests[] = array($source, $minified);
 
         return $tests;
     }
