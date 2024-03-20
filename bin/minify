@@ -1,0 +1,279 @@
+#!/usr/bin/env php
+<?php
+use MatthiasMullie\Minify;
+
+if (file_exists(__DIR__ . '/../../../autoload.php')) {
+    require_once __DIR__ . '/../../../autoload.php';
+} elseif (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+} else {
+    require_once __DIR__ . '/../src/Minify.php';
+    require_once __DIR__ . '/../src/CSS.php';
+    require_once __DIR__ . '/../src/Exception.php';
+}
+
+error_reporting(E_ALL);
+
+function parse_argv($args, $short_opts = array(), $flag_opts = array()) {
+    $command = array_shift($args);
+    $arguments = array();
+    $options = array();
+    $flags = array();
+    $last_opt = null;
+
+    foreach($args as $arg) {
+        $value = null;
+
+        if (substr($arg, 0, 1) !== '-') {
+            if ($last_opt) {
+                $value = $arg;
+                $arg = $last_opt;
+            } else {
+                $arguments[] = $arg;
+                $last_opt = null;
+                continue;
+            }
+        } else {
+            $arg_split = array();
+            preg_match('/^--?([A-Z\d\-_]+)=?(.+)?$/i', $arg, $arg_split);
+            $arg = $arg_split[1];
+
+            if (count($arg_split) > 2) $value = $arg_split[2];
+        }
+
+        if (array_key_exists($arg, $short_opts)) $arg = $short_opts[$arg];
+
+        if (in_array($arg, $flag_opts)) {
+            if (!in_array($arg, $flags)) $flags[] = $arg;
+
+            $last_opt = null;
+        } else {
+            if (array_key_exists($arg, $options)) {
+                if (is_array($options[$arg])) {
+                    $options[$arg][] = $value;
+                } else {
+                    if (is_null($options[$arg])) {
+                        $options[$arg] = $value;
+                    } elseif (!is_null($value)) {
+                        $options[$arg] = array($options[$arg], $value);
+                    }
+                }
+            } else {
+                $options[$arg] = $value;
+            }
+
+            $last_opt = $value ? null : $arg;
+        }
+    }
+    
+    return compact('command', 'arguments', 'options', 'flags');
+}
+
+// Check PHP setup for CLI arguments
+if (!isset($_SERVER['argv']) && !isset($argv)) {
+    fwrite(STDERR, 'Please enable the "register_argc_argv" directive in your php.ini' . PHP_EOL);
+    exit(1);
+} elseif (!isset($argv)) {
+    $argv = $_SERVER['argv'];
+}
+
+// Parse CLI arguments
+$cli = parse_argv(
+    $argv,
+    array(
+        'e' => 'import-ext',
+        'g' => 'gzip',
+        'h' => 'help',
+        'm' => 'max-import-size',
+        'o' => 'output'
+    ),
+    array(
+        'gzip',
+        'help'
+    )
+);
+
+// Check if script run in a CLI environment
+if ('cli' !== php_sapi_name()) {
+    fwrite(STDERR, $cli['command'] . ' must be run in the command line' . PHP_EOL);
+    exit(1);
+}
+
+// Check if any files were given
+if (empty($cli['arguments'])) {
+    fwrite(STDERR, 'Argument(s) expected: Path to file(s)' . PHP_EOL);
+    exit(1);
+}
+
+// Display helpful information about the CLI tool if the first argument is 'help' or the help flag is used
+if (strtolower($cli['arguments'][0]) === 'help' || in_array('help', $cli['flags'])) {
+    echo "
+Minify
+https://github.com/matthiasmullie/minify
+    
+Removes whitespace, strips comments, combines files and optimizes/shortens a few common programming patterns.
+
+Usage:
+    minify <input_file> [additional_input_files...]
+    
+Options:
+    --import-ext <1>, -e <1>        Defines an extension that will be imported in CSS (ex. `-e \"gif|data:image/gif\" -e \"png|data:image/png\"`)
+    
+    --gzip <1>, -g <1>              gzencode()'s the minified content
+    
+    --max-import-size <1>, -m <1>   The maximum import size (in kB) for CSS
+    
+    --output <1>, -o <1>            The file path to write the minified content to
+
+";
+    
+    exit;
+}
+
+// Check if source files exist
+foreach($cli['arguments'] as $source_file) { 
+  if (!file_exists($source_file)) {
+      fwrite(STDERR, 'Source file "' . $source_file . '" not found' . PHP_EOL);
+      exit(1);
+  }
+}
+
+$gzip = in_array('gzip', $cli['flags']);
+
+// Get CSS Import Extensions if any
+$import_exts = null;
+if (isset($cli['options']['import-ext'])) {
+    $import_exts = array();
+
+    foreach((array) $cli['options']['import-ext'] as $ext) {
+        $ext_split = explode('|', $ext);
+        
+        if (count($ext_split) === 2) {
+            $import_exts[$ext_split[0]] = $ext_split[1];
+        }
+    }
+}
+
+// Get CSS files
+$css_files = array_filter($cli['arguments'], function($arg) {
+    return strtolower(substr($arg, -4)) === '.css';
+});
+
+// Get JS files
+$js_files = array_filter($cli['arguments'], function($arg) {
+    return strtolower(substr($arg, -3)) === '.js';
+});
+
+// Get output files, if any
+$css_output_file = null;
+$js_output_file = null;
+if (isset($cli['options']['output'])) {
+    if (!empty($css_files)) {
+        $css_output_files = array_values(array_filter((array) $cli['options']['output'], function($out) {
+            return strtolower(substr($out, -4)) === '.css';
+        }));
+    
+        if (!empty($css_output_files)) {
+            $css_output_file = end($css_output_files);
+        }
+    }
+
+    if (!empty($js_files)) {
+        $js_output_files = array_values(array_filter((array) $cli['options']['output'], function($out) {
+            return strtolower(substr($out, -3)) === '.js';
+        }));
+        
+        if (!empty($js_output_files)) {
+            $js_output_file = end($js_output_files);
+        }
+    }
+}
+
+try {
+    if (!empty($css_files)) {
+        $css_compile_count = 1;
+        $css_wildcard_output = false;
+
+        if ($css_output_file && strpos($css_output_file, '*') !== false) {
+            $css_compile_count = count($css_files);
+            $css_wildcard_output = $css_output_file;
+        }
+
+        for ($x = 0; $x <= $css_compile_count - 1; $x++) {
+            $css_minifier = new Minify\CSS();
+
+            if (isset($cli['options']['max-import-size'])) {
+                $css_minifier->setMaxImportSize($cli['options']['max-import-size']);
+            }
+
+            if (isset($import_exts)) {
+                $css_minifier->setImportExtensions($import_exts);
+            }
+
+            if ($css_wildcard_output) {
+                $css_minifier->add($css_files[$x]);
+                $css_input_info = pathinfo($css_files[$x]);
+                $css_output_file = str_replace('*', $css_input_info['filename'], $css_wildcard_output);
+            } else {
+                foreach($css_files as $css_file) {
+                    $css_minifier->add($css_file);
+                }
+            }
+
+            if ($css_output_file) {
+                if ($gzip) {
+                    $css_minifier->gzip($css_output_file);
+                } else {
+                    $css_minifier->minify($css_output_file);
+                }
+            } else {
+                if ($gzip) {
+                    echo $css_minifier->gzip();
+                } else {
+                    echo $css_minifier->minify();
+                }
+            }
+        }
+    }
+
+    if (!empty($js_files)) {
+        $js_compile_count = 1;
+        $js_wildcard_output = false;
+
+        if ($js_output_file && strpos($js_output_file, '*') !== false) {
+            $js_compile_count = count($js_files);
+            $js_wildcard_output = $js_output_file;
+        }
+
+        for ($x = 0; $x <= $js_compile_count - 1; $x++) {
+            $js_minifier = new Minify\JS();
+            
+            if ($js_wildcard_output) {
+                $js_minifier->add($js_files[$x]);
+                $js_input_info = pathinfo($js_files[$x]);
+                $js_output_file = str_replace('*', $js_input_info['filename'], $js_wildcard_output);
+            } else {
+                foreach($js_files as $js_file) {
+                    $js_minifier->add($js_file);
+                }
+            }
+            
+            if ($js_output_file) {
+                if ($gzip) {
+                    $js_minifier->gzip($js_output_file);
+                } else {
+                    $js_minifier->minify($js_output_file);
+                }
+            } else {
+                if ($gzip) {
+                    echo $js_minifier->gzip();
+                } else {
+                    echo $js_minifier->minify();
+                }
+            }
+        }
+    }
+} catch (Exception $e) {
+    fwrite(STDERR, $e->getMessage(), PHP_EOL);
+    exit(1);
+}
