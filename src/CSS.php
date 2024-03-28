@@ -90,14 +90,14 @@ class CSS extends Minify
      */
     protected function moveImportsToTop($content)
     {
-        if (preg_match_all('/(;?)(@import (?<url>url\()?(?P<quotes>["\']?).+?(?P=quotes)(?(url)\)));?/', $content, $matches)) {
+        if (preg_match_all('/;?(@import (?<url>url\()?(?P<quotes>["\']?).+?(?P=quotes)(?(url)\)));?/', $content, $matches)) {
             // remove from content
             foreach ($matches[0] as $import) {
                 $content = str_replace($import, '', $content);
             }
 
             // add to top
-            $content = implode(';', $matches[2]) . ';' . trim($content, ';');
+            $content = implode(';', $matches[1]) . ';' . trim($content, ';');
         }
 
         return $content;
