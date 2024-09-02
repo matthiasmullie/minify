@@ -1,0 +1,2 @@
+@layer testLayer1;
+@import url('import.css') layer(testLayer1) supports(((display: grid) and (selector(h2 > p))) or (not (display: flex)));

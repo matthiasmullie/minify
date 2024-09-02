@@ -1,0 +1,1 @@
+@import url('import.css') supports(((display: grid) and (selector(h2 > p))) or (not (display: flex)));
