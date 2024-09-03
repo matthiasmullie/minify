@@ -3,6 +3,7 @@
 namespace MatthiasMullie\Minify\Tests\CSS;
 
 use MatthiasMullie\Minify\Tests\CompatTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * CSS minifier test case.
@@ -21,6 +22,7 @@ class CSSTest extends CompatTestCase
      *
      * @dataProvider dataProvider
      */
+    #[dataProvider('dataProvider')]
     public function testMinify($input, $expected)
     {
         $minifier = $this->getMinifier();
@@ -34,6 +36,7 @@ class CSSTest extends CompatTestCase
      *
      * @dataProvider dataProviderPaths
      */
+    #[dataProvider('dataProviderPaths')]
     public function testConvertRelativePath($source, $target, $expected)
     {
         $minifier = $this->getMinifier();
@@ -875,6 +878,37 @@ margin-left: calc(20px + var(--some-var));
                 text-decoration: none;
             }',
             'a{color:rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));text-decoration:none}a:hover{--bs-link-color-rgb:var(--bs-link-hover-color-rgb)}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/428
+        $tests[] = array(
+            __DIR__ . '/sample/combine_imports/index7.css',
+            '@layer;@layer{body{color:red}}'
+        );
+
+        $tests[] = array(
+            __DIR__ . '/sample/combine_imports/index8.css',
+            '@layer testLayer1,testLayer2;@layer testLayer1{body{color:blue}}@layer testLayer2{body{color:red}}'
+        );
+
+        $tests[] = array(
+            __DIR__ . '/sample/combine_imports/index9.css',
+            '@supports(((display:grid) and (selector(h2>p))) or (not (display:flex))){body{color:red}}'
+        );
+
+        $tests[] = array(
+            __DIR__ . '/sample/combine_imports/index10.css',
+            '@layer;@supports(((display:grid) and (selector(h2>p))) or (not (display:flex))){@layer{body{color:red}}}'
+        );
+
+        $tests[] = array(
+            __DIR__ . '/sample/combine_imports/index11.css',
+            '@layer testLayer1;@supports(((display:grid) and (selector(h2>p))) or (not (display:flex))){@layer testLayer1{body{color:red}}}'
+        );
+
+        $tests[] = array(
+            __DIR__ . '/sample/combine_imports/index12.css',
+            '@layer testLayer1;@media screen and (orientation:landscape){@supports(((display:grid) and (selector(h2>p))) or (not (display:flex))){@layer testLayer1{body{color:red}}}}'
         );
 
         return $tests;

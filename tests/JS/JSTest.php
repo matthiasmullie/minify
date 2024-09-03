@@ -3,6 +3,7 @@
 namespace MatthiasMullie\Minify\Tests\JS;
 
 use MatthiasMullie\Minify\Tests\CompatTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * JS minifier test case.
@@ -45,6 +46,7 @@ class JSTest extends CompatTestCase
      *
      * @dataProvider dataProvider
      */
+    #[dataProvider('dataProvider')]
     public function testMinify($input, $expected)
     {
         $minifier = $this->getMinifier();

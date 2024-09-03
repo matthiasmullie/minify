@@ -33,6 +33,8 @@ class CSS extends Minify
      */
     protected $maxImportSize = 5;
 
+    protected $maxSupportsNesting = 5;
+
     /**
      * @var string[] valid import extensions
      */
@@ -146,6 +148,18 @@ class CSS extends Minify
                 # (optional) trailing whitespace
                 \s*
 
+                # layer
+                (?P<layer>layer(\((?P<layerName>[^\)]+)\))?)?
+
+                # (optional) trailing whitespace
+                \s*
+
+                # supports
+                (?P<supports>supports'.str_repeat('\([^)(]*(?:', $this->maxSupportsNesting).'\([^)(]*\)'.str_repeat('[^)(]*)*\)', $this->maxSupportsNesting).')?
+
+                # (optional) trailing whitespace
+                \s*
+
                 # (optional) media statement(s)
                 (?P<media>[^;]*)
 
@@ -174,6 +188,18 @@ class CSS extends Minify
 
                 # close path enclosure
                 (?P=quotes)
+
+                # (optional) trailing whitespace
+                \s*
+
+                # layer
+                (?P<layer>layer(\((?P<layerName>[^\)]+)\))?)?
+
+                # (optional) trailing whitespace
+                \s*
+
+                # supports
+                (?P<supports>supports'.str_repeat('\([^)(]*(?:', $this->maxSupportsNesting).'\([^)(]*\)'.str_repeat('[^)(]*)*\)', $this->maxSupportsNesting).')?
 
                 # (optional) trailing whitespace
                 \s*
@@ -224,6 +250,18 @@ class CSS extends Minify
             $minifier->setMaxImportSize($this->maxImportSize);
             $minifier->setImportExtensions($this->importExtensions);
             $importContent = $minifier->execute($source, $parents);
+
+            // check if this is only valid for certain layers (named or unnamed)
+            if (!empty($match['layerName'])) {
+                $importContent = '@layer ' . $match['layerName'] . '{' . $importContent . '}';
+            } elseif (!empty($match['layer'])) {
+                $importContent = '@layer{' . $importContent . '}';
+            }
+
+            // check if this is only valid for certain layers (named or unnamed)
+            if (!empty($match['supports'])) {
+                $importContent = '@' . $match['supports'] . '{' . $importContent . '}';
+            }
 
             // check if this is only valid for certain media
             if (!empty($match['media'])) {

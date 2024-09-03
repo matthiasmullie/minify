@@ -1,0 +1,3 @@
+@layer testLayer1, testLayer2;
+@import url('import2.css') layer(testLayer1);
+@import url('import.css') layer(testLayer2);
