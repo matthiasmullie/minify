@@ -928,6 +928,18 @@ margin-left: calc(20px + var(--some-var));
             '.test2{color:rgb(1.5,2.5,3.5);background-color:#fff0}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/408
+        $tests[] = array(
+            ':root {
+                --default-height: 0px;
+            }
+            html { 
+                --example-height: var(--default-height, 0px);
+                scroll-padding: calc(var(--example-height) + 60px) 0px 0px 0px;
+            }',
+            ':root{--default-height:0px}html{--example-height:var(--default-height, 0px);scroll-padding:calc(var(--example-height) + 60px) 0 0 0}',
+        );
+
         return $tests;
     }
 
