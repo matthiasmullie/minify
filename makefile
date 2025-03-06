@@ -1,6 +1,6 @@
 PHP ?=
 TEST ?=
-VOLUME_BINDS ?= src,tests,build,.php-cs-fixer.php,phpunit.xml,ruleset.xml
+VOLUME_BINDS ?= src,tests,build,.php-cs-fixer.php,phpunit.xml
 
 docs:
 	docker run --rm -v $$(pwd)/src:/data/src -v $$(pwd)/docs:/data/docs -w /data php:cli bash -c "\
@@ -18,6 +18,6 @@ format:
 	VOLUMES=""
 	for VOLUME in $$(echo "$(VOLUME_BINDS)" | tr "," "\n"); do VOLUMES="$$VOLUMES -v $$(pwd)/$$VOLUME:/var/www/$$VOLUME"; done;\
 	test $$(docker images -q matthiasmullie/minify:cli) || docker build -t matthiasmullie/minify:cli .;\
-	docker run $$VOLUMES matthiasmullie/minify:cli sh -c "PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix && vendor/bin/phpcbf --standard=ruleset.xml"
+	docker run $$VOLUMES matthiasmullie/minify:cli sh -c "PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix"
 
 .PHONY: docs

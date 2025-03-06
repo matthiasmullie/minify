@@ -109,8 +109,8 @@ class CSS extends Minify
      * \@import's will be loaded and their content merged into the original file,
      * to save HTTP requests.
      *
-     * @param string   $source  The file to combine imports for
-     * @param string   $content The CSS content to combine imports for
+     * @param string $source The file to combine imports for
+     * @param string $content The CSS content to combine imports for
      * @param string[] $parents Parent paths, for circular reference checks
      *
      * @return string
@@ -245,7 +245,7 @@ class CSS extends Minify
      * @url(image.jpg) images will be loaded and their content merged into the
      * original file, to save HTTP requests.
      *
-     * @param string $source  The file to import files for
+     * @param string $source The file to import files for
      * @param string $content The CSS content to import files for
      *
      * @return string
@@ -357,7 +357,7 @@ class CSS extends Minify
      * (e.g. ../../images/image.gif, if the new CSS file is 1 folder deeper).
      *
      * @param ConverterInterface $converter Relative path converter
-     * @param string             $content   The CSS content to update relative urls for
+     * @param string $content The CSS content to update relative urls for
      *
      * @return string
      */
@@ -590,6 +590,7 @@ class CSS extends Minify
 
         // convert `rgb` to `hex`
         $dec = '([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])';
+
         return preg_replace_callback(
             "/rgb\($dec $dec $dec\)/i",
             function ($match) {

@@ -11,4 +11,3 @@
 /makefile export-ignore
 /phpunit.xml export-ignore
 /README.md export-ignore
-/ruleset.xml.dist export-ignore

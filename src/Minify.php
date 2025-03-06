@@ -230,7 +230,7 @@ abstract class Minify
      * Save to file.
      *
      * @param string $content The minified data
-     * @param string $path    The path to save the minified data to
+     * @param string $path The path to save the minified data to
      *
      * @throws IOException
      */
@@ -249,7 +249,7 @@ abstract class Minify
      * If $replacement is a string, it must be plain text. Placeholders like $1 or \2 don't work.
      * If you need that functionality, use a callback instead.
      *
-     * @param string          $pattern     PCRE pattern
+     * @param string $pattern PCRE pattern
      * @param string|callable $replacement Replacement value for matched pattern
      */
     protected function registerPattern($pattern, $replacement = '')
@@ -390,7 +390,7 @@ abstract class Minify
      * If it's a string, just pass it through.
      *
      * @param string|callable $replacement Replacement value
-     * @param array           $match       Match data, in PREG_OFFSET_CAPTURE form
+     * @param array $match Match data, in PREG_OFFSET_CAPTURE form
      *
      * @return string
      */
@@ -532,8 +532,8 @@ abstract class Minify
      * Attempts to write $content to the file specified by $handler. $path is used for printing exceptions.
      *
      * @param resource $handler The resource to write to
-     * @param string   $content The content to write
-     * @param string   $path    The path to the file (for exception printing only)
+     * @param string $content The content to write
+     * @param string $path The path to the file (for exception printing only)
      *
      * @throws IOException
      */

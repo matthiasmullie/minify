@@ -203,7 +203,7 @@ class CSSTest extends CompatTestCase
         );
 
         $tests[] = array(
-        <<<'JS'
+            <<<'JS'
 p * i ,  html
 /* remove spaces */
 
@@ -222,7 +222,7 @@ p  [ remove ~= " spaces  " ]  :nth-child( 3 + 2n )  >  b span   i  ,   div::afte
   margin-right : 10px;
 }
 JS
-        ,
+            ,
             'p * i,html body p,p [remove~=" spaces  "] :nth-child(3+2n)>b span i,div::after{content:" escapes \\" allowed \\\\";content:"  /* string */  "!important;width:calc(100% - 3em + 5px);margin-top:0;margin-bottom:0;margin-left:10px;margin-right:10px}',
         );
 
@@ -486,13 +486,13 @@ only screen and (min-device-pixel-ratio: 1.5) {
 
         // https://github.com/matthiasmullie/minify/issues/274
         $tests[] = array(
-              '.cvp-live-filter select {
+            '.cvp-live-filter select {
   background-position:
     calc(100% - 20px) calc(1em + 2px),
     calc(100% - 15px) calc(1em + 2px),
     calc(100% - 2.5em) 0.5em;
 }',
-              '.cvp-live-filter select{background-position:calc(100% - 20px) calc(1em + 2px),calc(100% - 15px) calc(1em + 2px),calc(100% - 2.5em) .5em}',
+            '.cvp-live-filter select{background-position:calc(100% - 20px) calc(1em + 2px),calc(100% - 15px) calc(1em + 2px),calc(100% - 2.5em) .5em}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/301
