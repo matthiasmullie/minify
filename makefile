@@ -12,7 +12,7 @@ test:
 	for VOLUME in $$(echo "$(VOLUME_BINDS)" | tr "," "\n"); do VOLUMES="$$VOLUMES -v $$(pwd)/$$VOLUME:/var/www/$$VOLUME"; done;\
 	VERSION=$$(echo "$(PHP)-cli" | sed "s/^-//");\
 	test $$(docker images -q matthiasmullie/minify:$$VERSION) || docker build -t matthiasmullie/minify:$$VERSION . --build-arg VERSION=$$VERSION;\
-	docker run $$VOLUMES matthiasmullie/minify:$$VERSION env XDEBUG_MODE=coverage vendor/bin/phpunit $(TEST) --coverage-clover build/coverage-$(PHP)-$(TEST).clover
+	docker run $$VOLUMES matthiasmullie/minify:$$VERSION env XDEBUG_MODE=coverage vendor/bin/phpunit $(TEST) --coverage-clover build/coverage-$(PHP)-$(TEST).clover --configuration=phpunit.xml
 
 format:
 	VOLUMES=""

@@ -3,6 +3,7 @@
 namespace MatthiasMullie\Minify\Tests\CSS;
 
 use MatthiasMullie\Minify\Tests\CompatTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * CSS minifier test case.
@@ -21,6 +22,7 @@ class CSSTest extends CompatTestCase
      *
      * @dataProvider dataProvider
      */
+    #[DataProvider('dataProvider')]
     public function testMinify($input, $expected)
     {
         $minifier = $this->getMinifier();
@@ -34,6 +36,7 @@ class CSSTest extends CompatTestCase
      *
      * @dataProvider dataProviderPaths
      */
+    #[DataProvider('dataProviderPaths')]
     public function testConvertRelativePath($source, $target, $expected)
     {
         $minifier = $this->getMinifier();
