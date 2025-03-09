@@ -195,6 +195,12 @@ class JS extends Minify
      */
     protected function stripComments()
     {
+        // enable removal of /*DEV*/ style comments
+        // this pattern will replace from "/*DEV*/" to end of line - e.g. "/*DEV*/ console.log(data);" -> ""
+        // it needs to come before the call to stripMultilineComments, otherwise that deletes
+        // the crucial /*DEV*/, while leaving the rest of the line entact
+        $this->registerPattern('/\/\*DEV\*\/.*$/m', '');
+        
         $this->stripMultilineComments();
 
         // single-line comments
