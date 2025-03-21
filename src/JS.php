@@ -263,7 +263,8 @@ class JS extends Minify
         );
         $delimiters = array_fill(0, count($propertiesAndMethods), '/');
         $propertiesAndMethods = array_map('preg_quote', $propertiesAndMethods, $delimiters);
-        $after = '(?=\s*([\.,;:\)\}&\|+]|\/\/|$|\.(' . implode('|', $propertiesAndMethods) . ')))';
+        $implodePropertiesAndMethod = implode('|', $propertiesAndMethods);
+        $after = '(?=\s*([\.,;:\)\}&\|+]|\/\/|$|\.(' . $implodePropertiesAndMethod . ')))';
         $this->registerPattern('/' . $before . '\K' . $pattern . $after . '/', $callback);
 
         // regular expressions following a `)` are rather annoying to detect...
@@ -278,7 +279,7 @@ class JS extends Minify
         // if a regex following `)` is not followed by `.<property or method>`,
         // it's quite likely not a regex
         $before = '\)\s*';
-        $after = '(?=\s*\.(' . implode('|', $propertiesAndMethods) . '))';
+        $after = '(?=\s*\.(' . $implodePropertiesAndMethod . '))';
         $this->registerPattern('/' . $before . '\K' . $pattern . $after . '/', $callback);
 
         // 1 more edge case: a regex can be followed by a lot more operators or
