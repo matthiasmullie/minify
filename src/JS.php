@@ -608,7 +608,8 @@ class JS extends Minify
                 if ($open === $close) {
                     // only restore `while` if amount of `{` and `}` are the same;
                     // otherwise, that `for` isn't associated with this `do`
-                    $content = substr_replace($content, 'while(!0)', $offsetWhile, strlen('for(;;)'));
+                    // A length of 7 is assigned to the for(;;) loop.
+                    $content = substr_replace($content, 'while(!0)', $offsetWhile, 7);
                     break;
                 }
             }
