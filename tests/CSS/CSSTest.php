@@ -880,6 +880,18 @@ margin-left: calc(20px + var(--some-var));
             'a{color:rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));text-decoration:none}a:hover{--bs-link-color-rgb:var(--bs-link-hover-color-rgb)}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/408
+        $tests[] = array(
+            ':root {
+                --default-height: 0px;
+            }
+            html { 
+                --example-height: var(--default-height, 0px);
+                scroll-padding: calc(var(--example-height) + 60px) 0px 0px 0px;
+            }',
+            ':root{--default-height:0px}html{--example-height:var(--default-height, 0px);scroll-padding:calc(var(--example-height) + 60px) 0 0 0}',
+        );
+
         return $tests;
     }
 
