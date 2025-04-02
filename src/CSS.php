@@ -13,6 +13,7 @@
 namespace MatthiasMullie\Minify;
 
 use MatthiasMullie\Minify\Exceptions\FileImportException;
+use MatthiasMullie\Minify\Exceptions\PatternMatchException;
 use MatthiasMullie\PathConverter\Converter;
 use MatthiasMullie\PathConverter\ConverterInterface;
 
@@ -296,6 +297,8 @@ class CSS extends Minify
      * @param string[] $parents Parent paths, for circular reference checks
      *
      * @return string The minified data
+     *
+     * @throws PatternMatchException
      */
     public function execute($path = null, $parents = array())
     {
@@ -733,34 +736,57 @@ class CSS extends Minify
      * @param string $content The CSS content to strip the whitespace for
      *
      * @return string
+     *
+     * @throws PatternMatchException
      */
     protected function stripWhitespace($content)
     {
         // remove leading & trailing whitespace
-        $content = preg_replace('/^\s*/m', '', $content);
-        $content = preg_replace('/\s*$/m', '', $content);
+        $content = $this->pregReplace('/^\s*/m', '', $content);
+        $content = $this->pregReplace('/\s*$/m', '', $content);
 
         // replace newlines with a single space
-        $content = preg_replace('/\s+/', ' ', $content);
+        $content = $this->pregReplace('/\s+/', ' ', $content);
 
         // remove whitespace around meta characters
         // inspired by stackoverflow.com/questions/15195750/minify-compress-css-with-regex
-        $content = preg_replace('/\s*([\*$~^|]?+=|[{};,>~]|!important\b)\s*/', '$1', $content);
-        $content = preg_replace('/([\[(:>\+])\s+/', '$1', $content);
-        $content = preg_replace('/\s+([\]\)>\+])/', '$1', $content);
-        $content = preg_replace('/\s+(:)(?![^\}]*\{)/', '$1', $content);
+        $content = $this->pregReplace('/\s*([\*$~^|]?+=|[{};,>~]|!important\b)\s*/', '$1', $content);
+        $content = $this->pregReplace('/([\[(:>\+])\s+/', '$1', $content);
+        $content = $this->pregReplace('/\s+([\]\)>\+])/', '$1', $content);
+        $content = $this->pregReplace('/\s+(:)(?![^\}]*\{)/', '$1', $content);
 
         // whitespace around + and - can only be stripped inside some pseudo-
         // classes, like `:nth-child(3+2n)`
         // not in things like `calc(3px + 2px)`, shorthands like `3px -2px`, or
         // selectors like `div.weird- p`
         $pseudos = array('nth-child', 'nth-last-child', 'nth-last-of-type', 'nth-of-type');
-        $content = preg_replace('/:(' . implode('|', $pseudos) . ')\(\s*([+-]?)\s*(.+?)\s*([+-]?)\s*(.*?)\s*\)/', ':$1($2$3$4$5)', $content);
+        $content = $this->pregReplace('/:(' . implode('|', $pseudos) . ')\(\s*([+-]?)\s*(.+?)\s*([+-]?)\s*(.*?)\s*\)/', ':$1($2$3$4$5)', $content);
 
         // remove semicolon/whitespace followed by closing bracket
         $content = str_replace(';}', '}', $content);
 
         return trim($content);
+    }
+
+    /**
+     * Perform a preg_replace and check for errors.
+     *
+     * @param string $pattern Pattern
+     * @param string $replacement Replacement
+     * @param string $subject String to process
+     *
+     * @return string
+     *
+     * @throws PatternMatchException
+     */
+    protected function pregReplace($pattern, $replacement, $subject)
+    {
+        $result = preg_replace($pattern, $replacement, $subject);
+        if ($result === null) {
+            throw PatternMatchException::fromLastError("Failed to replace with pattern '$pattern'");
+        }
+
+        return $result;
     }
 
     /**
