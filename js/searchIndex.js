@@ -41,6 +41,16 @@ Search.appendIndex(
             "summary": "IO\u0020Exception\u0020Class.",
             "url": "classes/MatthiasMullie-Minify-Exceptions-IOException.html"
         },                {
+            "fqsen": "\\MatthiasMullie\\Minify\\Exceptions\\PatternMatchException",
+            "name": "PatternMatchException",
+            "summary": "Pattern\u0020Match\u0020Exception\u0020Class.",
+            "url": "classes/MatthiasMullie-Minify-Exceptions-PatternMatchException.html"
+        },                {
+            "fqsen": "\\MatthiasMullie\\Minify\\Exceptions\\PatternMatchException\u003A\u003AfromLastError\u0028\u0029",
+            "name": "fromLastError",
+            "summary": "Create\u0020an\u0020exception\u0020from\u0020preg_last_error.",
+            "url": "classes/MatthiasMullie-Minify-Exceptions-PatternMatchException.html#method_fromLastError"
+        },                {
             "fqsen": "\\MatthiasMullie\\Minify\\JS",
             "name": "JS",
             "summary": "JavaScript\u0020Minifier\u0020Class.",
