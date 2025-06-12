@@ -902,6 +902,24 @@ margin-left: calc(20px + var(--some-var));
             '.a1::after{content:"2"}.a1::after{content:"1"}',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/435 - cleanupModernColors
+        $tests[] = array(
+            '.test{color:rgb(1,2,3);background-color:rgba(4,5,6,7)}',
+            '.test{color:#010203;background-color:rgba(4,5,6,7)}',
+        );
+        $tests[] = array(
+            '.test{color:rgb(1, 2, 3); background-color:rgba(4, 5, 6, 7)}',
+            '.test{color:#010203;background-color:rgba(4,5,6,7)}',
+        );
+        $tests[] = array(
+            '.test2{color:rgb(1.5,2.5,3.5);background-color:rgba(0,0,0,0)}',
+            '.test2{color:rgb(1.5,2.5,3.5);background-color:#fff0}',
+        );
+        $tests[] = array(
+            '.test2 { color: rgb(1.5  ,  2.5, 3.5);  background-color:  rgba(0,0, 0,0)}',
+            '.test2{color:rgb(1.5,2.5,3.5);background-color:#fff0}',
+        );
+
         return $tests;
     }
 
