@@ -109,7 +109,7 @@ class CSSTest extends CompatTestCase
 
         $minifier = $this->getMinifier();
         $minifier->add($src);
-        $this->expectExceptionMessageMatches('/Failed to replace with pattern/');
+        $this->expectException('MatthiasMullie\Minify\Exceptions\PatternMatchException');
         $minifier->minify();
     }
 
