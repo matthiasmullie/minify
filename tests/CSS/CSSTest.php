@@ -99,6 +99,21 @@ class CSSTest extends CompatTestCase
     }
 
     /**
+     * Test minifier error handling.
+     */
+    public function testErrorHandling()
+    {
+        // long whitespace that could exceed pcre.backtrack_limit
+        $limit = (int) (ini_get('pcre.backtrack_limit') ?: 1000000);
+        $src = '.a1::after{content: "2"}' . str_repeat(' ', $limit) . '.a1::after{content: "1"}';
+
+        $minifier = $this->getMinifier();
+        $minifier->add($src);
+        $this->expectException('MatthiasMullie\Minify\Exceptions\PatternMatchException');
+        $minifier->minify();
+    }
+
+    /**
      * @return array [input, expected result]
      */
     public static function dataProvider()
@@ -878,6 +893,13 @@ margin-left: calc(20px + var(--some-var));
                 text-decoration: none;
             }',
             'a{color:rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));text-decoration:none}a:hover{--bs-link-color-rgb:var(--bs-link-hover-color-rgb)}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}',
+        );
+
+        // a large stylesheet that could exceed pcre.backtrack_limit
+        $limit = (int) (ini_get('pcre.backtrack_limit') ?: 1000000);
+        $tests[] = array(
+            '.a1::after{content: "2"}/* Comment with apostrophe\' */' . str_repeat('a{}', (int) ($limit / 3)) . '/* Comment with apostrophe\' */.a1::after{content: "1"}',
+            '.a1::after{content:"2"}.a1::after{content:"1"}',
         );
 
         return $tests;
