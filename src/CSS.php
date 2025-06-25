@@ -389,7 +389,7 @@ class CSS extends Minify
                 (?P<quotes>["\'])?
 
                     # fetch path
-                    (?P<path>.+?)
+                    (?P<path>[^#].+?)
 
                 # close path enclosure
                 (?(quotes)(?P=quotes))
