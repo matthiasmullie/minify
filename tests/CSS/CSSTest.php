@@ -3,6 +3,7 @@
 namespace MatthiasMullie\Minify\Tests\CSS;
 
 use MatthiasMullie\Minify\Tests\CompatTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * CSS minifier test case.
@@ -21,6 +22,7 @@ class CSSTest extends CompatTestCase
      *
      * @dataProvider dataProvider
      */
+    #[DataProvider('dataProvider')]
     public function testMinify($input, $expected)
     {
         $minifier = $this->getMinifier();
@@ -34,6 +36,7 @@ class CSSTest extends CompatTestCase
      *
      * @dataProvider dataProviderPaths
      */
+    #[DataProvider('dataProviderPaths')]
     public function testConvertRelativePath($source, $target, $expected)
     {
         $minifier = $this->getMinifier();
@@ -93,6 +96,21 @@ class CSSTest extends CompatTestCase
         $property = $object->getProperty('importExtensions');
         $property->setAccessible(true);
         $this->assertEquals($property->getValue($minifier), array('gif' => 'data:image/gif'));
+    }
+
+    /**
+     * Test minifier error handling.
+     */
+    public function testErrorHandling()
+    {
+        // long whitespace that could exceed pcre.backtrack_limit
+        $limit = (int) (ini_get('pcre.backtrack_limit') ?: 1000000);
+        $src = '.a1::after{content: "2"}' . str_repeat(' ', $limit) . '.a1::after{content: "1"}';
+
+        $minifier = $this->getMinifier();
+        $minifier->add($src);
+        $this->expectException('MatthiasMullie\Minify\Exceptions\PatternMatchException');
+        $minifier->minify();
     }
 
     /**
@@ -200,7 +218,7 @@ class CSSTest extends CompatTestCase
         );
 
         $tests[] = array(
-        <<<'JS'
+            <<<'JS'
 p * i ,  html
 /* remove spaces */
 
@@ -219,7 +237,7 @@ p  [ remove ~= " spaces  " ]  :nth-child( 3 + 2n )  >  b span   i  ,   div::afte
   margin-right : 10px;
 }
 JS
-        ,
+            ,
             'p * i,html body p,p [remove~=" spaces  "] :nth-child(3+2n)>b span i,div::after{content:" escapes \\" allowed \\\\";content:"  /* string */  "!important;width:calc(100% - 3em + 5px);margin-top:0;margin-bottom:0;margin-left:10px;margin-right:10px}',
         );
 
@@ -483,13 +501,13 @@ only screen and (min-device-pixel-ratio: 1.5) {
 
         // https://github.com/matthiasmullie/minify/issues/274
         $tests[] = array(
-              '.cvp-live-filter select {
+            '.cvp-live-filter select {
   background-position:
     calc(100% - 20px) calc(1em + 2px),
     calc(100% - 15px) calc(1em + 2px),
     calc(100% - 2.5em) 0.5em;
 }',
-              '.cvp-live-filter select{background-position:calc(100% - 20px) calc(1em + 2px),calc(100% - 15px) calc(1em + 2px),calc(100% - 2.5em) .5em}',
+            '.cvp-live-filter select{background-position:calc(100% - 20px) calc(1em + 2px),calc(100% - 15px) calc(1em + 2px),calc(100% - 2.5em) .5em}',
         );
 
         // https://github.com/matthiasmullie/minify/issues/301
@@ -875,6 +893,31 @@ margin-left: calc(20px + var(--some-var));
                 text-decoration: none;
             }',
             'a{color:rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));text-decoration:none}a:hover{--bs-link-color-rgb:var(--bs-link-hover-color-rgb)}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}',
+        );
+
+        // a large stylesheet that could exceed pcre.backtrack_limit
+        $limit = (int) (ini_get('pcre.backtrack_limit') ?: 1000000);
+        $tests[] = array(
+            '.a1::after{content: "2"}/* Comment with apostrophe\' */' . str_repeat('a{}', (int) ($limit / 3)) . '/* Comment with apostrophe\' */.a1::after{content: "1"}',
+            '.a1::after{content:"2"}.a1::after{content:"1"}',
+        );
+
+        // https://github.com/matthiasmullie/minify/issues/435 - cleanupModernColors
+        $tests[] = array(
+            '.test{color:rgb(1,2,3);background-color:rgba(4,5,6,7)}',
+            '.test{color:#010203;background-color:rgba(4,5,6,7)}',
+        );
+        $tests[] = array(
+            '.test{color:rgb(1, 2, 3); background-color:rgba(4, 5, 6, 7)}',
+            '.test{color:#010203;background-color:rgba(4,5,6,7)}',
+        );
+        $tests[] = array(
+            '.test2{color:rgb(1.5,2.5,3.5);background-color:rgba(0,0,0,0)}',
+            '.test2{color:rgb(1.5,2.5,3.5);background-color:#fff0}',
+        );
+        $tests[] = array(
+            '.test2 { color: rgb(1.5  ,  2.5, 3.5);  background-color:  rgba(0,0, 0,0)}',
+            '.test2{color:rgb(1.5,2.5,3.5);background-color:#fff0}',
         );
 
         return $tests;

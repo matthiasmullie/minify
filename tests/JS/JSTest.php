@@ -3,6 +3,7 @@
 namespace MatthiasMullie\Minify\Tests\JS;
 
 use MatthiasMullie\Minify\Tests\CompatTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * JS minifier test case.
@@ -45,6 +46,7 @@ class JSTest extends CompatTestCase
      *
      * @dataProvider dataProvider
      */
+    #[DataProvider('dataProvider')]
     public function testMinify($input, $expected)
     {
         $minifier = $this->getMinifier();
@@ -206,16 +208,16 @@ class JSTest extends CompatTestCase
         );
 
         $tests[] = array(
-          'for ( i = 0; ; i++ ) statement',
-          'for(i=0;;i++)statement',
+            'for ( i = 0; ; i++ ) statement',
+            'for(i=0;;i++)statement',
         );
         $tests[] = array(
             'for (i = 0; (i < 10); i++) statement',
             'for(i=0;(i<10);i++)statement',
         );
         $tests[] = array(
-          'alert("test");;alert("test2")',
-          'alert("test");alert("test2")',
+            'alert("test");;alert("test2")',
+            'alert("test");alert("test2")',
         );
         $tests[] = array(
             '-1
@@ -708,7 +710,7 @@ function isJSON() {
     str.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']');
 }
 BUG
-,
+            ,
             <<<'BUG'
 function inspect(){escapedString.replace(/abc/g,'\\\'')}
 function isJSON(){str.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']')}
