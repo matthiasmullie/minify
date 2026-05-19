@@ -100,6 +100,35 @@ class JSTest extends CompatTestCase
             '/abc\/def\//.test("abc")',
             '/abc\/def\//.test("abc")',
         );
+
+        // template literal containing URL — `//` in `https://` must not be
+        // treated as line comment, or the URL path is stripped and the
+        // template literal becomes unclosed (real-world breakage: WP Dark
+        // Mode plugin v5.3.5 app.min.js, where the next template literal in
+        // file merges into the runaway one, producing SyntaxError on
+        // subsequent property declarations)
+        $tests[] = array(
+            'var url=`https://example.com/${id}/path`',
+            'var url=`https://example.com/${id}/path`',
+        );
+
+        // multiple URL-containing template literals in same script
+        $tests[] = array(
+            'var a=`https://a.example/${i}`;var b=`http://b.example/${j}`',
+            'var a=`https://a.example/${i}`;var b=`http://b.example/${j}`',
+        );
+
+        // legitimate `// line comment` after code on same line: still stripped
+        $tests[] = array(
+            "var a=1;// this comment must still be removed\nvar b=2",
+            'var a=1;var b=2',
+        );
+
+        // `// leading comment` at start of line: still stripped
+        $tests[] = array(
+            "// leading comment\nvar a=1",
+            'var a=1',
+        );
         $tests[] = array(
             '/abc\/def\//.test("abc\/def\/")',
             '/abc\/def\//.test("abc\/def\/")',
