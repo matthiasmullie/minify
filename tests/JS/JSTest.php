@@ -121,6 +121,18 @@ class JSTest extends CompatTestCase
             'var a=/abc\/def\//.test("abc")',
         );
 
+        // regex literals after arrow functions
+        $tests[] = array(
+            'const test = (value) => /^image\//.test(value);',
+            'const test=(value)=>/^image\//.test(value)',
+        );
+
+        // don't confuse division after arrow functions for regexes
+        $tests[] = array(
+            'const divide = (value) => value / 2;',
+            'const divide=(value)=>value/2',
+        );
+
         // don't confuse multiple slashes for regexes
         $tests[] = array(
             'a = b / c; d = e / f',
