@@ -133,6 +133,35 @@ class JSTest extends CompatTestCase
             'const divide=(value)=>value/2',
         );
 
+        // same case without whitespace around the arrow/function body
+        $tests[] = array(
+            'const d=(v)=>v/2;',
+            'const d=(v)=>v/2',
+        );
+
+        // multiple divisions after an arrow must still be treated as divisions
+        $tests[] = array(
+            'const d = (a, b) => a / b / 2;',
+            'const d=(a,b)=>a/b/2',
+        );
+
+        // modern regex flags: make sure `d`, `s` & `v` are part of the regex
+        // and don't cause the escaped `/` to be mistaken for a line comment
+        $tests[] = array(
+            'const regex = /^image\//s; foo();',
+            'const regex=/^image\//s;foo()',
+        );
+
+        $tests[] = array(
+            'const regex = /^image\//d; foo();',
+            'const regex=/^image\//d;foo()',
+        );
+
+        $tests[] = array(
+            'const regex = /^image\//v; foo();',
+            'const regex=/^image\//v;foo()',
+        );
+
         // don't confuse multiple slashes for regexes
         $tests[] = array(
             'a = b / c; d = e / f',
