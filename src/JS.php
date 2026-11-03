@@ -198,7 +198,7 @@ class JS extends Minify
         $this->stripMultilineComments();
 
         // single-line comments
-        $this->registerPattern('/\/\/.*$/m', '');
+        $this->registerPattern('/(?<!:)\/\/.*$/m', '');
     }
 
     /**
