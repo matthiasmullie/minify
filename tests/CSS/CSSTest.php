@@ -48,13 +48,17 @@ class CSSTest extends CompatTestCase
             if (is_string($path)) {
                 $object = new \ReflectionObject($minifier);
                 $property = $object->getProperty('data');
-                $property->setAccessible(true);
+                if ( PHP_VERSION_ID < 80100 ) {
+                    $property->setAccessible(true);
+                }
                 $data = $property->getValue($minifier);
 
                 // keep content, but make it appear from the given path
                 $data[$path] = array_pop($data);
                 $property->setValue($minifier, $data);
-                $property->setAccessible(false);
+                if ( PHP_VERSION_ID < 80100 ) {
+                    $property->setAccessible(true);
+                }
             }
         }
 
@@ -90,11 +94,15 @@ class CSSTest extends CompatTestCase
         $object = new \ReflectionObject($minifier);
 
         $property = $object->getProperty('maxImportSize');
-        $property->setAccessible(true);
+        if ( PHP_VERSION_ID < 80100 ) {
+            $property->setAccessible(true);
+        }
         $this->assertEquals($property->getValue($minifier), 10);
 
         $property = $object->getProperty('importExtensions');
-        $property->setAccessible(true);
+        if ( PHP_VERSION_ID < 80100 ) {
+            $property->setAccessible(true);
+        }
         $this->assertEquals($property->getValue($minifier), array('gif' => 'data:image/gif'));
     }
 

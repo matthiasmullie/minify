@@ -178,7 +178,9 @@ class AbstractTest extends CompatTestCase
 
         $object = new \ReflectionObject($minifier);
         $method = $object->getMethod('openFileForWriting');
-        $method->setAccessible(true);
+        if ( PHP_VERSION_ID < 80100 ) {
+            $method->setAccessible(true);
+        }
 
         $method->invokeArgs($minifier, array($wrongPath));
     }
@@ -192,7 +194,9 @@ class AbstractTest extends CompatTestCase
 
         $object = new \ReflectionObject($minifier);
         $method = $object->getMethod('writeToFile');
-        $method->setAccessible(true);
+        if ( PHP_VERSION_ID < 80100 ) {
+            $method->setAccessible(true);
+        }
 
         $method->invokeArgs($minifier, array($wrongPath, ''));
     }
