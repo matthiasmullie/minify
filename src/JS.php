@@ -237,13 +237,14 @@ class JS extends Minify
         // closing the regex)
         // then also ignore bare `/` inside `[]`, where they don't need to be
         // escaped: anything inside `[]` can be ignored safely
-        $pattern = '\\/(?!\*)(?:[^\\[\\/\\\\\n\r]++|(?:\\\\.)++|(?:\\[(?:[^\\]\\\\\n\r]++|(?:\\\\.)++)++\\])++)++\\/[gimuy]*';
+        // finally, match optional JavaScript regex flags
+        $pattern = '\\/(?!\*)(?:[^\\[\\/\\\\\n\r]++|(?:\\\\.)++|(?:\\[(?:[^\\]\\\\\n\r]++|(?:\\\\.)++)++\\])++)++\\/[dgimsuvy]*';
 
         // a regular expression can only be followed by a few operators or some
         // of the RegExp methods (a `\` followed by a variable or value is
         // likely part of a division, not a regex)
         $keywords = array('do', 'in', 'new', 'else', 'throw', 'yield', 'delete', 'return',  'typeof');
-        $before = '(^|[=:,;\+\-\*\?\/\}\(\{\[&\|!]|' . implode('|', $keywords) . ')\s*';
+        $before = '(^|=>|[=:,;\+\-\*\?\/\}\(\{\[&\|!]|' . implode('|', $keywords) . ')\s*';
         $propertiesAndMethods = array(
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp#Properties_2
             'constructor',
