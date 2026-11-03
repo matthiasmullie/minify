@@ -8,7 +8,7 @@ RUN cat /etc/os-release | grep jessie && echo "deb http://archive.debian.org/deb
 RUN cat /etc/os-release | grep stretch && echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.list || true
 RUN cat /etc/os-release | grep buster && echo "deb http://archive.debian.org/debian buster main" > /etc/apt/sources.list || true
 RUN cat /etc/os-release | grep bullseye && echo "deb http://archive.debian.org/debian bullseye main" > /etc/apt/sources.list || true
-RUN apt update --allow-insecure-repositories
+RUN apt update || apt update --allow-insecure-repositories
 RUN apt install --reinstall -y --allow-unauthenticated ca-certificates
 RUN apt install -y --allow-unauthenticated zip unzip libzip-dev git
 RUN docker-php-ext-install zip pcntl
