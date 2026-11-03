@@ -1420,6 +1420,28 @@ b=2',
             'f=void 0===m?/ +/g:m',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/448
+        $tests[] = array(
+            "{
+    test: [/\sedg\//i],
+    describe(ua) {
+      const browser = {
+        name: 'Microsoft Edge',
+      };
+
+      const version = Utils.getFirstMatch(/\sedg\/(\d+(\.?_?\d+)+)/i, ua);
+
+      if (version) {
+        browser.version = version;
+      }
+
+      return browser;
+    },
+  }",
+            "{test:[/\sedg\//i],describe(ua){const browser={name:'Microsoft Edge',};const version=Utils.getFirstMatch(/\sedg\/(\d+(\.?_?\d+)+)/i,ua);if(version){browser.version=version}
+return browser},}",
+        );
+
         // known minified files to help doublecheck changes in places not yet
         // anticipated in these tests
         $files = glob(__DIR__ . '/sample/minified/*.js');
