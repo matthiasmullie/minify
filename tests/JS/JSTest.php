@@ -442,6 +442,20 @@ else statement',
             'var testtrue="testing if true as part of varname is ignored as it should"',
         );
 
+        // https://github.com/matthiasmullie/minify/issues/430
+        $tests[] = array(
+            'var a=true.valueOf(),b=false.toString()',
+            'var a=true.valueOf(),b=false.toString()',
+        );
+        $tests[] = array(
+            "var a=true .valueOf(),b=false['toString'](),c=true?.valueOf()",
+            "var a=true.valueOf(),b=false['toString'](),c=true?.valueOf()",
+        );
+        $tests[] = array(
+            'var a=b?true?.5:1:false',
+            'var a=b?!0?.5:1:!1',
+        );
+
         // random bits of code that tripped errors during development
         $tests[] = array(
             '
