@@ -585,7 +585,11 @@ class JS extends Minify
 
             return $match[1] . ($match[2] === 'true' ? '!0' : '!1');
         };
-        $content = preg_replace_callback('/(^|.\s*)\b(true|false)\b(?!:)/', $callback, $content);
+        // they must also be left alone when a property is accessed on them,
+        // like `true.valueOf()` or `false['toString']()`: `!0.valueOf()` is a
+        // syntax error & `!0['toString']()` negates the result instead (`?.`
+        // followed by a digit is a ternary, like `a?true?.5:1`, though)
+        $content = preg_replace_callback('/(^|.\s*)\b(true|false)\b(?!:)(?!\s*(?:[.\[]|\?\.(?!\d)))/', $callback, $content);
 
         // for(;;) is exactly the same as while(true), but shorter :)
         $content = preg_replace('/\bwhile\(!0\){/', 'for(;;){', $content);
