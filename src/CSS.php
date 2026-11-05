@@ -760,7 +760,11 @@ class CSS extends Minify
         // not in things like `calc(3px + 2px)`, shorthands like `3px -2px`, or
         // selectors like `div.weird- p`
         $pseudos = array('nth-child', 'nth-last-child', 'nth-last-of-type', 'nth-of-type');
-        $content = $this->pregReplace('/:(' . implode('|', $pseudos) . ')\(\s*([+-]?)\s*(.+?)\s*([+-]?)\s*(.*?)\s*\)/', ':$1($2$3$4$5)', $content);
+        // the An+B parts can't contain whitespace or parentheses, so an
+        // `of <selector>` argument, like `:nth-child(2n+1 of .item)`, is not
+        // mistaken for one; it is handled separately to keep its leading space
+        $content = $this->pregReplace('/:(' . implode('|', $pseudos) . ')\(\s*([+-]?)\s*([^\s()]+?)\s*([+-]?)\s*([^\s()]*?)\s*\)/', ':$1($2$3$4$5)', $content);
+        $content = $this->pregReplace('/:(' . implode('|', $pseudos) . ')\(\s*([+-]?)\s*([^\s()]+?)\s*([+-]?)\s*([^\s()]*?)\s+of\s+/', ':$1($2$3$4$5 of ', $content);
 
         // remove semicolon/whitespace followed by closing bracket
         $content = str_replace(';}', '}', $content);
