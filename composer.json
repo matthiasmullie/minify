@@ -37,7 +37,6 @@
         }
     },
     "bin": [
-        "bin/minifycss",
-        "bin/minifyjs"
+        "bin/minify"
     ]
 }
