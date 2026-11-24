@@ -94,6 +94,31 @@ class JSTest extends CompatTestCase
             'var str=`Hi, ${name}`',
         );
 
+        // template literal nested inside ${} with quotes in it, should not end
+        // at the inner backtick & cause the rest of the code to be mangled
+        $tests[] = array(
+            'warn(`Error: ${e}\n${r ? \'Expr: "\' + r + `"\n` : ""}`, t); var m = "see https://alpinejs.dev. Retry";',
+            'warn(`Error: ${e}\n${r ? \'Expr: "\' + r + `"\n` : ""}`,t);var m="see https://alpinejs.dev. Retry"',
+        );
+        $tests[] = array(
+            'var x = `Hello ${n ? `dear ${n}` : "guest"}`; var y = "see https://example.com. Bye";',
+            'var x=`Hello ${n ? `dear ${n}` : "guest"}`;var y="see https://example.com. Bye"',
+        );
+
+        // regex, braces & division inside ${}
+        $tests[] = array(
+            'var s = `content: \'${c.replace(/\'|"/g, \'\')}\';`; var t = "a. b";',
+            'var s=`content: \'${c.replace(/\'|"/g, \'\')}\';`;var t="a. b"',
+        );
+        $tests[] = array(
+            'var u = `${fn({ a: \'}\' })} https://example.com`; var v = "a. b";',
+            'var u=`${fn({ a: \'}\' })} https://example.com`;var v="a. b"',
+        );
+        $tests[] = array(
+            'var w = `${a / b} and ${c / d}`; var z = "a. b";',
+            'var w=`${a / b} and ${c / d}`;var z="a. b"',
+        );
+
         // regex delimiters need to be treated as strings
         // (two forward slashes could look like a comment)
         $tests[] = array(
