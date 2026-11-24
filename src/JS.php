@@ -159,7 +159,8 @@ class JS extends Minify
          * Comments will be removed altogether, strings and regular expressions
          * will be replaced by placeholder text, which we'll restore later.
          */
-        $this->extractStrings('\'"`');
+        $this->extractTemplateLiterals();
+        $this->extractStrings('\'"');
         $this->stripComments();
         $this->extractRegex();
 
@@ -188,6 +189,57 @@ class JS extends Minify
         $content = $this->restoreExtractedData($content);
 
         return $content;
+    }
+
+    /**
+     * Template literals can contain ${} expressions, which can in turn contain
+     * strings, braces, regular expressions and other template literals:
+     * `a ${b ? `c` : 'd'} e`
+     *
+     * The generic string extraction in extractStrings() ends a string at the
+     * next unescaped backtick, which would end the literal above at the inner
+     * backtick and throw off string detection for the rest of the file (e.g.
+     * stripping whitespace inside strings, or treating // in a URL as the
+     * start of a comment).
+     *
+     * This method matches the complete template literal instead. If a literal
+     * can't be matched this way, it falls back to the previous behaviour of
+     * ending it at the next unescaped backtick.
+     *
+     * @param string[optional] $placeholderPrefix
+     */
+    protected function extractTemplateLiterals($placeholderPrefix = '')
+    {
+        // PHP only supports $this inside anonymous functions since 5.4
+        $minifier = $this;
+        $callback = function ($match) use ($minifier, $placeholderPrefix) {
+            if ($match[0] === '``') {
+                // empty template literal, no need for a placeholder
+                return $match[0];
+            }
+
+            $count = count($minifier->extracted);
+            $placeholder = '`' . $placeholderPrefix . $count . '`';
+            $minifier->extracted[$placeholder] = $match[0];
+
+            return $placeholder;
+        };
+
+        // building blocks that can occur inside a ${} expression
+        $singleQuoted = "'(?:[^'\\\\\\n]++|\\\\.)*+'";
+        $doubleQuoted = '"(?:[^"\\\\\\n]++|\\\\.)*+"';
+        // a regex can only start after an operator or opening bracket (optionally
+        // followed by a space), otherwise the / is a division
+        $regex = '(?<=[(,=:\[!&|?;{}]|[(,=:\[!&|?;{}] )\/(?![*\/])(?:[^\/\\\\\[\n]++|\\\\.|\[(?:[^\]\\\\\n]++|\\\\.)*+\])++\/[a-z]*+';
+        // contents of a ${} expression: anything but braces, quotes & slashes,
+        // or one of the above, or a nested template literal, or a {} block
+        $expression = "(?<expr>(?:[^{}`'\"\\/]++|$singleQuoted|$doubleQuoted|$regex|\\/|(?&tpl)|\\{(?&expr)\\})*+)";
+        // template literal: text (with escaped characters and lone $) and ${} expressions
+        $template = "(?<tpl>`(?:[^`\\\\\$]++|\\\\.|\\$(?!\\{)|\\$\\{{$expression}\\})*+`)";
+        // previous behaviour (see extractStrings), in case the above doesn't match
+        $fallback = '`(?:.{0,65535}?(?<!\\\\)(?:\\\\\\\\)*+)`';
+
+        $this->registerPattern('/(?:' . $template . '|' . $fallback . ')/s', $callback);
     }
 
     /**
