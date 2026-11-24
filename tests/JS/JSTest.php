@@ -97,8 +97,8 @@ class JSTest extends CompatTestCase
         // template literal nested inside ${} with quotes in it, should not end
         // at the inner backtick & cause the rest of the code to be mangled
         $tests[] = array(
-            'console.warn(`Error: ${e}\n${r ? \'Expression: "\' + r + `"\n` : ""}`, t); var msg = "see https://alpinejs.dev/plugins. Then retry";',
-            'console.warn(`Error: ${e}\n${r ? \'Expression: "\' + r + `"\n` : ""}`,t);var msg="see https://alpinejs.dev/plugins. Then retry"',
+            'warn(`Error: ${e}\n${r ? \'Expr: "\' + r + `"\n` : ""}`, t); var m = "see https://alpinejs.dev. Retry";',
+            'warn(`Error: ${e}\n${r ? \'Expr: "\' + r + `"\n` : ""}`,t);var m="see https://alpinejs.dev. Retry"',
         );
         $tests[] = array(
             'var x = `Hello ${n ? `dear ${n}` : "guest"}`; var y = "see https://example.com. Bye";',

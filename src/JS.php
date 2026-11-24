@@ -192,8 +192,11 @@ class JS extends Minify
     }
 
     /**
-     * Template literals can contain ${} expressions, which can in turn contain
-     * strings, braces, regular expressions and other template literals:
+     * Template literals are a pattern we need to match as a whole, including
+     * any ${} expressions inside them.
+     *
+     * Those expressions can in turn contain strings, braces, regular
+     * expressions and other template literals, e.g.:
      * `a ${b ? `c` : 'd'} e`
      *
      * The generic string extraction in extractStrings() ends a string at the
@@ -230,7 +233,8 @@ class JS extends Minify
         $doubleQuoted = '"(?:[^"\\\\\\n]++|\\\\.)*+"';
         // a regex can only start after an operator or opening bracket (optionally
         // followed by a space), otherwise the / is a division
-        $regex = '(?<=[(,=:\[!&|?;{}]|[(,=:\[!&|?;{}] )\/(?![*\/])(?:[^\/\\\\\[\n]++|\\\\.|\[(?:[^\]\\\\\n]++|\\\\.)*+\])++\/[a-z]*+';
+        $regexStart = '(?<=[(,=:\[!&|?;{}]|[(,=:\[!&|?;{}] )';
+        $regex = $regexStart . '\/(?![*\/])(?:[^\/\\\\\[\n]++|\\\\.|\[(?:[^\]\\\\\n]++|\\\\.)*+\])++\/[a-z]*+';
         // contents of a ${} expression: anything but braces, quotes & slashes,
         // or one of the above, or a nested template literal, or a {} block
         $expression = "(?<expr>(?:[^{}`'\"\\/]++|$singleQuoted|$doubleQuoted|$regex|\\/|(?&tpl)|\\{(?&expr)\\})*+)";
