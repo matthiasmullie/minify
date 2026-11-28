@@ -83,6 +83,36 @@ class CSSTest extends CompatTestCase
     }
 
     /**
+     * A large number of url()/@import references must be rewritten correctly
+     * (and quickly). These were previously rewritten with one str_replace()
+     * per reference - each rescanning the whole content - which made minifying
+     * such content quadratic in the number of references. This exercises that
+     * path at a scale that would time out under the old behaviour, and asserts
+     * the output is unchanged.
+     */
+    public function testManyUrlAndImportReferences()
+    {
+        $count = 2000;
+        $input = '';
+        $expectedImports = '';
+        $expectedBody = '';
+        for ($i = 0; $i < $count; ++$i) {
+            $input .= "@import url(import$i.css);";
+            $input .= "sel$i{background:url(bg$i.png)}";
+
+            // moveImportsToTop() collects every @import at the top of the
+            // output, in their original order, ahead of the rest of the css
+            $expectedImports .= "@import url(import$i.css);";
+            $expectedBody .= "sel$i{background:url(bg$i.png)}";
+        }
+        $expected = $expectedImports . $expectedBody;
+
+        $minifier = $this->getMinifier();
+        $minifier->add($input);
+        $this->assertEquals($expected, $minifier->minify());
+    }
+
+    /**
      * Test minifier import configuration methods.
      */
     public function testSetConfig()

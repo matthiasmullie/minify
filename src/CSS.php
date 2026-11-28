@@ -91,11 +91,13 @@ class CSS extends Minify
      */
     protected function moveImportsToTop($content)
     {
-        if (preg_match_all('/(;?)(@import (?<url>url\()?(?P<quotes>["\']?).+?(?P=quotes)(?(url)\)));?/', $content, $matches)) {
-            // remove from content
-            foreach ($matches[0] as $import) {
-                $content = str_replace($import, '', $content);
-            }
+        $importRegex = '/(;?)(@import (?<url>url\()?(?P<quotes>["\']?).+?(?P=quotes)(?(url)\)));?/';
+        if (preg_match_all($importRegex, $content, $matches)) {
+            // Remove all @import statements from their original position in a
+            // single pass. Looping str_replace() once per match rescanned the
+            // whole content on every iteration, which made this quadratic in
+            // the number of @import statements.
+            $content = preg_replace($importRegex, '', $content);
 
             // add to top
             $content = implode(';', $matches[2]) . ';' . trim($content, ';');
@@ -424,19 +426,9 @@ class CSS extends Minify
             /ix',
         );
 
-        // find all relative urls in css
-        $matches = array();
-        foreach ($relativeRegexes as $relativeRegex) {
-            if (preg_match_all($relativeRegex, $content, $regexMatches, PREG_SET_ORDER)) {
-                $matches = array_merge($matches, $regexMatches);
-            }
-        }
-
-        $search = array();
-        $replace = array();
-
-        // loop all urls
-        foreach ($matches as $match) {
+        // Rewrite a single url()/@import match (logic unchanged; this used to
+        // be the body of the loop below).
+        $rewrite = function (array $match) use ($converter) {
             // determine if it's a url() or an @import match
             $type = (strpos($match[0], '@import') === 0 ? 'import' : 'url');
 
@@ -471,17 +463,28 @@ class CSS extends Minify
                 $url = $match['quotes'] . $url . $match['quotes'];
             }
 
-            // build replacement
-            $search[] = $match[0];
             if ($type === 'url') {
-                $replace[] = 'url(' . $url . ')';
-            } elseif ($type === 'import') {
-                $replace[] = '@import "' . $url . '"';
+                return 'url(' . $url . ')';
             }
+
+            return '@import "' . $url . '"';
+        };
+
+        /*
+         * Rewrite the urls in a single pass per regex. The previous approach
+         * collected one search/replacement entry per match and then called
+         * str_replace() with those arrays, which rescans the whole content
+         * once per entry -- quadratic in the number of url()/@import
+         * references. preg_replace_callback() does the same substitution in a
+         * single linear pass, and replaces by position rather than by matched
+         * string (so repeated identical urls are no longer all rewritten by
+         * the first match's entry).
+         */
+        foreach ($relativeRegexes as $relativeRegex) {
+            $content = preg_replace_callback($relativeRegex, $rewrite, $content);
         }
 
-        // replace urls
-        return str_replace($search, $replace, $content);
+        return $content;
     }
 
     /**
